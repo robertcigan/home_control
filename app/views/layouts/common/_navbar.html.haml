@@ -1,0 +1,18 @@
+%nav.nav-main.navbar.navbar-expand-lg.navbar-dark.bg-dark
+  %a.navbar-brand{:href => "#"} Home Control
+  %button.navbar-toggler{"aria-controls" => "navbarSupportedContent", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#navigation", "data-toggle" => "collapse", :type => "button"}
+    %span.navbar-toggler-icon
+  #navigation.collapse.navbar-collapse
+    %ul.navbar-nav.mr-auto
+      %li.nav-item{ class: ("active" if current_page?(root_path)) }
+        = link_to "Dashboard", root_path, class: "nav-link"
+      %li.nav-item{ class: ("active" if current_page?(boards_path)) }
+        = link_to "Boards", boards_path, class: "nav-link"
+      %li.nav-item{ class: ("active" if current_page?(devices_path)) }
+        = link_to "Devices", devices_path, class: "nav-link"
+      %li.nav-item{ class: ("active" if current_page?(programs_path)) }
+        = link_to "Programs", programs_path, class: "nav-link"
+      %li.nav-item{ class: ("active" if current_page?(panels_path)) }
+        = link_to "Panels", panels_path, class: "nav-link"
+  .ml-auto.text-secondary
+    v#{Rails.configuration.home_control.version}

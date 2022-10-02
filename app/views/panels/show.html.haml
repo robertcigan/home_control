@@ -1,0 +1,8 @@
+- page_title @panel.name
+
+.grid-stack.grid-stack-view.bg-light.h-100.panel{ data: { "panel-id": @panel.id }}
+  - @panel.widgets.each do |widget|
+    = render widget, edit: false
+
+:javascript
+  HomeControl.Panels.initShow(#{@panel.column}, #{@panel.row});

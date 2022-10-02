@@ -1,0 +1,20 @@
+.grid-stack-item.bg-info{ "gs-id": widget.id, "gs-x": widget.x, "gs-y": widget.y, "gs-h": widget.h, "gs-w": widget.w }
+  .grid-stack-item-content.bg-light.border
+    - if widget.widget_type_boolean_value?
+      = render partial: "widgets/widget_boolean_value", locals: { widget: widget }
+    - elsif widget.widget_type_text_value?
+      = render partial: "widgets/widget_text_value", locals: { widget: widget }
+    - elsif widget.widget_type_switch?
+      = render partial: "widgets/widget_switch", locals: { widget: widget }
+    - else
+      Not implemented
+    
+    - if edit
+      = link_to fa_icon("pencil-alt"), edit_panel_widget_path(@panel, widget), title: "Edit", class: "btn btn-sm btn-primary edit-widget", data: { toggle: "ajax-modal", class: "modal-sm", title: "Edit Widget" }
+      = link_to fa_icon("trash"), panel_widget_path(@panel, widget), method: :delete, title: "Remove", class: "btn btn-sm btn-danger destroy-widget", data: { confirm: 'Are you sure?' }
+      
+      = form_with model: widget, url: update_position_panel_widget_path(@panel, widget), local: false do |form|
+        = form.hidden_field :x, data: { gs: "x" }
+        = form.hidden_field :y, data: { gs: "y" }
+        = form.hidden_field :w, data: { gs: "w" }
+        = form.hidden_field :h, data: { gs: "h" }

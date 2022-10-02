@@ -1,0 +1,26 @@
+!!!
+%html{ class: (content_for(:html_class) if content_for?(:html_class))}
+  %head
+    %meta{ charset: "utf-8" }
+    %meta{ content: "width=device-width, initial-scale=1.0, shrink-to-fit=no", name: "viewport" }
+    %meta{ content: "IE=edge", "http-equiv": "X-UA-Compatible" }
+    %meta{ content: "no-cache", name: "turbolinks-cache-control" }
+
+    %title
+      - if content_for?(:title)
+        = content_for :title
+        \-
+      Home Control
+    = csrf_meta_tags
+    = csp_meta_tag
+    = action_cable_meta_tag
+    -# = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+    -# = stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    -# = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag "application", "data-turbo-track": "reload" 
+    -# = javascript_importmap_tags
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+
+    = content_for(:head)
+
+  = content_for?(:base_content) ? yield(:base_content) : yield

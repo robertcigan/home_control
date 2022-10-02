@@ -1,0 +1,40 @@
+.table-responsive
+  %table.table.table-hover.table-striped
+    %thead
+      %tr
+        %th= sort_link @search, :name, "Name", {}, remote: true
+        %th= sort_link @search, :device_type, "Type", {}, remote: true
+        %th.text-center Value
+        %th.text-center= sort_link @search, :updated_at, "Last Change", {}, remote: true
+        %th= sort_link @search, :board_name, "Board", {}, remote: true
+        %th= sort_link @search, :pin, "Pin", {}, remote: true
+        %th= sort_link @search, :pin, "Address", {}, remote: true
+        %th= sort_link @search, :compression_type, {}, remote: true
+        %th
+        %th
+    %tbody
+      - @devices.each do |device|
+        %tr.device{ data: { device: device.json_data }}
+          %td= link_to device, device_path(device), class: "indicated"
+          %td= device.device_type_to_human
+          %td.text-center.indication= device.indication
+          %td.text-center.updated= device.last_change_text
+          %td= device.board
+          %td= device.pin
+          %td= device.holding_register_address
+          %td= device.compression_type_to_human
+          %td.nowrap.text-right
+            - if device.toggle?
+              = link_to fa_icon("toggle-off"), set_device_path(device, device: { value: true }), method: :patch, class: "btn btn-sm btn-warning toggle-off", data: { remote: true }
+              = link_to fa_icon("toggle-on"), set_device_path(device, device: { value: false }), method: :patch, class: "btn btn-sm btn-success toggle-on", data: { remote: true }
+          %td.nowrap.text-right.actions
+            = link_to fa_icon("pencil-alt"), edit_device_path(device), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Device" }
+            = link_to fa_icon("trash"), device_path(device), method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"
+
+.page-pagination
+  .pagination-description
+    = page_entries_info @devices
+  = paginate @devices, remote: true
+
+:javascript
+  HomeControl.Devices.initList();

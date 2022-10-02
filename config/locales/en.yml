@@ -1,0 +1,133 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+en:
+  date:
+    formats:
+      default: "%Y-%m-%d"
+  time:
+    formats:
+      default: "%Y-%m-%d %H:%M:%S"
+      custom: "%-d.%-m.%Y %H:%M:%S"
+      date: "%-d.%-m.%Y"
+      day_and_hour: "%-d.%-m.%Y %Hh"
+      month: "%Y-%-m"
+      year: "%Y"
+
+  activerecord:
+    attributes:
+      board:
+        name: "Name"
+        ip: "IP"
+        board_type: "Type"
+        slave_address: "ModBus Address"
+        data_read_interval: "Read Interval (s)"
+      device:
+        device_type: "Type"
+        board: "Board"
+        pin: "Pin/Address"
+        holding_register_address: "Holding Register"
+        modbus_data_type: "ModBus Data Type"
+        scale: "Value Scale"
+        unit: "Unit"
+        compression_type: "Device Log Compression"
+        compression_timespan: "Timespan"
+        compression_backlog: "Backlog"
+        last_change: "Last Change"
+      panel:
+        public_access: "Public Access"
+      widget:
+        show_updated: "Show Updated"
+
+    attribute_options:
+      board:
+        board_type:
+          arduino_mega_8b: "Arduino Mega (8bit)"
+          esp8266_bat: "ESP8266 (battery powered)"
+          modbus_tcp: "ModBus TCP"
+      board_log: 
+        log_type:
+          connected: "Connected"
+          disconnected: "Disconected"
+      device:
+        device_type:
+          button: "Button"
+          switch: "Switch"
+          distance: "Distance"
+          ds18b20: "DS18B20 Temperature Sensor"
+          analog_input: "Analog Input"
+          relay: "Relay"
+          pwm: "PWM output"
+          sound: "Sound"
+          board_test: "Board Test"
+          virtual_boolean: "Virtual Boolean"
+          virtual_decimal: "Virtual Decimal"
+          virtual_integer: "Virtual Integer"
+          virtual_string: "Virtual String"
+        modbus_data_type:
+          uint16: "uint16"
+          int16: "int16"
+        compression_type:
+          average: "Average Value"
+          w_average: "Weighted Average Value"
+          end_value: "End Value"
+        compression_timespan:
+          min10: "10 minutes"
+          hour: "Hour"
+          day: "Day"
+
+      widget:
+        widget_type:
+          switch: "Switch"
+          boolean_value: "Boolean Value"
+          text_value: "Text Value"
+        color_1:
+          blue: "Blue"
+          indigo: "Indigo"
+          purple: "Purple"
+          pink: "Pink"
+          red: "Red"
+          orange: "Orange"
+          yellow: "Yellow"
+          green: "Green"
+          teal: "Teal"
+          cyan: "Cyan"
+          white: "White"
+          gray: "Gray"
+          gray_dark: "Dark Gray"
+        color_2:
+          blue: "Blue"
+          indigo: "Indigo"
+          purple: "Purple"
+          pink: "Pink"
+          red: "Red"
+          orange: "Orange"
+          yellow: "Yellow"
+          green: "Green"
+          teal: "Teal"
+          cyan: "Cyan"
+          white: "White"
+          gray: "Gray"
+          gray_dark: "Dark Gray"
+      program:
+        program_type:
+          default: "Input activated"
+          repeated: "Repeated"

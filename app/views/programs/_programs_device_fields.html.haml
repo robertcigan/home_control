@@ -1,0 +1,10 @@
+.nested-fields
+  .row
+    .col-sm-5
+      = f.input :device_id, collection: Device.all, include_blank: "Select Device...", label: false, input_html: { data: { reload: true }}
+    .col-sm-4
+      = f.input :variable_name, label: false, input_html: { placeholder: "Variable Name", data: { reload: true }}
+    .col-sm-2.mt-2
+      = f.input :trigger 
+    .col-sm-1.mt-2
+      = link_to_remove_association fa_icon("trash"), f

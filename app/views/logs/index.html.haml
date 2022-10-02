@@ -1,0 +1,10 @@
+.panel.panel-primary.mt
+  .panel-heading
+    %h3.panel-title 
+      Log files
+  .panel-body
+    %table.table
+      - @files.each do |file|
+        %tr
+          %td= link_to file.first, log_path(file: file.first, anchor: "endofpage")
+          %td= l(file.last)

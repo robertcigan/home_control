@@ -1,0 +1,12 @@
+.grid-stack-edit {
+  min-height: 30rem;
+}
+
+.grid-stack-view, .grid-stack-edit {
+  .grid-stack-item {
+    .grid-stack-item-content {
+      inset: 0 !important;
+      padding: 0;
+    }
+  }
+}

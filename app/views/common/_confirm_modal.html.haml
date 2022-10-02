@@ -1,0 +1,17 @@
+#confirm-modal.modal
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %div
+        %h4.mb-0 Confirmation
+        %button.close{ "data-dismiss" => "modal", type: "button" } ×
+      #ajax-modal-content
+        .modal-body.text-center
+          .mt-4.mb-4.text-muted
+            = fa_icon("exclamation-circle", class: "fa-3x")
+          %h3
+            Are You Sure?
+          %p#confirm-text
+      .modal-footer.justify-content-center
+        %span#confirm-modal-link
+        %button.btn.btn-default.btn-outline.btn-w-m{ "data-dismiss" => "modal", type: "button" } Cancel

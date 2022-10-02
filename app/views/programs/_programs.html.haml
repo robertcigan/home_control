@@ -1,0 +1,43 @@
+.table-responsive
+  %table.table.table-hover.table-striped
+    %thead
+      %tr
+        %th= sort_link @search, :name, "Name", {}, remote: true
+        %th= sort_link @search, :program_type, "Type", {}, remote: true
+        %th= sort_link @search, :last_run, "Last Run", {}, remote: true
+        %th.text-right= sort_link @search, :runtime, "Runtime", {}, remote: true
+        %th.text-right Thread Utilization
+        %th.text-center= sort_link @search, :enabled, "Status", {}, remote: true
+        %th
+    %tbody
+      - @programs.each do |program|
+        %tr.program{ data: { program: program.json_data }}
+          %td= link_to program.name, program
+          %td
+            - if program.program_type_repeated?
+              #{program.program_type_to_human}(#{program.repeat_every}s)
+            - else
+              = program.program_type_to_human
+          %td.last-run
+          %td.text-right
+            %span.runtime> !
+            ms
+          %td.text-right
+            %span.thread-utilisation> !
+            \%
+          %td.nowrap.text-center
+            = link_to fa_icon("toggle-on"), set_program_path(program, program: { enabled: false }), method: :patch, class: "btn btn-sm btn-success toggle-on", data: { remote: true }
+            = link_to fa_icon("toggle-off"), set_program_path(program, program: { enabled: true }), method: :patch, class: "btn btn-sm btn-warning toggle-off", data: { remote: true }
+            = link_to fa_icon("play"), run_program_path(program), method: :patch, data: { confirm: 'Are you sure?', remote: true }, title: "Test run", class: "ml btn btn-sm btn-info"
+          %td.nowrap.text-right
+            = link_to fa_icon("copy"), new_program_path(program_id: program), class: "ml btn btn-sm btn-primary", data: { toggle: "ajax-modal", class: "modal-lg", title: "Copy Program" }
+            = link_to fa_icon("pencil-alt"), edit_program_path(program), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-lg", title: "Edit Program" }
+            = link_to fa_icon("trash"), program, method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"
+
+.page-pagination
+  .pagination-description
+    = page_entries_info @programs
+  = paginate @programs, remote: true
+
+:javascript
+  HomeControl.Programs.initList();

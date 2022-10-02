@@ -1,0 +1,20 @@
+.table-responsive
+  %table.table.table-hover.table-striped
+    %thead
+      %tr
+        %th= sort_link @search, :created_at, "Time", {}, remote: true
+        %th
+          - if @device.value_attribute
+            = sort_link @search, @device.value_attribute, "Value", { }, remote: true
+          - else 
+            Value
+    %tbody
+      - @device_logs.each do |device_log|
+        %tr
+          %td= l(device_log.created_at)
+          %td= device_log.indication
+
+.page-pagination
+  .pagination-description
+    = page_entries_info @device_logs
+  = paginate @device_logs, remote: true

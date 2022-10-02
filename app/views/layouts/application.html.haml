@@ -1,0 +1,22 @@
+- content_for :base_content do
+  %body.pb-3
+    = render "layouts/common/navbar"
+    %main.container-fluid.mt-3
+      = render "layouts/common/flash"
+      - if content_for?(:section_title)
+        = content_for(:section_title)
+      - else
+        .content-heading.d-flex.align-items-center.mb-3
+          .section-title
+            %h1.mb-0= content_for :title
+          .ml-auto
+            = content_for :action_button
+      .content.mt-2      
+        = yield
+      
+
+    = render "common/ajax_modal/ajax_modal"
+    = render "common/confirm_modal"
+
+
+= render template: "layouts/base"

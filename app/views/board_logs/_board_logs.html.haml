@@ -1,0 +1,22 @@
+.table-responsive
+  %table.table.table-hover.table-striped
+    %thead
+      %tr
+        %th= sort_link @search, :created_at, "Time", { }, remote: true
+        %th= sort_link @search, :log_type, "Status", { }, remote: true
+        - if @board.board_type_esp8266_bat?
+          %th= sort_link @search, :ssid, "SSID", { }, remote: true
+          %th= sort_link @search, :signal_strength, "Signal Strength", { }, remote: true
+    %tbody
+      - @board_logs.each do |board_log|
+        %tr
+          %td= l(board_log.created_at)
+          %td= board_log.indication
+          - if @board.board_type_esp8266_bat?
+            %td= board_log.ssid
+            %td= number_to_percentage(board_log.signal_strength) if board_log.signal_strength
+
+.page-pagination
+  .pagination-description
+    = page_entries_info @board_logs
+  = paginate @board_logs, remote: true

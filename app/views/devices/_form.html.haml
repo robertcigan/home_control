@@ -1,0 +1,49 @@
+= simple_form_for(@device, url: @device.new_record? ? devices_path : device_path(@device), as: 'device', remote: true) do |form|
+  .modal-body
+    = form.error_notification
+    .row
+      .col
+        = form.input :name
+      .col
+        = form.input :device_type, collection: Device.device_types_to_collection, input_html: { data: { reload: true } }
+    
+    = form.association :board, input_html: { data: { reload: true } }
+    - if @device.board
+      - if @device.board.board_type_modbus_tcp?
+        .row
+          .col
+            = form.input :holding_register_address
+          .col
+            = form.input :scale, hint: "(10, 100, 1000...)"
+          .col 
+            = form.input :modbus_data_type, collection: Device.modbus_data_types_to_collection
+      - else
+        = form.input :pin
+    - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) 
+      = form.input :inverted
+    - if @device.poll?
+      = form.input :poll
+    %hr
+    .row
+      - if @device.device_type && @device.value_attribute
+        .col
+          = form.input @device.value_attribute
+      .col   
+        = form.input :unit
+    - if @device.compressable?
+      .row
+        .col-sm-4
+          = form.input :compression_type, collection: Device.compression_types_to_collection, input_html: { data: { reload: true} }
+        - if @device.compression_type.present?
+          .col
+            = form.input :compression_timespan, collection: Device.compression_timespans_to_collection
+          .col
+            = form.input :compression_backlog, hint: "How many compression timespans should pass to start the compression"
+
+        
+  .modal-footer
+    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
+    = form.button :submit, @device.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
+
+:javascript
+  HomeControl.Devices.initForm()

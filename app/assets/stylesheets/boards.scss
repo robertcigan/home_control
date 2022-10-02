@@ -1,0 +1,18 @@
+.board {
+  &.board-on {
+    .connected {
+      display: inline;
+    }
+    .disconnected {
+      display: none;
+    }
+  }
+  &.board-off {
+    .connected {
+      display: none;
+    }
+    .disconnected {
+      display: inline;
+    }
+  }
+}

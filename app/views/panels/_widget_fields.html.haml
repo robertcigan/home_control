@@ -1,0 +1,14 @@
+.nested-fields.mb-4.col-md-6
+  .card.bg-light
+    .card-body
+      .row
+        = f.input :widget_type, collection: Widget.widget_types_to_collection, wrapper_html: { class: "col-9" }
+        .col-3.mt-icon.text-right
+          = link_to_remove_association fa_icon("trash"), f
+      = f.input :name
+      .row
+        = f.association :device, collection: Device.all, include_blank: "Select Device...", wrapper_html: { class: "col-6" }
+        = f.association :program, collection: Program.all, include_blank: "Select Program...", wrapper_html: { class: "col-6" }
+      .row
+        = f.input :color_1, collection: Widget.color_1s_to_collection, wrapper_html: { class: "col-6" }
+        = f.input :color_2, collection: Widget.color_2s_to_collection, wrapper_html: { class: "col-6" }

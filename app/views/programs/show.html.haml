@@ -1,0 +1,79 @@
+- page_title @program 
+
+- content_for(:section_title) do
+  .card.shadow.program{ data: { program: @program.json_data }}
+    .card-body.pt-0
+      .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+        %h1= @program.name
+        .actions.ml-auto
+          = link_to fa_icon("toggle-on"), set_program_path(@program, program: { enabled: false }), method: :patch, class: "btn btn-sm btn-success toggle-on", data: { remote: true }
+          = link_to fa_icon("toggle-off"), set_program_path(@program, program: { enabled: true }), method: :patch, class: "btn btn-sm btn-warning toggle-off", data: { remote: true }
+          = link_to fa_icon("play"), run_program_path(@program), method: :patch, data: { confirm: 'Are you sure?', remote: true }, title: "Test run", class: "ml btn btn-sm btn-info"
+
+          = link_to fa_icon("copy"), new_program_path(program_id: @program), class: "ml-5 btn btn-sm btn-primary", data: { toggle: "ajax-modal", class: "modal-lg", title: "Copy Program" }
+          = link_to fa_icon("pencil-alt"), edit_program_path(@program), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-lg", title: "Edit Program" }
+          = link_to fa_icon("trash"), program_path(@program), method: :delete, data: { confirm: 'Are you sure?' }, class: "ml btn btn-sm btn-danger"
+
+      .row
+        .col-sm-6
+          .row.my-2
+            .col-6= Program.human_attribute_name(:program_type)
+            .col-6= @program.program_type_to_human
+          .row.my-2
+            .col-6= Program.human_attribute_name(:last_run)
+            .col-6.last-run
+          .row.my-2
+            .col-6= Program.human_attribute_name(:runtime)
+            .col-6
+              %span.runtime> !
+              ms
+          .row.my-2
+            .col-6 Thread Utilization
+            .col-6
+              %span.thread-utilisation> !
+              \%
+            
+        .col-sm-6
+          .row.my-2
+            .col-6
+              = Program.human_attribute_name(:last_error_at)
+              = fa_icon("exclamation-triangle", class: "text-danger has-error")
+            .col-6.last-error-at
+          %code.my-2= @program.last_error_message
+
+.row
+  .col-md-6
+    .card.shadow.mt-2
+      .card-body.pt-0
+        .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+          %h3 Devices
+        - @program.programs_devices.each do |programs_device|
+          .row.mb
+            .col-sm-4
+              %strong= link_to programs_device.device, device_path(programs_device.device)
+            .col-sm-4
+              {{#{programs_device.variable_name}}}
+            .col-sm-4
+              = programs_device.trigger? ? "trigger" : nil
+  .col-md-6
+    .card.shadow.mt-2
+      .card-body.pt-0
+        .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+          %h3 Variables
+        - @program.storage.each_pair.each do |variable_name, variable_value|
+          .row.mb
+            .col-sm-6= variable_name
+            .col-sm-6= variable_value
+
+.card.shadow.mt-2
+  .card-body.pt-0
+    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+      %h3 Code
+    .row
+      .col-md-6
+        %code= @program.code.gsub("\n", "<br/>").html_safe
+      .col-md-6
+        %code= @program.compiled_code.gsub("\n", "<br/>").html_safe
+
+:javascript
+  HomeControl.Programs.initShow();

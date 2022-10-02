@@ -1,0 +1,13 @@
+- content_for(:html_class) { "h-100" } 
+- content_for :base_content do
+  %body.h-100
+    %main.container-fluid.p-0.h-100
+      = render "layouts/common/flash"
+      .content.h-100
+        = yield
+
+    = render "common/ajax_modal/ajax_modal"
+    = render "common/confirm_modal"
+
+
+= render template: "layouts/base"

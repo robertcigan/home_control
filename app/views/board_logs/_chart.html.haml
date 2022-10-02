@@ -1,0 +1,47 @@
+%ul.nav.nav-tabs
+  %li.nav-item
+    = link_to "Year", chart_board_board_logs_path(@board, timespan: "year"), remote: true, class: "nav-link #{"active" if @timespan == "year"}"
+  %li.nav-item
+    = link_to "Month", chart_board_board_logs_path(@board, timespan: "month"), remote: true, class: "nav-link #{"active" if @timespan == "month"}"
+  %li.nav-item
+    = link_to "Week", chart_board_board_logs_path(@board, timespan: "week"), remote: true, class: "nav-link #{"active" if @timespan == "week"}"
+  %li.nav-item
+    = link_to "Day", chart_board_board_logs_path(@board, timespan: "day"), remote: true, class: "nav-link #{"active" if @timespan == "day"}"
+  %li.nav-item
+    = link_to "Hour", chart_board_board_logs_path(@board, timespan: "hour"), remote: true, class: "nav-link #{"active" if @timespan == "hour"}"
+  %li.ml-auto
+    - if @timespan == "day"
+      = link_to l(@min - 1.day, format: :date).html_safe + fa_icon("backward", class: "ml-2"), chart_board_board_logs_path(@board, timespan: "day", min: (@min - 1.day), max: (@max - 1.day)), remote: true, class: "btn btn-secondary mr-2"
+      .mx-2.btn.btn-disabled.btn-success
+        = l(@min, format: :date)
+      = link_to fa_icon("forward", class: "mr-2") + l(@min + 1.day, format: :date), chart_board_board_logs_path(@board, timespan: "day", min: (@min + 1.day), max: (@max + 1.day)), remote: true, class: "btn btn-secondary ml-2"
+    
+    - elsif @timespan == "hour"
+      = link_to l(@min - 1.hour, format: :day_and_hour).html_safe + fa_icon("backward", class: "ml-2"), chart_board_board_logs_path(@board, timespan: "hour", min: (@min - 1.hour), max: (@max - 1.hour)), remote: true, class: "btn btn-secondary mr-2"
+      .mx-2.btn.btn-disabled.btn-success
+        = l(@min, format: :day_and_hour)
+      = link_to fa_icon("forward", class: "mr-2") + l(@min + 1.hour, format: :day_and_hour), chart_board_board_logs_path(@board, timespan: "hour", min: (@min + 1.hour), max: (@max + 1.hour)), remote: true, class: "btn btn-secondary ml-2"
+    
+    - elsif @timespan == "week"
+      = link_to l(@min - 1.week, format: :date).html_safe + fa_icon("backward", class: "ml-2"), chart_board_board_logs_path(@board, timespan: "week", min: (@min - 1.week), max: (@max - 1.week)), remote: true, class: "btn btn-secondary mr-2"
+      .mx-2.btn.btn-disabled.btn-success
+        = l(@min, format: :date)
+      = link_to fa_icon("forward", class: "mr-2") + l(@min + 1.week, format: :date), chart_board_board_logs_path(@board, timespan: "week", min: (@min + 1.week), max: (@max + 1.week)), remote: true, class: "btn btn-secondary ml-2"
+    
+    - elsif @timespan == "month"
+      = link_to l(@min - 1.month, format: :month).html_safe + fa_icon("backward", class: "ml-2"), chart_board_board_logs_path(@board, timespan: "month", min: (@min - 1.month), max: (@max - 1.month)), remote: true, class: "btn btn-secondary mr-2"
+      .mx-2.btn.btn-disabled.btn-success
+        = l(@min, format: :month)
+      = link_to fa_icon("forward", class: "mr-2") + l(@min + 1.month, format: :month), chart_board_board_logs_path(@board, timespan: "month", min: (@min + 1.month), max: (@max + 1.month)), remote: true, class: "btn btn-secondary ml-2"
+    
+    - elsif @timespan == "year"
+      = link_to l(@min - 1.year, format: :year).html_safe + fa_icon("backward", class: "ml-2"), chart_board_board_logs_path(@board, timespan: "year", min: (@min - 1.year), max: (@max - 1.year)), remote: true, class: "btn btn-secondary mr-2"
+      .mx-2.btn.btn-disabled.btn-success
+        = l(@min, format: :year)
+      = link_to fa_icon("forward", class: "mr-2") + l(@min + 1.year, format: :year), chart_board_board_logs_path(@board, timespan: "year", min: (@min + 1.year), max: (@max + 1.year)), remote: true, class: "btn btn-secondary ml-2"
+
+  
+- if @chart_options[:type] == :area
+  = area_chart chart_board_board_logs_path(@board, timespan: @timespan, min: @min, max: @max), @chart_options
+- else
+  = line_chart chart_board_board_logs_path(@board, timespan: @timespan, min: @min, max: @max), @chart_options

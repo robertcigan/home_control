@@ -1,0 +1,39 @@
+.row.mt
+  .col-sm-4
+    .panel.panel-primary
+      .panel-heading
+        %h3.panel-title 
+          Panels
+          .pull-right.badge= Panel.count
+      .panel-body
+        - Panel.all.each do |panel|
+          = link_to panel, panel, class: "btn btn-md btn-default", target: "_blank"
+  .col-sm-4
+    .panel.panel-primary
+      .panel-heading
+        %h3.panel-title 
+          Devices
+          .pull-right.badge= Device.count
+      .panel-body
+        - Device.all.each do |device|
+          .device.row{id: "device_#{device.id}", data: device.json_data}
+            .col-md-6
+              = device
+            .col-md-6.text-right
+              .updated.label.label-primary
+  .col-sm-4
+    .panel.panel-primary
+      .panel-heading
+        %h3.panel-title 
+          Boards
+          .pull-right.badge= Board.count
+      .panel-body
+        - Board.all.each do |board|
+          .board.row{id: dom_id(board), data: board.json_data}
+            .col-md-6
+              = board
+            .col-md-6.text-right
+              .updated.label.label-primary
+
+:javascript
+  //HomeControl.Home.init();

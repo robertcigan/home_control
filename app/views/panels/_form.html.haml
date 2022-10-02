@@ -1,0 +1,23 @@
+= simple_form_for(@panel, remote: true) do |form|
+  .modal-body
+    = form.error_notification
+    = form.input :name
+    = form.input :public_access, wrapper_html: { class: "single-checkbox" }
+    -# .row
+    -#   = form.input :column, wrapper_html: { class: "col-6" }
+    -#   = form.input :row, wrapper_html: { class: "col-6" }
+
+    %h3 Widgets
+    .container
+      #widgets.row
+        = form.simple_fields_for :widgets do |widget_form|
+          = render 'widget_fields', f: widget_form
+        .links.col-12
+          = link_to_add_association fa_icon("plus", text: "Add", class: "mr-2"), form, :widgets, class: "btn btn-primary btn-sm"
+    
+  .modal-footer
+    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
+    = form.button :submit, @panel.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
+
+:javascript
+  HomeControl.Panels.initForm();

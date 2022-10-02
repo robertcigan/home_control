@@ -1,0 +1,80 @@
+- page_title @device 
+
+- content_for(:section_title) do
+  .card.shadow.device{ data: { device: @device.json_data }}
+    .card-body.pt-0
+      .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+        %h1= @device.name
+        .actions.ml-auto
+          = link_to fa_icon("pencil-alt"), edit_device_path(@device), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Device" }
+          = link_to fa_icon("trash"), device_path(@device), method: :delete, data: { confirm: 'Are you sure?' }, class: "ml btn btn-sm btn-danger"
+      .row
+        .col-sm-6
+          .row.my-2
+            .col-6= Device.human_attribute_name(:device_type)
+            .col-6= @device.device_type_to_human
+          .row.my-2
+            .col-6= Device.human_attribute_name(:board)
+            .col-6= @device.board
+          - if @device.pin
+            .row.my-2
+              .col-6= Device.human_attribute_name(:pin)
+              .col-6= @device.pin
+          - if @device.holding_register_address
+            .row.my-2
+              .col-6= Device.human_attribute_name(:holding_register_address)
+              .col-6= @device.holding_register_address
+          - if @device.modbus_data_type
+            .row.my-2
+              .col-6= Device.human_attribute_name(:modbus_data_type)
+              .col-6= @device.modbus_data_type_to_human
+          - if @device.scale
+            .row.my-2
+              .col-6= Device.human_attribute_name(:scale)
+              .col-6= @device.scale
+          - if @device.poll?
+            .row.my-2
+              .col-6= Device.human_attribute_name(:poll)
+              .col-6= @device.poll ? "#{@device.poll}ms" : nil
+          - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) 
+            .row.my-2
+              .col-6= Device.human_attribute_name(:inverted)
+              .col-6= @device.inverted ? fa_icon("check") : nil
+          .row.my-2
+            .col-6 Value
+            .col-6.indication= @device.indication
+          .row.my-2
+            .col-6= Device.human_attribute_name(:last_change)
+            .col-6.updated= @device.last_change_text
+        .col-sm-6
+          - if @device.compression_type.present?
+            .row.my-2
+              .col-6= Device.human_attribute_name(:compression_type)
+              .col-6= @device.compression_type_to_human
+            .row.my-2
+              .col-6= Device.human_attribute_name(:compression_timespan)
+              .col-6= @device.compression_timespan_to_human
+            .row.my-2
+              .col-6= Device.human_attribute_name(:compression_backlog)
+              .col-6 #{@device.compression_backlog} #{@device.compression_timespan_to_human.pluralize(@device.compression_backlog)}
+
+.card.shadow.mt-2{ data: { onload_content:  chart_device_device_logs_path(@device) } }
+  .card-body.pt-0
+    .sk-spinner.sk-spinner-wave
+      .sk-rect1
+      .sk-rect2
+      .sk-rect3
+      .sk-rect4
+      .sk-rect5
+      
+.card.shadow.mt-2{ data: { onload_content:  device_device_logs_path(@device) } }
+  .card-body.pt-0
+    .sk-spinner.sk-spinner-wave
+      .sk-rect1
+      .sk-rect2
+      .sk-rect3
+      .sk-rect4
+      .sk-rect5
+
+:javascript
+  HomeControl.Devices.initShow();

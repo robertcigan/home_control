@@ -1,0 +1,15 @@
+.card.shadow
+  .card-body.pt-0
+    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+      %h3 Connection Log
+    
+    = simple_form_for @search, url: board_board_logs_path(@board), remote: true, method: :get, wrapper: :inline_form, html: { id: "board_logs_search_form", class: "form-inline" } do |form|
+      = form.input :connected_eq, collection: { "Connected": true, "Disconnected": false}, required: false, label: false, wrapper_html: { class: "mb-2 mr-2"}, input_html: { data: { autosubmit: true, placeholder: "All Statuses" }}
+      .mr-2.mb-2
+        = render "common/per_page"
+
+    #board_logs
+      = render "board_logs"
+
+:javascript
+  HomeControl.BoardLogs.initIndex();

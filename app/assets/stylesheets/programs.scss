@@ -1,0 +1,32 @@
+.CodeMirror {
+  border: 1px solid;
+  height: auto;
+}
+
+.program {
+  &.program-on {
+    .toggle-off {
+      display: none;
+    }
+    .toggle-on {
+      display: inline;
+    }
+  }
+  &.program-off {
+    .toggle-off {
+      display: inline;
+    }
+    .toggle-on {
+      display: none;
+    }
+  }
+  .has-error {
+    display: none;
+  }
+  &.program-error {
+    .has-error {
+      display: inline !important;
+    }
+  }
+  
+}

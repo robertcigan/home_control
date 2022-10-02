@@ -1,0 +1,19 @@
+.device {
+  &.device-on {
+    .toggle-off {
+      display: none;
+    }
+    .toggle-on {
+      display: inline;
+    }
+  }
+  &.device-off {
+    .toggle-off {
+      display: inline;
+    }
+    .toggle-on {
+      display: none;
+    }
+  }
+  
+}

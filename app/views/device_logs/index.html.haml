@@ -1,0 +1,14 @@
+.card.shadow.mt-2
+  .card-body.pt-0
+    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+      %h3 Value Log
+    
+    = simple_form_for @search, url: device_device_logs_path(@device), remote: true, method: :get, wrapper: :inline_form, html: { id: "device_logs_search_form", class: "form-inline" } do |form|
+      .mr-2.mb-2
+        = render "common/per_page"
+
+    #device_logs
+      = render "device_logs/device_logs"
+
+:javascript
+  HomeControl.DeviceLogs.initIndex();

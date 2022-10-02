@@ -1,0 +1,7 @@
+<% if @device.errors.any? || @reload %>
+  <%= ajax_modal_render("form") %>
+<% else %>
+  <%= refresh_list_by_script("#device_search") %>
+  $("#ajax-modal").modal("hide")
+  <%= show_flash %>
+<% end %>

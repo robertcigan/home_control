@@ -1,0 +1,14 @@
+- if flash[:notice]
+  -# .d-flex
+  -#   .alert.alert-success.alert-dismissible.fade.show.m-t.mx-auto
+  -#     = flash[:notice]
+  -#     %button.close{ data: { dismiss: "alert" }, type: "button" } ×
+  :javascript
+    HomeControl.Layout.showFlash("#{flash[:notice]}", "success")
+- if flash[:alert]
+  -# .d-flex
+  -#   .alert.alert-danger.alert-dismissible.fade.show.m-t.mx-auto
+  -#     = flash[:alert]
+  -#     %button.close{ data: { dismiss: "alert" }, type: "button" } ×
+  :javascript
+    HomeControl.Layout.showFlash("#{flash[:alert]}", "alert")

@@ -1,0 +1,73 @@
+- page_title @board 
+
+- content_for(:section_title) do
+  .card.shadow.board{ data: { board: @board.json_data }}
+    .card-body.pt-0
+      .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+        %h1= @board.name
+        .actions.ml-auto
+          = link_to fa_icon("pencil-alt"), edit_board_path(@board), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Board" }
+          = link_to fa_icon("trash"), @board, method: :delete, data: { confirm: 'Are you sure?' }, class: "ml btn btn-sm btn-danger"
+      .row.py-2
+        .col-sm-3.col-6
+          IP
+        .col-sm-9.col-6
+          = @board.ip
+      .row.py-2
+        .col-sm-3.col-6
+          Type
+        .col-sm-9.col-6
+          = @board.board_type_to_human
+      - if @board.board_type_modbus_tcp?
+        .row.py-2
+          .col-sm-3.col-6
+            Address
+          .col-sm-9.col-6
+            = @board.slave_address
+      .row.py-2
+        .col-sm-3.col-6
+          Status
+        .col-sm-9.col-6
+          = fa_icon("check", class: "connected")
+          = fa_icon("ban", class: "disconnected")
+      - if @board.board_type_esp8266_bat? || @board.board_type_arduino_mega_8b?
+        .row.py-2
+          .col-sm-3.col-6
+            FW Version
+          .col-sm-9.col-6
+            = @board.version
+      - if @board.board_type_esp8266_bat?
+        .row.py-2
+          .col-sm-3.col-6
+            SSID
+          .col-sm-9.col-6.ssid
+            = @board.ssid
+        .row.py-2
+          .col-sm-3.col-6
+            Signal Strength
+          .col-sm-9.col-6
+            %span.signal-strength
+              = @board.signal_strength
+            \%
+
+.card.shadow.mt-2{ data: { onload_content:  chart_board_board_logs_path(@board) } }
+  .card-body.pt-0
+    .sk-spinner.sk-spinner-wave
+      .sk-rect1
+      .sk-rect2
+      .sk-rect3
+      .sk-rect4
+      .sk-rect5
+      
+.card.shadow.mt-2{ data: { onload_content:  board_board_logs_path(@board) } }
+  .card-body.pt-0
+    .sk-spinner.sk-spinner-wave
+      .sk-rect1
+      .sk-rect2
+      .sk-rect3
+      .sk-rect4
+      .sk-rect5
+    
+
+:javascript
+  HomeControl.Boards.initShow();
