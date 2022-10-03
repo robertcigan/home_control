@@ -30,6 +30,7 @@
 !/tmp/storage/.keep
 
 /public/assets
+/public/packs
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
@@ -39,3 +40,4 @@ config/env.yml
 config/database.yml
 
 .DS_Store
+node_modules
