@@ -1,12 +1,21 @@
 namespace "HomeControl.Layout", (exports) ->
+  exports.cable = null
   exports.init = ->
     initAjaxModal()
     initSelectOnLoad()
+    initCable()
     $(document).on "turbolinks:load", ->
       #exports.initSearchField()
       exports.initSelect()
       exports.initReloadForm()
       initAutosubmit()
+  
+  initCable = ->
+    exports.cable = ActionCable.createConsumer()
+    HomeControl.BoardChannel.init()
+    HomeControl.DeviceChannel.init()
+    HomeControl.PanelChannel.init()
+    HomeControl.ProgramChannel.init()
   
   initAutosubmit = ->
     exports.initAutosubmitCheckbox()
@@ -171,6 +180,5 @@ namespace "HomeControl.Layout", (exports) ->
       cache: false
       success: (data, textStatus, jqXHR) ->
         $elem.replaceWith(data)
-
 
 HomeControl.Layout.init()

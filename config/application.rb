@@ -20,5 +20,6 @@ module HomeControl7
     # config.eager_load_paths << Rails.root.join("extras")
     config.time_zone = "Prague"
     config.autoload_paths += %W(#{config.root}/lib)
+    config.active_record.yaml_column_permitted_classes = [ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Symbol, Time]
   end
 end

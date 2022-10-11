@@ -14,5 +14,15 @@
 //= require select2
 //= require chartkick
 //= require Chart.bundle
+//= require actioncable
 
-//= require_tree .
+//= require_tree ./channels
+//= require layout
+//= require board_logs
+//= require boards
+//= require devices
+//= require device_logs
+//= require home
+//= require panels
+//= require programs
+//= require widgets

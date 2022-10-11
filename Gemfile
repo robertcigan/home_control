@@ -80,6 +80,7 @@ gem "codemirror-rails"
 gem "coffee-rails"
 gem "envyable"
 gem "eventmachine"
+gem "action_cable_client"
 gem 'event_spitter'
 gem "font_awesome5_rails"
 gem "foreman"

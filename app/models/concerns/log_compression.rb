@@ -13,7 +13,7 @@ module LogCompression
     time.change(min: (time.min / 5) * 5, sec: 0)
   end
 
-  def run_compression(replace_lpgs = false)
+  def run_compression(replace_logs = false)
     compression_time_calculated = if compression_last_run_at.nil?
       if device_logs.count > 0
         if compression_timespan_min1?
@@ -46,7 +46,7 @@ module LogCompression
     backlog_calculated = if compression_timespan_min1?
       compression_backlog * 60
     elsif compression_timespan_min5?
-        compression_backlog * 300
+      compression_backlog * 300
     elsif compression_timespan_min10?
       compression_backlog * 600
     elsif compression_timespan_hour?
@@ -55,7 +55,7 @@ module LogCompression
       compression_backlog * 86400
     end
     if compression_time_calculated && (Time.current - compression_time_calculated) > backlog_calculated
-      compress_logs(compression_time_calculated, replace_lpgs)
+      compress_logs(compression_time_calculated, replace_logs)
     else
       nil
     end
@@ -65,7 +65,13 @@ module LogCompression
   # timespan - :hour
   def compress_logs(time, replace_logs = false) 
     self.class.transaction do
-      if compression_timespan_min10?
+      if compression_timespan_min1?
+        starts_at = time.beginning_of_minute
+        ends_at = time.end_of_minute
+      elsif compression_timespan_min5?
+        starts_at = round_to_min5(time)
+        ends_at = (time + 4.minutes).end_of_minute
+      elsif compression_timespan_min10?
         starts_at = round_to_min10(time)
         ends_at = (time + 9.minutes).end_of_minute
       elsif compression_timespan_hour?

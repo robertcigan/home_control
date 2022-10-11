@@ -1,24 +1,23 @@
-# README
+Arduino protocol:
+PC -> ARDUINO
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Commands:
+reset_devices: true
 
-Things you may want to cover:
+add:
+  type: "switch" | "button"
+  pin: 30
+  id: 5
 
-* Ruby version
+  
+ARDUINO 
+IP: prod/dev
+server ip:  192, 168, 0, 2 /  192, 168, 0, 102
+client ip: 192, 168, 0, 60+ / 192, 168, 0, 200+
 
-* System dependencies
+Pins:
 
-* Configuration
+10 - Ethernet control
+18,19 - Serial1 (sound module)
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+A0 - A15 assignable analog pins

@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  mount ActionCable.server => '/websocket' 
+  mount ActionCable.server => '/websockets' 
   resources :boards do
     resources :board_logs, only: [:index] do
       collection do 

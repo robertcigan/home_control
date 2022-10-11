@@ -124,7 +124,7 @@ EventMachine.run do
       proc do
         begin 
           Device.where.not(compression_type: nil).where.not(compression_type: "").each do |device|
-            if (result = device.run_compression(true)) 
+            if (device.run_compression(true)) 
               puts "Compressing logs for  #{device.name} - #{device.compression_type_to_human} - #{device.compression_timespan_to_human}"
             end
           end
