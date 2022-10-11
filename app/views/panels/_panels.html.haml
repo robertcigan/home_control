@@ -10,9 +10,9 @@
         %tr
           %td= link_to panel, panel, remote: false, data: { remote: false, turbolinks: false}
           %td.text-center= panel.public_access? ? fa_icon("check") : nil
-          %td.nowrap.text-right.actions
+          %td.text-nowrap.text-right.actions
             = link_to fa_icon("columns"), panel_widgets_path(panel), title: "Layout", class: "btn btn-sm btn-warning"
-            = link_to fa_icon("pencil-alt"), edit_panel_path(panel), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Panel" }
+            = link_to fa_icon("pencil-alt"), edit_panel_path(panel), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-lg", title: "Edit Panel" }
             = link_to fa_icon("trash"), panel, method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"
 
 .page-pagination

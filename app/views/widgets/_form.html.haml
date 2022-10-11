@@ -3,9 +3,9 @@
     = form.error_notification
     .row
       = form.input :widget_type, collection: Widget.widget_types_to_collection, wrapper_html: { class: "col-6" }
-      = form.input :show_updated, wrapper_html: { class: "col-6" }
     .row
-      = form.input :name, wrapper_html: { class: "col-6" }
+      = form.input :name, wrapper_html: { class: "col-8" }
+      = form.input :show_updated, wrapper_html: { class: "col-4" }
     .row
       = form.association :device, include_blank: "Select Device...", wrapper_html: { class: "col-6" }
       = form.association :program, include_blank: "Select Program...", wrapper_html: { class: "col-6" }

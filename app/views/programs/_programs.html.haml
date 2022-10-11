@@ -25,11 +25,11 @@
           %td.text-right
             %span.thread-utilisation> !
             \%
-          %td.nowrap.text-center
+          %td.text-nowrap.text-center
             = link_to fa_icon("toggle-on"), set_program_path(program, program: { enabled: false }), method: :patch, class: "btn btn-sm btn-success toggle-on", data: { remote: true }
             = link_to fa_icon("toggle-off"), set_program_path(program, program: { enabled: true }), method: :patch, class: "btn btn-sm btn-warning toggle-off", data: { remote: true }
+          %td.text-nowrap.text-right.actions
             = link_to fa_icon("play"), run_program_path(program), method: :patch, data: { confirm: 'Are you sure?', remote: true }, title: "Test run", class: "ml btn btn-sm btn-info"
-          %td.nowrap.text-right
             = link_to fa_icon("copy"), new_program_path(program_id: program), class: "ml btn btn-sm btn-primary", data: { toggle: "ajax-modal", class: "modal-lg", title: "Copy Program" }
             = link_to fa_icon("pencil-alt"), edit_program_path(program), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-lg", title: "Edit Program" }
             = link_to fa_icon("trash"), program, method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"

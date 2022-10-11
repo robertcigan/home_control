@@ -9,10 +9,18 @@ module LogCompression
     time.change(min: (time.min / 10) * 10, sec: 0)
   end
 
+  def round_to_min5(time = Time.current)
+    time.change(min: (time.min / 5) * 5, sec: 0)
+  end
+
   def run_compression(replace_lpgs = false)
     compression_time_calculated = if compression_last_run_at.nil?
       if device_logs.count > 0
-        if compression_timespan_min10?
+        if compression_timespan_min1?
+          device_logs.order(:created_at).first.created_at.beginning_of_minute
+        elsif compression_timespan_min5?
+          round_to_min5(device_logs.order(:created_at).first.created_at)
+        elsif compression_timespan_min10?
           round_to_min10(device_logs.order(:created_at).first.created_at)
         elsif compression_timespan_hour?
           device_logs.order(:created_at).first.created_at.beginning_of_hour
@@ -23,7 +31,11 @@ module LogCompression
         nil
       end
     else
-      if compression_timespan_min10?
+      if compression_timespan_min1?
+        (compression_last_run_at + 1.minute).beginning_of_minute
+      elsif compression_timespan_min5?
+          round_to_min5(compression_last_run_at + 5.minutes)
+      elsif compression_timespan_min10?
         round_to_min10(compression_last_run_at + 10.minutes)
       elsif compression_timespan_hour?
         (compression_last_run_at + 1.hour).beginning_of_hour
@@ -31,7 +43,11 @@ module LogCompression
         (compression_last_run_at + 1.day).beginning_of_day
       end
     end
-    backlog_calculated = if compression_timespan_min10?
+    backlog_calculated = if compression_timespan_min1?
+      compression_backlog * 60
+    elsif compression_timespan_min5?
+        compression_backlog * 300
+    elsif compression_timespan_min10?
       compression_backlog * 600
     elsif compression_timespan_hour?
       compression_backlog * 3600
@@ -45,7 +61,7 @@ module LogCompression
     end
   end
 
-  # calculation - :w_average, :average, :end_value
+  # calculation - :w_average, :average, :end_value, :max_value
   # timespan - :hour
   def compress_logs(time, replace_logs = false) 
     self.class.transaction do
@@ -89,8 +105,13 @@ module LogCompression
             )
           when Device::CompressionType::END_VALUE
             device_logs.build(
-              created_at: starts_at,
+              created_at: ends_at,
               value_attribute => device_logs_timespan.order(:created_at).last.send(value_attribute)
+            )
+          when Device::CompressionType::MAX_VALUE
+            device_logs.build(
+              created_at: ends_at,
+              value_attribute => device_logs_timespan.order(:created_at).max(value_attribute)
             )
           else
           end

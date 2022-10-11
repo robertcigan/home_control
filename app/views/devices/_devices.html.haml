@@ -23,11 +23,11 @@
           %td= device.pin
           %td= device.holding_register_address
           %td= device.compression_type_to_human
-          %td.nowrap.text-right
+          %td.text-nowrap.text-right
             - if device.toggle?
               = link_to fa_icon("toggle-off"), set_device_path(device, device: { value: true }), method: :patch, class: "btn btn-sm btn-warning toggle-off", data: { remote: true }
               = link_to fa_icon("toggle-on"), set_device_path(device, device: { value: false }), method: :patch, class: "btn btn-sm btn-success toggle-on", data: { remote: true }
-          %td.nowrap.text-right.actions
+          %td.text-nowrap.text-right.actions
             = link_to fa_icon("pencil-alt"), edit_device_path(device), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Device" }
             = link_to fa_icon("trash"), device_path(device), method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"
 

@@ -23,11 +23,11 @@ class Device < ApplicationRecord
   def modbus_data_type_to_human
     I18n.t("activerecord.attribute_options.device.modbus_data_type.#{modbus_data_type}") if modbus_data_type.present?
   end
-  attribute_options :compression_type, [:average, :w_average, :end_value]
+  attribute_options :compression_type, [:average, :w_average, :end_value, :max_value]
   def compression_type_to_human
     I18n.t("activerecord.attribute_options.device.compression_type.#{compression_type}") if compression_type.present?
   end
-  attribute_options :compression_timespan, [:min10, :hour, :day]
+  attribute_options :compression_timespan, [:min1, :min5, :min10, :hour, :day]
   def compression_timespan_to_human
     I18n.t("activerecord.attribute_options.device.compression_timespan.#{compression_timespan}") if compression_timespan.present?
   end

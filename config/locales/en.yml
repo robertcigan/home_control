@@ -89,7 +89,10 @@ en:
           average: "Average Value"
           w_average: "Weighted Average Value"
           end_value: "End Value"
+          max_value: "Max Value"
         compression_timespan:
+          min1: "1 minute"
+          min5: "5 minutes"
           min10: "10 minutes"
           hour: "Hour"
           day: "Day"

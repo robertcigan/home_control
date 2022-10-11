@@ -27,7 +27,7 @@
                 = board.signal_strength
               \%
 
-          %td.nowrap.text-right.actions
+          %td.text-nowrap.text-right.actions
             = link_to fa_icon("pencil-alt"), edit_board_path(board), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Board" }
             = link_to fa_icon("trash"), board, method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"
 
