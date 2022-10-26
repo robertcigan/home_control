@@ -6,8 +6,9 @@
 server "192.168.0.3", user: "pi", roles: %w{app db web}
 set :deploy_to, "/home/pi/home_control"
 set :rails_env, 'production'
-set :ruby_version, "2.7.5"
+set :ruby_version, "3.1.2"
 set :rvm_ruby_version, -> { "#{fetch(:ruby_version)}@#{fetch(:application)}" }
+set :branch, "rails7"
 
 # set :foreman_target_path, -> { File.join(fetch(:deploy_to), "current") }
 # set :foreman_user, 'pi'
