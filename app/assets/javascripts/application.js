@@ -1,5 +1,5 @@
 //= require jquery
-//= require jquery_ujs 
+//= require jquery_ujs
 //= require namespace
 //= require confirm_modal
 //= require turbolinks
@@ -15,6 +15,7 @@
 //= require chartkick
 //= require Chart.bundle
 //= require actioncable
+//= require jquery.debounce
 
 //= require_tree ./channels
 //= require layout

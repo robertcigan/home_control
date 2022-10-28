@@ -104,13 +104,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
   create_table "programs_devices", id: :integer, charset: "utf8", force: :cascade do |t|
     t.integer "program_id"
     t.integer "device_id"
-    t.string "variable_name"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.string "variable_name"
     t.boolean "trigger", default: false, null: false
     t.index ["device_id"], name: "index_programs_devices_on_device_id"
     t.index ["program_id"], name: "index_programs_devices_on_program_id"
-    t.index ["variable_name"], name: "index_programs_devices_on_variable_name"
   end
 
   create_table "widgets", charset: "utf8", force: :cascade do |t|

@@ -5,7 +5,7 @@ namespace "HomeControl.Layout", (exports) ->
     initSelectOnLoad()
     initCable()
     $(document).on "turbolinks:load", ->
-      #exports.initSearchField()
+      exports.initSearchField()
       exports.initSelect()
       exports.initReloadForm()
       initAutosubmit()
@@ -75,9 +75,8 @@ namespace "HomeControl.Layout", (exports) ->
 
   exports.initSearchField = (selector = "input.search-field") ->
     $(selector).each ->
-      $(this).on "input", _.debounce ->
+      $(this).on "input", jQuery.debounce ($(this).data("debounce-time") || 1000), false, ->
         $(this).parents("form").submit()
-      , ($(this).data("debounce-time") || 1000)
 
   initSelectOnLoad = ->
     $.fn.select2.defaults.set "theme", "bootstrap4"

@@ -87,7 +87,7 @@ module LogCompression
         Rails.logger.debug "Device #{id} compressing logs #{starts_at} - #{ends_at}"
         new_device_log = case compression_type
           when Device::CompressionType::AVERAGE
-            new_device_log = device_logs.build(
+            device_logs.build(
               created_at: starts_at,
               value_attribute => device_logs_timespan.average(value_attribute)
             )
@@ -105,7 +105,7 @@ module LogCompression
                 end
               end
             end
-            new_device_log = device_logs.build(
+            device_logs.build(
               created_at: starts_at,
               value_attribute => total_weight_value / (ends_at - starts_at)
             )
@@ -117,7 +117,7 @@ module LogCompression
           when Device::CompressionType::MAX_VALUE
             device_logs.build(
               created_at: ends_at,
-              value_attribute => device_logs_timespan.order(:created_at).max(value_attribute)
+              value_attribute => device_logs_timespan.maximum(value_attribute)
             )
           else
           end
