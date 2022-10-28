@@ -2,17 +2,17 @@
   font-size: 1vw;
   line-height: 1;
 
-  @media (min-width: map-get($grid-breakpoints, "xl")) {
-    font-size: 0.7vw;
-  }
+  // @media (min-width: map-get($grid-breakpoints, "xl")) {
+  //   font-size: 0.7vw;
+  // }
 
-  @media (max-width: map-get($grid-breakpoints, "md")) {
-    font-size: 1.4vw;
-  }
+  // @media (max-width: map-get($grid-breakpoints, "md")) {
+  //   font-size: 1.4vw;
+  // }
 
-  @media (max-width: map-get($grid-breakpoints, "sm")) {
-    font-size: 1.8vw;
-  }
+  // @media (max-width: map-get($grid-breakpoints, "sm")) {
+  //   font-size: 1.8vw;
+  // }
 
   // &[gs-w="1"] .widget { font-size: 100%; }
   // &[gs-w="2"] .widget { font-size: 130%; }
@@ -27,18 +27,18 @@
   // &[gs-w="11"] .widget { font-size: 320%; }
   // &[gs-w="12"] .widget { font-size: 340%; }
 
-  &[gs-w="1"] .widget { font-size: 100%; }
-  &[gs-w="2"] .widget { font-size: 175%; }
-  &[gs-w="3"] .widget { font-size: 200%; }
-  &[gs-w="4"] .widget { font-size: 220%; }
-  &[gs-w="5"] .widget { font-size: 250%; }
-  &[gs-w="6"] .widget { font-size: 280%; }
-  &[gs-w="7"] .widget { font-size: 310%; }
-  &[gs-w="8"] .widget { font-size: 350%; }
-  &[gs-w="9"] .widget { font-size: 390%; }
-  &[gs-w="10"] .widget { font-size: 440%; }
-  &[gs-w="11"] .widget { font-size: 490%; }
-  &[gs-w="12"] .widget { font-size: 550%; }
+  // &[gs-w="1"] .widget { font-size: 100%; }
+  // &[gs-w="2"] .widget { font-size: 175%; }
+  // &[gs-w="3"] .widget { font-size: 200%; }
+  // &[gs-w="4"] .widget { font-size: 220%; }
+  // &[gs-w="5"] .widget { font-size: 250%; }
+  // &[gs-w="6"] .widget { font-size: 280%; }
+  // &[gs-w="7"] .widget { font-size: 310%; }
+  // &[gs-w="8"] .widget { font-size: 350%; }
+  // &[gs-w="9"] .widget { font-size: 390%; }
+  // &[gs-w="10"] .widget { font-size: 440%; }
+  // &[gs-w="11"] .widget { font-size: 490%; }
+  // &[gs-w="12"] .widget { font-size: 550%; }
 
 
   .grid-stack-item-content {
@@ -119,15 +119,15 @@
     }
   }
   
-  .widget-header {
-    font-size: 120%;
-  }
-  .widget-body {
-    font-size: 180%;
-  }
-  .widget-footer {
-    font-size: 80%;
-  }
+  // .widget-header {
+  //   font-size: 120%;
+  // }
+  // .widget-body {
+  //   font-size: 180%;
+  // }
+  // .widget-footer {
+  //   font-size: 80%;
+  // }
 
   a {
     font-size: inherit;

@@ -23,3 +23,11 @@ namespace "HomeControl.Panels", (exports) ->
       row: row
       cellHeight: "#{100.0/row}%"
     HomeControl.Devices.initDevicesUpdates()
+
+    $(".grid-stack-item").on "widget:resize", (event) ->
+      HomeControl.Layout.autoFontResize($(this))
+    HomeControl.Layout.autoFontResize()
+    $(window).on "resize", ->
+      HomeControl.Layout.autoFontResize()
+      
+

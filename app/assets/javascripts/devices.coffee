@@ -25,6 +25,7 @@ namespace "HomeControl.Devices", (exports) ->
         device.trigger("device:off")
       device.find(".updated").text(device.data("device-updated"))
       device.find(".indication").text(device.data("device-indication"))
+      device.parents(".grid-stack-item").trigger("widget:resize")
     .on "device:on", (event) ->
       $(this).removeClass("device-off").addClass("device-on")
     .on "device:off", (event) ->

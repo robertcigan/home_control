@@ -6,7 +6,3 @@ pridat typ programu "scheduled" - program se jednorazove spusti v dany cas (zati
 
 Pridat widget typ - hodiny - bude ukazovat aktualni cas
 Pridat widget typu chart
-
-Log compression - per 3 minute
-Log compression intervals - hour should be hour, day should be day etc
-Log compression Method - interval min, interval max

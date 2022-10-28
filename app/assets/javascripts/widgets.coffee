@@ -10,6 +10,7 @@ namespace "HomeControl.Widgets", (exports) ->
       $(this).find("input[data-gs=w]").val($(this).attr("gs-w"))
       $(this).find("input[data-gs=h]").val($(this).attr("gs-h"))
       $(this).find("form").submit()
+      HomeControl.Layout.autoFontResize($(this))
 
     grid = GridStack.init
       float: true
@@ -23,6 +24,12 @@ namespace "HomeControl.Widgets", (exports) ->
         $(item.el).trigger("widget:update")
 
     HomeControl.Devices.initDevicesUpdates()
+
+    $(".grid-stack-item").on "widget:resize", (event) ->
+      HomeControl.Layout.autoFontResize($(this))
+    HomeControl.Layout.autoFontResize()
+    $(window).on "resize", ->
+      HomeControl.Layout.autoFontResize()
   
   exports.initForm = -> 
     HomeControl.Layout.initSelect(true)
