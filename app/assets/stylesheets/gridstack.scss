@@ -45,7 +45,7 @@ $animation_speed: .3s !default;
       position: absolute;
       width: auto;
       overflow-x: hidden;
-      overflow-y: auto;
+      overflow-y: hidden;
     }
 
     > .ui-resizable-handle {

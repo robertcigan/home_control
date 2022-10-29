@@ -1,12 +1,14 @@
 - if widget.device
   .widget.widget-boolean-value.h-100.device{ data: { device: widget.device.json_data }, class: "color-1-#{widget.color_1} color-2-#{widget.color_2}" }
     .widget-header.d-flex.align-items-center.justify-content-center.text-center{class:  widget.show_updated? ? "h-25" : "h-30"}
-      = widget
+      .resizable-font-size
+        = widget
     .widget-body.d-flex.align-items-center.justify-content-center{class:  widget.show_updated? ? "h-50" : "h-70"}
-      .toggle-off
-        = fa_icon("cog")
-      .toggle-on
-        = fa_icon("cog", animation: 'spin')
+      .resizable-font-size
+        .toggle-off
+          = fa_icon("cog")
+        .toggle-on
+          = fa_icon("cog", animation: 'spin')
     - if widget.show_updated?
       .widget-footer.d-flex.align-items-center.justify-content-center{class:  widget.show_updated? ? "h-50" : "h-70"}
         .updated.text-center

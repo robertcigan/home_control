@@ -182,14 +182,18 @@ namespace "HomeControl.Layout", (exports) ->
 
   exports.autoFontResize = (container = "body") ->
     $(container).find(".resizable-font-size").each ->
-      container = $(this).parent()
-      font_size = container.height() * 0.8 
-      max_width = container.width() * 0.6
+      parent_container = $(this).parent()
+      font_size = parent_container.height() * 0.8 
+      max_width = parent_container.width() * 0.6
       $(this).css("font-size", font_size)
       if $(this).width() > max_width
         font_size = font_size * max_width / $(this).width()
-        if font_size > 60
-          font_size = (font_size - 60) * 0.3 + 60
-        $(this).css("font-size", font_size)
+      if font_size > 50
+        font_size = (font_size - 50) * 0.3 + 50
+      # multi line text recalculation
+      $(this).css("font-size", font_size)
+      if $(this).height() > parent_container.height() * 0.8 
+        font_size = font_size * parent_container.height() * 0.8  / $(this).height()
+      $(this).css("font-size", font_size)
 
 HomeControl.Layout.init()
