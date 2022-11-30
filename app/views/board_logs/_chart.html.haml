@@ -42,6 +42,6 @@
 
   
 - if @chart_options[:type] == :area
-  = area_chart chart_board_board_logs_path(@board, timespan: @timespan, min: @min, max: @max), @chart_options
+  = area_chart chart_board_board_logs_path(@board, timespan: @timespan, min: @min, max: @max), **@chart_options
 - else
-  = line_chart chart_board_board_logs_path(@board, timespan: @timespan, min: @min, max: @max), @chart_options
+  = line_chart chart_board_board_logs_path(@board, timespan: @timespan, min: @min, max: @max), **@chart_options
