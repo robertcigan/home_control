@@ -29,7 +29,7 @@ class Board < ApplicationRecord
   def connected; connected?; end
 
   def disconnected!
-    update!(connected_at: nil)
+    update!(connected_at: nil, ssid: nil, signal_strength: nil)
   end
 
   def connected!(params = {})

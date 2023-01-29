@@ -23,7 +23,10 @@ namespace "HomeControl.Devices", (exports) ->
         device.trigger("device:on")
       else if device.data("device-status") == "false" || device.data("device-status") == false
         device.trigger("device:off")
-      device.find(".updated").text(device.data("device-updated"))
+      if device.data("device-updated")
+        device.find(".updated").text(device.data("device-updated"))
+      else
+        device.find(".updated").text("")
       device.find(".indication").text(device.data("device-indication"))
       device.parents(".grid-stack-item").trigger("widget:resize")
     .on "device:on", (event) ->

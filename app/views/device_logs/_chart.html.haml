@@ -41,6 +41,6 @@
       = link_to fa_icon("forward", class: "mr-2") + l(@min + 1.year, format: :year), chart_device_device_logs_path(@device, timespan: "year", min: (@min + 1.year), max: (@max + 1.year)), remote: true, class: "btn btn-secondary ml-2"
 
 - if @chart_options[:type] == :area
-  = area_chart chart_device_device_logs_path(@device, timespan: @timespan, min: @min, max: @max), **@chart_options
+  = area_chart chart_device_device_logs_path(@device, timespan: @timespan, min: @min, max: @max, format: :json), **@chart_options
 - else
-  = line_chart chart_device_device_logs_path(@device, timespan: @timespan, min: @min, max: @max), **@chart_options
+  = line_chart chart_device_device_logs_path(@device, timespan: @timespan, min: @min, max: @max, format: :json), **@chart_options

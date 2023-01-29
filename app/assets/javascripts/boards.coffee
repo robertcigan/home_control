@@ -23,8 +23,16 @@ namespace "HomeControl.Boards", (exports) ->
         board.trigger("board:on")
       else if board.data("board-status") == "false" || board.data("board-status") == false
         board.trigger("board:off")
-      board.find(".ssid").text(board.data("board-ssid"))
-      board.find(".signal-strength").text(board.data("board-signal-strength"))
+      
+      if board.data("board-ssid")
+        board.find(".ssid").text(board.data("board-ssid"))
+      else
+        board.find(".ssid").text("")
+      
+      if board.data("board-signal-strength")
+        board.find(".signal-strength").text(board.data("board-signal-strength"))
+      else
+        board.find(".signal-strength").text("")
     .on "board:on", (event) ->
       $(this).removeClass("board-off").addClass("board-on")
     .on "board:off", (event) ->

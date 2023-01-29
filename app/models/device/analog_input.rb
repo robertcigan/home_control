@@ -48,6 +48,9 @@ class Device::AnalogInput < Device
   end
   
   def log_device_log
-    device_logs.build(value_decimal: value_decimal) if value_decimal_changed?
+    if value_decimal_changed?
+      self.last_change = Time.current
+      device_logs.build(value_decimal: value_decimal)
+    end 
   end
 end

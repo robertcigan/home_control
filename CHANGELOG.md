@@ -1,3 +1,10 @@
+## Home Control 3.0 (2023-01) ##
+  * Rails 7.x
+  * Ruby 3.1
+  * Updated bundle
+  * Fixed missing Last Change update for some device types
+  * Added device log compression type "Max Value" - compress logs using maximum value during the selected timeframe
+
 ## Home Control 2.5 (2022-07) ##
   * Button implementation bugfix
   * Widget name override

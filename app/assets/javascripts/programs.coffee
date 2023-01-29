@@ -51,9 +51,13 @@ namespace "HomeControl.Programs", (exports) ->
         program.trigger("program:error-off")
       program.find(".runtime").text(program.data("program-runtime"))
       program.find(".thread-utilisation").text(program.data("program-thread-utilisation"))
-      program.find(".last-run").text(program.data("program-last-run"))
-      program.find(".last-error-at").text(program.data("program-last-error-at"))
-      
+      if program.data("program-last-run")
+        program.find(".last-run").text(program.data("program-last-run"))
+      else program.find(".last-run").text("")
+      if program.data("program-last-error-at")
+        program.find(".last-error-at").text(program.data("program-last-error-at"))
+      else
+        program.find(".last-error-at").text("")
     .on "program:on", (event) ->
       $(this).removeClass("program-off").addClass("program-on")
     .on "program:off", (event) ->
