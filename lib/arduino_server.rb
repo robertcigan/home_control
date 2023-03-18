@@ -63,60 +63,57 @@ EventMachine.run do
   
   #READ AND WRITE VALUE PERIODICALLY (FALLBACK WHEN SOMETHING FAILS TO WRITE?READ)
   EventMachine::PeriodicTimer.new(60) do
-    ArduinoMessenger.connected_clients.each do |conn|
-      EM.defer(
-        proc do
-          begin 
+    EM.defer(
+      proc do
+        begin
+          ArduinoMessenger.connected_clients.each do |conn| 
             conn.board.read_values_from_devices
             conn.board.write_values_to_devices
-          ensure 
-            ActiveRecord::Base.connection_pool.release_connection
           end
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
         end
-      )
-    end
+      end
+    )
   end
 
   EventMachine::PeriodicTimer.new(3) do
     #check for last received data timestamp
-    ArduinoMessenger.connected_clients.each do |conn|
-      if conn.received_timestamp && (Time.current - conn.received_timestamp) > 20
-        puts "#{Time.now} timeout detected to #{conn.board.ip}"
-        conn.board.disconnected!
-        conn.close_connection
-      end
-    end
-  end
-
-  EventMachine::PeriodicTimer.new(1) do
-    Program.repeated_to_run.each do |program|
-      EM.defer(
-        proc do
-          begin 
-            program.run
-          ensure 
-            ActiveRecord::Base.connection_pool.release_connection
+    EM.defer(
+      proc do
+        begin
+          ArduinoMessenger.connected_clients.each do |conn|
+            if conn.received_timestamp && (Time.current - conn.received_timestamp) > 20
+              puts "#{Time.now} timeout detected to #{conn.board.ip}"
+              conn.board.disconnected!
+              conn.close_connection
+            end
           end
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
         end
-      )
-    end
+      end
+    )
   end
 
   EventMachine::PeriodicTimer.new(1) do
-    Board.where(board_type: Board::BoardType::MODBUS_TCP).each do |board|
-      EM.defer(
-        proc do
-          begin 
+    EM.defer(
+      proc do
+        begin 
+          Board.where(board_type: Board::BoardType::MODBUS_TCP).each do |board|
             if board.connected_at.nil? || (Time.current - board.connected_at) > board.data_read_interval.seconds
               puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
               board.read_modbus
             end
-          ensure 
-            ActiveRecord::Base.connection_pool.release_connection
           end
+          Program.repeated_to_run.each do |program|
+            program.run
+          end
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
         end
-      )
-    end
+      end
+    )
   end
 
   EventMachine::PeriodicTimer.new(10) do

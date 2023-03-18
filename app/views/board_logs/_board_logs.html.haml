@@ -14,7 +14,9 @@
           %td= board_log.indication
           - if @board.board_type_esp8266_bat?
             %td= board_log.ssid
-            %td= number_to_percentage(board_log.signal_strength) if board_log.signal_strength
+            %td
+              - if board_log.signal_strength
+                #{board_log.signal_strength}\%
 
 .page-pagination
   .pagination-description
