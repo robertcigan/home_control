@@ -64,7 +64,7 @@ module LogCompression
   # calculation - :w_average, :average, :end_value, :max_value
   # timespan - :hour
   def compress_logs(time, replace_logs = false) 
-    self.class.transaction do
+    #self.class.transaction do
       if compression_timespan_min1?
         starts_at = time.beginning_of_minute
         ends_at = time.end_of_minute
@@ -136,6 +136,6 @@ module LogCompression
         end
         nil
       end
-    end
+    #end
   end
 end
