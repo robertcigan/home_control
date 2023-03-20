@@ -111,6 +111,7 @@ module LogCompression
                 value_attribute => total_weight_value / (ends_at - starts_at)
               )
             rescue Exception => e
+              puts "Device: #{device.id}"
               puts "DLO objects: #{device_log_count}"
               device_logs_objects.each {|dlo| puts [dlo.created_at, dlo.send(value_attribute)] }
               raise e
