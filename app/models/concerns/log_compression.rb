@@ -94,11 +94,13 @@ module LogCompression
           when Device::CompressionType::W_AVERAGE
             device_logs_objects = [device_logs.where("created_at < ?", starts_at).order(:created_at).last] + device_logs_timespan.order(:created_at).load.to_a
             total_weight_value = 0
+            puts "Compressing #{id}"
+            logs_count = device_logs_objects.size
             device_logs_objects.each_with_index do |device_log, i|
               unless device_log.nil? || device_log.send(value_attribute).nil?                    
                 total_weight_value += if i == 0 #first when value is in the previous timespan
                   device_log.send(value_attribute) * (device_logs_objects[1].created_at - starts_at)
-                elsif i == device_log_count  #last ( +1 becase added first log as extra)
+                elsif i == (logs_count - 1) #last
                   device_log.send(value_attribute) * (ends_at - device_log.created_at)
                 else
                   device_log.send(value_attribute) * (device_logs_objects[i + 1].created_at - device_log.created_at)
