@@ -116,7 +116,7 @@ EventMachine.run do
     )
   end
 
-  EventMachine::PeriodicTimer.new(10) do
+  EventMachine::PeriodicTimer.new(20) do
     EM.defer(
       proc do
         begin 
