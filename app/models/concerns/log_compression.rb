@@ -92,23 +92,29 @@ module LogCompression
               value_attribute => device_logs_timespan.average(value_attribute)
             )
           when Device::CompressionType::W_AVERAGE
-            device_logs_objects = [device_logs.where("created_at < ?", starts_at).order(:created_at).last] + device_logs_timespan.order(:created_at).load.to_a
-            total_weight_value = 0
-            device_logs_objects.each_with_index do |device_log, i|
-              unless device_log.nil? || device_log.send(value_attribute).nil?                    
-                total_weight_value += if i == 0 #first when value is in the previous timespan
-                  device_log.send(value_attribute) * (device_logs_objects[1].created_at - starts_at)
-                elsif i == (device_log_count - 1)  #last
-                  device_log.send(value_attribute) * (ends_at - device_log.created_at)
-                else
-                  device_log.send(value_attribute) * (device_logs_objects[i + 1].created_at - device_log.created_at)
+            begin
+              device_logs_objects = [device_logs.where("created_at < ?", starts_at).order(:created_at).last] + device_logs_timespan.order(:created_at).load.to_a
+              total_weight_value = 0
+              device_logs_objects.each_with_index do |device_log, i|
+                unless device_log.nil? || device_log.send(value_attribute).nil?                    
+                  total_weight_value += if i == 0 #first when value is in the previous timespan
+                    device_log.send(value_attribute) * (device_logs_objects[1].created_at - starts_at)
+                  elsif i == (device_log_count - 1)  #last
+                    device_log.send(value_attribute) * (ends_at - device_log.created_at)
+                  elsif
+                    device_log.send(value_attribute) * (device_logs_objects[i + 1].created_at - device_log.created_at)
+                  end
                 end
               end
+              device_logs.build(
+                created_at: starts_at,
+                value_attribute => total_weight_value / (ends_at - starts_at)
+              )
+            rescue Exception => e
+              puts "DLO objects: #{device_log_count}"
+              device_logs_objects.each {|dlo| puts [dlo.created_at, dlo.send(value_attribute)] }
+              raise e
             end
-            device_logs.build(
-              created_at: starts_at,
-              value_attribute => total_weight_value / (ends_at - starts_at)
-            )
           when Device::CompressionType::END_VALUE
             device_logs.build(
               created_at: ends_at,
