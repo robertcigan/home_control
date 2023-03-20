@@ -101,7 +101,7 @@ module LogCompression
                     device_log.send(value_attribute) * (device_logs_objects[1].created_at - starts_at)
                   elsif i == (device_log_count - 1)  #last
                     device_log.send(value_attribute) * (ends_at - device_log.created_at)
-                  elsif
+                  else
                     device_log.send(value_attribute) * (device_logs_objects[i + 1].created_at - device_log.created_at)
                   end
                 end
