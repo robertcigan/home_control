@@ -98,7 +98,7 @@ module LogCompression
             logs_count = device_logs_objects.size
             device_logs_objects.each_with_index do |device_log, i|
               unless device_log.nil? || device_log.send(value_attribute).nil?                    
-                total_weight_value += if i == 0 #first when value is in the previous timespan
+                total_weight_value += if i == 0 && logs_count > 1 #first when value is in the previous timespan
                   device_log.send(value_attribute) * (device_logs_objects[1].created_at - starts_at)
                 elsif i == (logs_count - 1) #last
                   device_log.send(value_attribute) * (ends_at - device_log.created_at)
