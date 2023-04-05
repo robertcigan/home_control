@@ -100,14 +100,25 @@ EventMachine.run do
     EM.defer(
       proc do
         begin 
+          Program.repeated_to_run.each do |program|
+            program.run
+          end
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
+        end
+      end
+    )
+  end
+
+  EventMachine::PeriodicTimer.new(1) do
+    EM.defer(
+      proc do
+        begin 
           Board.where(board_type: Board::BoardType::MODBUS_TCP).each do |board|
             if board.connected_at.nil? || (Time.current - board.connected_at) > board.data_read_interval.seconds
               puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
               board.read_modbus
             end
-          end
-          Program.repeated_to_run.each do |program|
-            program.run
           end
         ensure 
           ActiveRecord::Base.connection_pool.release_connection
