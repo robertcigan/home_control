@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_06_092308) do
   create_table "board_logs", charset: "utf8", force: :cascade do |t|
     t.integer "board_id"
     t.datetime "created_at", precision: nil, null: false
@@ -18,6 +18,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.boolean "connected", default: false, null: false
     t.integer "signal_strength"
     t.string "ssid"
+    t.index ["created_at"], name: "index_board_logs_on_created_at"
+    t.index ["updated_at"], name: "index_board_logs_on_updated_at"
   end
 
   create_table "boards", charset: "utf8", force: :cascade do |t|
@@ -32,8 +34,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.integer "version"
     t.integer "slave_address"
     t.integer "data_read_interval"
+    t.index ["board_type"], name: "index_boards_on_board_type"
     t.index ["connected_at"], name: "index_boards_on_connected_at"
+    t.index ["data_read_interval"], name: "index_boards_on_data_read_interval"
     t.index ["ip"], name: "index_boards_on_ip"
+    t.index ["name"], name: "index_boards_on_name"
     t.index ["version"], name: "index_boards_on_version"
   end
 
@@ -45,7 +50,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.boolean "value_boolean"
     t.string "value_string"
     t.decimal "value_decimal", precision: 6, scale: 2
+    t.index ["created_at"], name: "index_device_logs_on_created_at"
     t.index ["device_id"], name: "index_device_logs_on_device_id"
+    t.index ["updated_at"], name: "index_device_logs_on_updated_at"
   end
 
   create_table "devices", id: :integer, charset: "utf8", force: :cascade do |t|
@@ -71,8 +78,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.string "compression_timespan"
     t.integer "compression_backlog"
     t.datetime "compression_last_run_at", precision: nil
+    t.index ["board_id"], name: "index_devices_on_board_id"
+    t.index ["compression_last_run_at"], name: "index_devices_on_compression_last_run_at"
     t.index ["device_type"], name: "index_devices_on_device_type"
+    t.index ["last_change"], name: "index_devices_on_last_change"
+    t.index ["name"], name: "index_devices_on_name"
     t.index ["pin"], name: "index_devices_on_pin"
+    t.index ["type"], name: "index_devices_on_type"
   end
 
   create_table "panels", charset: "utf8", force: :cascade do |t|
@@ -82,6 +94,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.integer "row", default: 12
     t.integer "column", default: 12
     t.boolean "public_access", default: false, null: false
+    t.index ["created_at"], name: "index_panels_on_created_at"
     t.index ["name"], name: "index_panels_on_name"
   end
 
@@ -98,7 +111,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.boolean "enabled", default: false, null: false
     t.integer "runtime"
     t.datetime "last_error_at", precision: nil
+    t.index ["created_at"], name: "index_programs_on_created_at"
+    t.index ["enabled"], name: "index_programs_on_enabled"
+    t.index ["last_error_at"], name: "index_programs_on_last_error_at"
+    t.index ["last_run"], name: "index_programs_on_last_run"
     t.index ["program_type"], name: "index_programs_on_program_type"
+    t.index ["updated_at"], name: "index_programs_on_updated_at"
   end
 
   create_table "programs_devices", id: :integer, charset: "utf8", force: :cascade do |t|
@@ -110,6 +128,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.boolean "trigger", default: false, null: false
     t.index ["device_id"], name: "index_programs_devices_on_device_id"
     t.index ["program_id"], name: "index_programs_devices_on_program_id"
+    t.index ["trigger"], name: "index_programs_devices_on_trigger"
+    t.index ["variable_name"], name: "index_programs_devices_on_variable_name"
   end
 
   create_table "widgets", charset: "utf8", force: :cascade do |t|
@@ -128,9 +148,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_16_131222) do
     t.string "icon"
     t.string "name"
     t.boolean "show_updated", default: false, null: false
+    t.index ["created_at"], name: "index_widgets_on_created_at"
     t.index ["device_id"], name: "index_widgets_on_device_id"
+    t.index ["name"], name: "index_widgets_on_name"
     t.index ["panel_id"], name: "index_widgets_on_panel_id"
     t.index ["program_id"], name: "index_widgets_on_program_id"
+    t.index ["show_updated"], name: "index_widgets_on_show_updated"
+    t.index ["updated_at"], name: "index_widgets_on_updated_at"
   end
 
 end
