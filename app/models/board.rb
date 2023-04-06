@@ -123,6 +123,7 @@ class Board < ApplicationRecord
 
   def read_modbus_block(device_block)
     begin
+      #puts "#{Time.now} Reading Modbus started - #{name} / #{ip}"
       ModBus::TCPClient.connect(ip, 502) do |cl|
         cl.read_retry_timeout = 1
         cl.read_retries = 1
@@ -141,6 +142,7 @@ class Board < ApplicationRecord
           end
         end
       end
+      #puts "#{Time.now} Reading Modbus ended - #{name} / #{ip}"
       connected!
     rescue ModBus::Errors::ModBusException, Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::EHOSTDOWN => e
       puts "#{Time.now} Modbus Error - #{name} / #{ip} - #{e.message}"

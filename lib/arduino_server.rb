@@ -77,7 +77,7 @@ EventMachine.run do
     )
   end
 
-  EventMachine::PeriodicTimer.new(3) do
+  EventMachine::PeriodicTimer.new(5) do
     #check for last received data timestamp
     EM.defer(
       proc do
@@ -96,48 +96,63 @@ EventMachine.run do
     )
   end
 
+  program_repeated_to_run = false
   EventMachine::PeriodicTimer.new(1) do
     EM.defer(
       proc do
-        begin 
-          Program.repeated_to_run.each do |program|
-            program.run
-          end
-        ensure 
-          ActiveRecord::Base.connection_pool.release_connection
-        end
-      end
-    )
-  end
-
-  EventMachine::PeriodicTimer.new(1) do
-    EM.defer(
-      proc do
-        begin 
-          Board.where(board_type: Board::BoardType::MODBUS_TCP).each do |board|
-            if board.connected_at.nil? || (Time.current - board.connected_at) > board.data_read_interval.seconds
-              puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
-              board.read_modbus
+        begin
+          unless program_repeated_to_run
+            program_repeated_to_run = true
+            Program.repeated_to_run.each do |program|
+              program.run
             end
           end
         ensure 
           ActiveRecord::Base.connection_pool.release_connection
+          program_repeated_to_run = false
         end
       end
     )
   end
 
+  board_modbus_active = false
+  EventMachine::PeriodicTimer.new(1) do
+    EM.defer(
+      proc do
+        begin 
+          unless board_modbus_active
+            board_modbus_active = true
+            Board.where(board_type: Board::BoardType::MODBUS_TCP).each do |board|
+              if board.connected_at.nil? || (Time.current - board.connected_at) > board.data_read_interval.seconds
+                puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
+                board.read_modbus
+              end
+            end
+          end
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
+          board_modbus_active = false            
+        end
+      end
+    )
+  end
+
+  device_log_compression = false
   EventMachine::PeriodicTimer.new(20) do
     EM.defer(
       proc do
-        begin 
-          Device.where.not(compression_type: nil).where.not(compression_type: "").each do |device|
-            if (device.run_compression(true)) 
-              puts "Compressing logs for  #{device.name} - #{device.compression_type_to_human} - #{device.compression_timespan_to_human}"
+        begin
+          unless device_log_compression
+            device_log_compression = true
+            Device.where.not(compression_type: nil).where.not(compression_type: "").each do |device|
+              if (device.run_compression(true)) 
+                puts "Compressing logs for  #{device.name} - #{device.compression_type_to_human} - #{device.compression_timespan_to_human}"
+              end
             end
           end
         ensure 
           ActiveRecord::Base.connection_pool.release_connection
+          device_log_compression = false
         end
       end
     )
