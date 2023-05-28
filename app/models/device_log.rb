@@ -25,7 +25,7 @@ class DeviceLog < ApplicationRecord
     elsif value_decimal != nil
       device.unit.present? ? "#{value_decimal}#{device.unit}" : value_decimal
     elsif value_string.present?
-      device.unit.present? ? "#{value_string}#{device.unit}" : value_decimal
+      device.unit.present? ? "#{value_string}#{device.unit}" : value_string
     else
       I18n.l(updated_at)
     end
