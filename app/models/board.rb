@@ -11,6 +11,7 @@ class Board < ApplicationRecord
   has_many :board_logs, dependent: :delete_all
 
   scope :ip, proc { |data| where(ip: data) }
+  scope :modbus_tcp, proc { where(board_type: Board::BoardType::MODBUS_TCP) }
 
   before_save :log_board_log
 
@@ -144,7 +145,7 @@ class Board < ApplicationRecord
       end
       #puts "#{Time.now} Reading Modbus ended - #{name} / #{ip}"
       connected!
-    rescue ModBus::Errors::ModBusException, Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::EHOSTDOWN => e
+    rescue ModBus::Errors::ModBusException, Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::EHOSTDOWN, Errno::ECONNREFUSED => e
       puts "#{Time.now} Modbus Error - #{name} / #{ip} - #{e.message}"
       disconnected!
     end

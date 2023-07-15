@@ -7,7 +7,7 @@ DeviceLog
 Device
 
 ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}
-ip_address = ip.ip_address
+ip_address = ip ? ip.ip_address : "127.0.0.1"
 puts "IP server address detected: #{ip_address}"
 
 client_connected = false
@@ -61,7 +61,7 @@ EventMachine.run do
     end
   end
   
-  #READ AND WRITE VALUE PERIODICALLY (FALLBACK WHEN SOMETHING FAILS TO WRITE?READ)
+  #READ AND WRITE VALUE PERIODICALLY (FALLBACK WHEN SOMETHING FAILS TO WRITE?READ CORRECTLY)
   EventMachine::PeriodicTimer.new(60) do
     EM.defer(
       proc do
@@ -122,7 +122,7 @@ EventMachine.run do
         begin 
           unless board_modbus_active
             board_modbus_active = true
-            Board.where(board_type: Board::BoardType::MODBUS_TCP).each do |board|
+            Board.modbus_tcp.each do |board|
               if board.connected_at.nil? || (Time.current - board.connected_at) > board.data_read_interval.seconds
                 puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
                 board.read_modbus
@@ -144,7 +144,7 @@ EventMachine.run do
         begin
           unless device_log_compression
             device_log_compression = true
-            Device.where.not(compression_type: nil).where.not(compression_type: "").each do |device|
+            Device.for_compression.each do |device|
               if (device.run_compression(true)) 
                 puts "Compressing logs for  #{device.name} - #{device.compression_type_to_human} - #{device.compression_timespan_to_human}"
               end
@@ -153,6 +153,26 @@ EventMachine.run do
         ensure 
           ActiveRecord::Base.connection_pool.release_connection
           device_log_compression = false
+        end
+      end
+    )
+  end
+
+  periodic_websocket_push = false
+  EventMachine::PeriodicTimer.new(60) do
+    EM.defer(
+      proc do
+        begin
+          unless periodic_websocket_push
+            periodic_websocket_push = true
+            Device.repeated_ws_push.each do |device|
+              device.push_value_change
+              puts "Manual WS push #{device.name}"
+            end
+          end
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
+          periodic_websocket_push = false
         end
       end
     )

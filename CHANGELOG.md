@@ -1,3 +1,9 @@
+## Home Control 3.1 (2023-07) ##
+  # Automatic WS device value push for stale devices (> 60s)
+  # Fixing ModbusTCP bug crash when connection refused
+  # Prevent overlapping EM timers
+  # DB indexes tuning
+
 ## Home Control 3.0 (2023-01) ##
   * Rails 7.x
   * Ruby 3.1
