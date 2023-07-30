@@ -38,21 +38,28 @@ class Board < ApplicationRecord
   end
 
   def parse(data) # incoming json
-    #puts "RECEIVED DATA: " + data.to_s
     case data.keys.first
     when "pong"
       connected!(version: data["version"], ssid: data["ssid"], signal_strength: data["rssi"])
     when "send_devices"
       set_pins
     when "device"
-      device = devices.find_by(id: data["device"]["id"])
-      if device
-        if data["device"]["value"] != nil
-          device.set(data["device"]["value"])
-        elsif device.is_a?(Device::Button)
-          device.set()
+      if data["device"] && data["device"]["id"]
+        device = devices.find_by(id: data["device"]["id"])
+        if device
+          if data["device"]["value"] != nil
+            device.set(data["device"]["value"])
+          elsif device.is_a?(Device::Button)
+            device.set()
+          end
+        else
+          puts "RECEIVED WRONG DEVICE DATA: " + data.to_s
         end
+      else
+        puts "RECEIVED WRONG DATA: " + data.to_s
       end
+    else
+      puts "RECEIVED WRONG JSON: " + data.to_s
     end
   end
   
