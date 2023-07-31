@@ -15,16 +15,16 @@ class ArduinoMessenger < EventMachine::Connection
     port, ip = Socket.unpack_sockaddr_in(get_peername)
     @ip = ip
     puts "#{Time.now} #{ip} has connected"
+    @received_data_buffer = ""
+    @largest_data = 0
     @board = Board.where(ip: ip).first
     if @board
       @board.connected!
-      @received_data_buffer = ""
-      @largest_data = 0
       @@connected_clients.push(self)
       #self.comm_inactivity_timeout = 20
       
       puts "#{Time.now} clients: #{@@connected_clients.collect(&:ip).join(", ")}"
-      EventMachine::Timer.new(1) do
+      EventMachine::Timer.new(3) do
         @board.read_values_from_devices
         @board.write_values_to_devices
       end
@@ -72,6 +72,7 @@ class ArduinoMessenger < EventMachine::Connection
               @board.parse(json)
             rescue JSON::ParserError
               puts "#{Time.now} Parse Error - #{json_text}"
+              @received_data_buffer = ""
             end
           end
         rescue TypeError
