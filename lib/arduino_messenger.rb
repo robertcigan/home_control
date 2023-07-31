@@ -54,7 +54,7 @@ class ArduinoMessenger < EventMachine::Connection
   end
   
   def process_buffer
-    if @received_data_buffer.size > 1000
+    if @received_data_buffer.size > 10e6
       puts "#{Time.now} #{@board.ip} data overflow" 
       puts "-------------------------------------"
       puts @received_data_buffer
