@@ -23,7 +23,7 @@ class ArduinoMessenger < EventMachine::Connection
       @@connected_clients.push(self)
       #self.comm_inactivity_timeout = 20
       
-      puts "#{Time.now} clients: #{@@connected_clients.collect(&:ip).join(", ")}"
+      puts "#{Time.now} #{@board.ip} clients: #{@@connected_clients.collect(&:ip).join(", ")}"
       EventMachine::Timer.new(3) do
         @board.read_values_from_devices
         @board.write_values_to_devices
@@ -38,8 +38,8 @@ class ArduinoMessenger < EventMachine::Connection
     if @largest_data.nil? || data.size > @largest_data
       @largest_data = data.size
       #if Rails.env.development?
-        puts "#{Time.now} Largest data: #{@largest_data}" 
-        puts "#{Time.now} Buffer: #{data}"
+        puts "#{Time.now} #{@board.ip} Largest data: #{@largest_data}" 
+        puts "#{Time.now} #{@board.ip} Buffer: #{data}"
       #end
     end
     @received_data_buffer << data
@@ -93,10 +93,10 @@ class ArduinoMessenger < EventMachine::Connection
   
   def unbind
     if @board
-      puts "#{Time.now} Board #{ip} connection closed"
+      puts "#{Time.now} #{@board.ip} connection closed"
       @board.reload.disconnected!
       @@connected_clients.delete(self)
-      puts "#{Time.now} clients: #{@@connected_clients.collect(&:ip).join(", ")}"
+      puts "#{Time.now} #{@board.ip} clients: #{@@connected_clients.collect(&:ip).join(", ")}"
     else
       puts "#{Time.now} Client #{ip} connection closed"
     end
