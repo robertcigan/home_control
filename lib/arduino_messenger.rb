@@ -47,15 +47,15 @@ class ArduinoMessenger < EventMachine::Connection
         puts "#{Time.now} #{@board.ip} Buffer: #{data}"
       #end
     end
-    puts "#{Time.now} #{@board.ip} Buffer: #{data}"
     @received_data_buffer << data
+    puts "#{Time.now} #{@board.ip} Buffer: #{@received_data_buffer}"    
     @received_timestamp = Time.current
     process_buffer
   end
   
   def process_buffer
     if @received_data_buffer.size > 1000
-      puts "#{Time.now} data overflow" 
+      puts "#{Time.now} #{@board.ip} data overflow" 
       puts "-------------------------------------"
       puts @received_data_buffer
       puts "-------------------------------------"
