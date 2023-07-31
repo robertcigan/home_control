@@ -83,9 +83,9 @@ EventMachine.run do
       proc do
         begin
           ArduinoMessenger.connected_clients.each do |conn|
-            if conn.received_timestamp && (Time.current - conn.received_timestamp) > 20
+            if conn.received_timestamp && (Time.current - conn.received_timestamp) > 30
               puts "#{Time.now} timeout detected to #{conn.board.ip}"
-              conn.board.disconnected!
+              #conn.board.disconnected!
               conn.close_connection
             end
           end
@@ -138,7 +138,7 @@ EventMachine.run do
   end
 
   device_log_compression = false
-  EventMachine::PeriodicTimer.new(20) do
+  EventMachine::PeriodicTimer.new(30) do
     EM.defer(
       proc do
         begin

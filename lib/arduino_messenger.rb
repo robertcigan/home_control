@@ -16,12 +16,13 @@ class ArduinoMessenger < EventMachine::Connection
     @ip = ip
     puts "#{Time.now} #{ip} has connected"
     @received_data_buffer = ""
+    @received_timestamp = Time.current
     @largest_data = 0
     @board = Board.where(ip: ip).first
     if @board
       @board.connected!
       @@connected_clients.push(self)
-      #self.comm_inactivity_timeout = 20
+      self.comm_inactivity_timeout = 30
       
       puts "#{Time.now} #{@board.ip} clients: #{@@connected_clients.collect(&:ip).join(", ")}"
       EventMachine::Timer.new(3) do
