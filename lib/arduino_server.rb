@@ -29,7 +29,7 @@ EventMachine.run do
   
   client.received do | message |
     if message && message['message']
-      puts "#{Time.now} Sending: #{message["message"]["data"]} to #{message['message']['ip']}"
+      # puts "#{Time.now} Sending: #{message["message"]["data"]} to #{message['message']['ip']}"
 
       if (found_connected_client = ArduinoMessenger.connected_clients.find { |c| c.ip == message['message']['ip'] })
         found_connected_client.send_command(message["message"]["data"])

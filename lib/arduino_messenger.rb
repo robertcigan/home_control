@@ -42,6 +42,7 @@ class ArduinoMessenger < EventMachine::Connection
         puts "#{Time.now} #{@board.ip} Buffer: #{data}"
       #end
     end
+    puts "#{Time.now} #{@board.ip} Buffer: #{data}"
     @received_data_buffer << data
     @received_timestamp = Time.current
     process_buffer
@@ -88,6 +89,7 @@ class ArduinoMessenger < EventMachine::Connection
   end
   
   def send_data(data)
+    puts "#{Time.now} #{@board.ip} Sending: #{data}"
     super(data)
   end
   
