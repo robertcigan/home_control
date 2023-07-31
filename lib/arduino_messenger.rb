@@ -43,12 +43,12 @@ class ArduinoMessenger < EventMachine::Connection
     if @largest_data.nil? || data.size > @largest_data
       @largest_data = data.size
       #if Rails.env.development?
-        puts "#{Time.now} #{@board.ip} Largest data: #{@largest_data}" 
-        puts "#{Time.now} #{@board.ip} Buffer: #{data}"
+        # puts "#{Time.now} #{@board.ip} Largest data: #{@largest_data}" 
+        # puts "#{Time.now} #{@board.ip} Buffer: #{data}"
       #end
     end
     @received_data_buffer << data
-    puts "#{Time.now} #{@board.ip} Buffer: #{@received_data_buffer}"    
+    # puts "#{Time.now} #{@board.ip} Buffer: #{@received_data_buffer}"    
     @received_timestamp = Time.current
     process_buffer
   end
@@ -74,10 +74,10 @@ class ArduinoMessenger < EventMachine::Connection
           received_jsons.each do |json_text|
             begin
               json = JSON.parse( json_text )
-              puts "#{Time.now} Parsed #{json_text} from #{ip}"
+              puts "#{Time.now} #{@board.ip} Parsed #{json_text} from #{ip}"
               @board.parse(json)
             rescue JSON::ParserError
-              puts "#{Time.now} Parse Error - #{json_text}"
+              puts "#{Time.now} #{@board.ip} Parse Error - #{json_text}"
               @received_data_buffer = ""
             end
           end
