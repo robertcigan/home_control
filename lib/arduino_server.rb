@@ -124,7 +124,7 @@ EventMachine.run do
             board_modbus_active = true
             Board.modbus_tcp.each do |board|
               if board.connected_at.nil? || (Time.current - board.connected_at) > board.data_read_interval.seconds
-                puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
+                #puts "#{Time.now} reading ModBus TCP #{board.name} / #{board.ip}"
                 board.read_modbus
               end
             end
@@ -146,7 +146,7 @@ EventMachine.run do
             device_log_compression = true
             Device.for_compression.each do |device|
               if (device.run_compression(true)) 
-                puts "Compressing logs for  #{device.name} - #{device.compression_type_to_human} - #{device.compression_timespan_to_human}"
+                #puts "Compressing logs for  #{device.name} - #{device.compression_type_to_human} - #{device.compression_timespan_to_human}"
               end
             end
           end
@@ -167,7 +167,7 @@ EventMachine.run do
             periodic_websocket_push = true
             Device.repeated_ws_push.each do |device|
               device.push_value_change
-              puts "Manual WS push #{device.name}"
+              #puts "Manual WS push #{device.name}"
             end
           end
         ensure 
