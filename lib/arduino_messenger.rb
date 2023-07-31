@@ -19,7 +19,7 @@ class ArduinoMessenger < EventMachine::Connection
     @received_timestamp = Time.current
     @largest_data = 0
     @board = Board.where(ip: ip).first
-    if @board
+    if @board && !@@connected_clients.collect(&:ip).include?(ip)
       @board.connected!
       @@connected_clients.push(self)
       self.comm_inactivity_timeout = 30
@@ -29,6 +29,10 @@ class ArduinoMessenger < EventMachine::Connection
         @board.read_values_from_devices
         @board.write_values_to_devices
       end
+    elsif 
+      @@connected_clients.collect(&:ip).include?(ip)
+      puts "#{Time.now} Already connected board #{ip}"
+      close_connection
     else
       puts "#{Time.now} Unknow board #{ip}"
       close_connection
