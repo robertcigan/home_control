@@ -1,3 +1,6 @@
+## Home Control 3.2 (2024-01) ##
+  # Blinds/Shutter/Curtain implemented (2 pin control) - requires V9 FW version
+
 ## Home Control 3.1 (2023-07) ##
   # Automatic WS device value push for stale devices (> 60s)
   # Fixing ModbusTCP bug crash when connection refused

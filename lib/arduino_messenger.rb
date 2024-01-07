@@ -74,8 +74,12 @@ class ArduinoMessenger < EventMachine::Connection
           received_jsons.each do |json_text|
             begin
               json = JSON.parse( json_text )
-              puts "#{Time.now} #{@board.ip} Parsed #{json_text} from #{ip}"
-              @board.parse(json)
+              if @board
+                puts "#{Time.now} #{@board.ip} Parsed #{json_text} from #{ip}"
+                @board.parse(json)
+              else
+                puts "#{Time.now} Parsed #{json_text} from #{ip}"
+              end
             rescue JSON::ParserError
               puts "#{Time.now} #{@board.ip} Parse Error - #{json_text}"
               @received_data_buffer = ""

@@ -1,6 +1,6 @@
 Rails.application.configure do
   config.home_control = OpenStruct.new(
-    version: "3.1",
+    version: "3.2",
     luxon_formats: {
       second: "HH:mm:ss",
       minute: "HH:mm",

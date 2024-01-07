@@ -19,7 +19,7 @@
             = form.input :modbus_data_type, collection: Device.modbus_data_types_to_collection
       - else
         = form.input :pin
-    - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) 
+    - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) || @device.is_a?(Device::Curtain)
       = form.input :inverted
     - if @device.poll?
       = form.input :poll

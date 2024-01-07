@@ -78,6 +78,7 @@ en:
           pwm: "PWM output"
           sound: "Sound"
           board_test: "Board Test"
+          curtain: "Blinds/Shutter/Curtain"
           virtual_boolean: "Virtual Boolean"
           virtual_decimal: "Virtual Decimal"
           virtual_integer: "Virtual Integer"
