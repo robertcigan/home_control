@@ -67,10 +67,12 @@ class ProgramsController < ApplicationController
   
   def run
     @program.run
-    flash.now[:notice] = "Program #{@program} successfully run"
+    unless params[:silent]
+      flash.now[:notice] = "Program #{@program} successfully run"
+    end
     respond_with(@program)
   end
-
+  
   private
 
   def program_params

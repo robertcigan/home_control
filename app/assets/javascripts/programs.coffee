@@ -39,6 +39,14 @@ namespace "HomeControl.Programs", (exports) ->
       return false
   
   exports.initProgramsUpdates = ->
+    $( ".program" ).on "mousedown", "a", (event) ->
+      $(this).parents(".program").removeClass("program-stopped").addClass("program-running")
+    $( ".program" ).on "mouseup", "a", (event) ->
+      program_to_stop = $(this).parents(".program")
+      setTimeout ->
+        program_to_stop.removeClass("program-running").addClass("program-stopped")
+      , 300
+
     $( ".program" ).on "program:update", (event) ->
       program = $(this)
       if program.data("program-enabled") == "true" || program.data("program-enabled") == true

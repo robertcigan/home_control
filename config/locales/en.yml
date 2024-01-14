@@ -101,6 +101,7 @@ en:
       widget:
         widget_type:
           switch: "Switch"
+          button: "Button"
           boolean_value: "Boolean Value"
           text_value: "Text Value"
         color_1:

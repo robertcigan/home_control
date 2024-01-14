@@ -1,0 +1,13 @@
+- if widget.program
+  .widget.widget-button.h-100.program.program-stopped{ data: { program: widget.program.json_data }, class: "color-1-#{widget.color_1} color-2-#{widget.color_2}" }
+    = link_to run_program_path(widget.program, silent: true), method: :patch, data: { remote: true } do
+      .widget-header.d-flex.align-items-center.justify-content-center.text-center{class:  widget.show_updated? ? "h-25" : "h-30"}
+        .resizable-font-size
+          = widget
+      .widget-body.d-flex.align-items-center.justify-content-center{class:  widget.show_updated? ? "h-50" : "h-70"}
+        .resizable-font-size
+          = fa_icon("play")
+      - if widget.show_updated?
+        .widget-footer.h-25.d-flex.align-items-center.justify-content-center
+          .last-run.text-center
+            = widget.program.last_run_text

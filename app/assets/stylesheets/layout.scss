@@ -79,11 +79,11 @@
 .table.table-hover {
   .actions {
     a {
-      visibility: hidden;
+      opacity: 0.2;
     }
   }
   tr:hover .actions a {
-    visibility: visible;
+    opacity: 1;
   }
 }
 

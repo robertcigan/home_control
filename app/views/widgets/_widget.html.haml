@@ -6,6 +6,8 @@
       = render partial: "widgets/widget_text_value", locals: { widget: widget }
     - elsif widget.widget_type_switch?
       = render partial: "widgets/widget_switch", locals: { widget: widget }
+    - elsif widget.widget_type_button?
+      = render partial: "widgets/widget_button", locals: { widget: widget }
     - else
       Not implemented
     

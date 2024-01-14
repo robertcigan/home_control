@@ -15,7 +15,7 @@
     = link_to set_device_path(widget.device, device: { value: false }), method: :patch, class: "toggle-on", data: { remote: true } do
       .widget-header.d-flex.align-items-center.justify-content-center.text-center{class:  widget.show_updated? ? "h-25" : "h-30"}
         .resizable-font-size
-          = widget.device
+          = widget
       .widget-body.d-flex.align-items-center.justify-content-center{class:  widget.show_updated? ? "h-50" : "h-70"}
         .resizable-font-size
           = fa_icon("toggle-on")

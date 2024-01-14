@@ -65,7 +65,7 @@
 
 @mixin color-1-list {
   &.color-1-blue { background: color("blue"); color: color("white"); }
-  &.color-1-1indigo { background: color("indigo"); color: color("white"); }
+  &.color-1-indigo { background: color("indigo"); color: color("white"); }
   &.color-1-purple { background: color("purple"); color: color("white"); }
   &.color-1-pink { background: color("pink"); color: color("white"); }
   &.color-1-red { background: color("red"); color: color("white"); }
@@ -81,7 +81,7 @@
 
 @mixin color-2-list {
   &.color-2-blue { background: color("blue"); color: color("white"); }
-  &.color-2-1indigo { background: color("indigo"); color: color("white"); }
+  &.color-2-indigo { background: color("indigo"); color: color("white"); }
   &.color-2-purple { background: color("purple"); color: color("white"); }
   &.color-2-pink { background: color("pink"); color: color("white"); }
   &.color-2-red { background: color("red"); color: color("white"); }
@@ -115,6 +115,15 @@
       @include color-2-list;
     }
     &.device-off {
+      @include color-1-list;
+    }
+  }
+
+  &.widget-button {
+    &.program-running {
+      @include color-2-list;
+    }
+    &.program-stopped {
       @include color-1-list;
     }
   }

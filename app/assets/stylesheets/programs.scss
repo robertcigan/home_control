@@ -4,6 +4,10 @@
 }
 
 .program {
+  &.program-stopped {
+  }
+  &.program-running {
+  }
   &.program-on {
     .toggle-off {
       display: none;

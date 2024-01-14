@@ -24,6 +24,7 @@ namespace "HomeControl.Widgets", (exports) ->
         $(item.el).trigger("widget:update")
 
     HomeControl.Devices.initDevicesUpdates()
+    HomeControl.Programs.initProgramsUpdates()
 
     $(".grid-stack-item").on "widget:resize", (event) ->
       HomeControl.Layout.autoFontResize($(this))
