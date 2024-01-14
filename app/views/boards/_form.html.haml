@@ -1,15 +1,15 @@
 = simple_form_for(@board, remote: true) do |form|
   .modal-body
     = form.error_notification
-    = form.input :name
-    = form.input :ip
-    = form.input :board_type, collection: Board.board_types_to_collection, input_html: { data: { reload: true }}
+    .row
+      = form.input :name, wrapper_html: { class: "col-sm-6" }
+      = form.input :ip, wrapper_html: { class: "col-sm-6" }
+      = form.input :board_type, collection: Board.board_types_to_collection, input_html: { data: { reload: true }}, wrapper_html: { class: "col-sm-6" }
+      = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
     - if form.object.board_type_modbus_tcp?
       .row
-        .col
-          = form.input :slave_address
-        .col
-          = form.input :data_read_interval
+        = form.input :slave_address, wrapper_html: { class: "col-sm-6" }
+        = form.input :data_read_interval, wrapper_html: { class: "col-sm-6" }
 
   .modal-footer
     = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"

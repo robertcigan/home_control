@@ -12,6 +12,7 @@ class Board < ApplicationRecord
 
   scope :ip, proc { |data| where(ip: data) }
   scope :modbus_tcp, proc { where(board_type: Board::BoardType::MODBUS_TCP) }
+  scope :for_log_clear,  proc { where.not(days_to_preserve_logs: nil) }
 
   before_save :log_board_log
 
@@ -158,6 +159,11 @@ class Board < ApplicationRecord
     end
   end
   
+  def clear_logs
+    logs_to_clear = board_logs.where("created_at < ?", Time.current - days_to_preserve_logs.days)
+    logs_to_clear.delete_all
+  end
+
   private
 
   def log_board_log

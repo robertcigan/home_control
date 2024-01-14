@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_06_092308) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_14_181056) do
   create_table "board_logs", charset: "utf8", force: :cascade do |t|
     t.integer "board_id"
     t.datetime "created_at", precision: nil, null: false
@@ -34,9 +34,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_06_092308) do
     t.integer "version"
     t.integer "slave_address"
     t.integer "data_read_interval"
+    t.integer "days_to_preserve_logs"
     t.index ["board_type"], name: "index_boards_on_board_type"
     t.index ["connected_at"], name: "index_boards_on_connected_at"
     t.index ["data_read_interval"], name: "index_boards_on_data_read_interval"
+    t.index ["days_to_preserve_logs"], name: "index_boards_on_days_to_preserve_logs"
     t.index ["ip"], name: "index_boards_on_ip"
     t.index ["name"], name: "index_boards_on_name"
     t.index ["version"], name: "index_boards_on_version"
@@ -78,8 +80,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_06_092308) do
     t.string "compression_timespan"
     t.integer "compression_backlog"
     t.datetime "compression_last_run_at", precision: nil
+    t.integer "days_to_preserve_logs"
     t.index ["board_id"], name: "index_devices_on_board_id"
     t.index ["compression_last_run_at"], name: "index_devices_on_compression_last_run_at"
+    t.index ["days_to_preserve_logs"], name: "index_devices_on_days_to_preserve_logs"
     t.index ["device_type"], name: "index_devices_on_device_type"
     t.index ["last_change"], name: "index_devices_on_last_change"
     t.index ["name"], name: "index_devices_on_name"

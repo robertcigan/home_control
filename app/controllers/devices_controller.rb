@@ -61,7 +61,8 @@ class DevicesController < ApplicationController
       :name, :board_id, :device_type, :pin, 
       :inverted, :poll, :holding_register_address, :scale,
       :value, :value_boolean, :value_integer, :value_string, :value_decimal, :unit, :modbus_data_type,
-      :compression_type, :compression_timespan, :compression_backlog, :compression_last_run_at
+      :compression_type, :compression_timespan, :compression_backlog, :compression_last_run_at,
+      :days_to_preserve_logs
     )
   end
 

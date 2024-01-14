@@ -158,6 +158,19 @@ EventMachine.run do
     )
   end
 
+  EventMachine::PeriodicTimer.new(1.day) do
+    EM.defer(
+      proc do
+        begin
+          Device.for_log_clear.each { |device| device.clear_logs }
+          Board.for_log_clear.each { |board| board.clear_logs }
+        ensure 
+          ActiveRecord::Base.connection_pool.release_connection
+        end
+      end
+    )
+  end
+
   periodic_websocket_push = false
   EventMachine::PeriodicTimer.new(60) do
     EM.defer(

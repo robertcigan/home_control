@@ -40,6 +40,7 @@ en:
         board_type: "Type"
         slave_address: "ModBus Address"
         data_read_interval: "Read Interval (s)"
+        days_to_preserve_logs: "Clear Logs After (days)"
       device:
         device_type: "Type"
         board: "Board"
@@ -52,6 +53,7 @@ en:
         compression_timespan: "Timespan"
         compression_backlog: "Backlog"
         last_change: "Last Change"
+        days_to_preserve_logs: "Clear Logs After (days)"
       panel:
         public_access: "Public Access"
       widget:

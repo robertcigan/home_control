@@ -51,6 +51,6 @@ class BoardsController < ApplicationController
   private
 
   def board_params
-    params.require(:board).permit(:name, :ip, :board_type, :slave_address, :data_read_interval)
+    params.require(:board).permit(:name, :ip, :board_type, :slave_address, :data_read_interval, :days_to_preserve_logs)
   end
 end

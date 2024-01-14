@@ -50,6 +50,7 @@ class Device < ApplicationRecord
   scope :board, proc { |data| joins(:board).where(boards: { ip: data }) }
   scope :repeated_ws_push, proc { joins(:widgets).distinct.where("devices.updated_at < ?", Time.current - 60.seconds) }
   scope :for_compression, proc { where.not(compression_type: nil).where.not(compression_type: "") }
+  scope :for_log_clear,  proc { where.not(days_to_preserve_logs: nil) }
 
   before_save :log_device_log
   after_create :reset_pins
@@ -115,6 +116,11 @@ class Device < ApplicationRecord
     else
       1
     end
+  end
+
+  def clear_logs
+    logs_to_clear = device_logs.where("created_at < ?", Time.current - days_to_preserve_logs.days)
+    logs_to_clear.delete_all
   end
 
   protected

@@ -2,21 +2,16 @@
   .modal-body
     = form.error_notification
     .row
-      .col
-        = form.input :name
-      .col
-        = form.input :device_type, collection: Device.device_types_to_collection, input_html: { data: { reload: true } }
+      = form.input :name, wrapper_html: { class: "col-sm-6" }
+      = form.input :device_type, collection: Device.device_types_to_collection, input_html: { data: { reload: true } }, wrapper_html: { class: "col-sm-6" }
     
-    = form.association :board, input_html: { data: { reload: true } }
+      = form.association :board, input_html: { data: { reload: true } }, wrapper_html: { class: "col-sm-6" }
     - if @device.board
       - if @device.board.board_type_modbus_tcp?
         .row
-          .col
-            = form.input :holding_register_address
-          .col
-            = form.input :scale, hint: "(10, 100, 1000...)"
-          .col 
-            = form.input :modbus_data_type, collection: Device.modbus_data_types_to_collection
+          = form.input :holding_register_address, wrapper_html: { class: "col-sm-4" }
+          = form.input :scale, hint: "(10, 100, 1000...)", wrapper_html: { class: "col-sm-4" }
+          = form.input :modbus_data_type, collection: Device.modbus_data_types_to_collection, wrapper_html: { class: "col-sm-4" }
       - else
         = form.input :pin
     - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) || @device.is_a?(Device::Curtain)
@@ -26,20 +21,16 @@
     %hr
     .row
       - if @device.device_type && @device.value_attribute
-        .col
-          = form.input @device.value_attribute
-      .col   
-        = form.input :unit
+        = form.input @device.value_attribute, wrapper_html: { class: "col-sm-6" }
+      = form.input :unit, wrapper_html: { class: "col-sm-6" }
     - if @device.compressable?
       .row
-        .col-sm-4
-          = form.input :compression_type, collection: Device.compression_types_to_collection, input_html: { data: { reload: true} }
+        = form.input :compression_type, collection: Device.compression_types_to_collection, input_html: { data: { reload: true} }, wrapper_html: { class: "col-sm-6 col-md-4" }
         - if @device.compression_type.present?
-          .col
-            = form.input :compression_timespan, collection: Device.compression_timespans_to_collection
-          .col
-            = form.input :compression_backlog, hint: "How many compression timespans should pass to start the compression"
-
+          = form.input :compression_timespan, collection: Device.compression_timespans_to_collection, wrapper_html: { class: "col-sm-6 col-md-4" }
+          = form.input :compression_backlog, hint: "How many compression timespans should pass to start the compression", wrapper_html: { class: "col-sm-6 col-md-4" }
+    .row
+      = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
         
   .modal-footer
     = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
