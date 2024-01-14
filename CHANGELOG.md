@@ -1,3 +1,7 @@
+## Home Control 3.3 (2024-01) ##
+  # Widget Type Button added to run assigned program
+  # Automatic board and device log clearing after specified set of days (setting per board/device)
+
 ## Home Control 3.2 (2024-01) ##
   # Blinds/Shutter/Curtain implemented (2 pin control) - requires V9 FW version
 
