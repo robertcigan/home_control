@@ -1,15 +1,15 @@
 ## Home Control 3.3 (2024-01) ##
-  # Widget Type Button added to run assigned program
-  # Automatic board and device log clearing after specified set of days (setting per board/device)
+  * Widget Type Button added to run assigned program
+  * Automatic board and device log clearing after specified set of days (setting per board/device)
 
 ## Home Control 3.2 (2024-01) ##
-  # Blinds/Shutter/Curtain implemented (2 pin control) - requires V9 FW version
+  * Blinds/Shutter/Curtain implemented (2 pin control) - requires V9 FW version
 
 ## Home Control 3.1 (2023-07) ##
-  # Automatic WS device value push for stale devices (> 60s)
-  # Fixing ModbusTCP bug crash when connection refused
-  # Prevent overlapping EM timers
-  # DB indexes tuning
+  * Automatic WS device value push for stale devices (> 60s)
+  * Fixing ModbusTCP bug crash when connection refused
+  * Prevent overlapping EM timers
+  * DB indexes tuning
 
 ## Home Control 3.0 (2023-01) ##
   * Rails 7.x
