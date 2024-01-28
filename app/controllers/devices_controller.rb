@@ -62,7 +62,7 @@ class DevicesController < ApplicationController
       :inverted, :poll, :holding_register_address, :scale,
       :value, :value_boolean, :value_integer, :value_string, :value_decimal, :unit, :modbus_data_type,
       :compression_type, :compression_timespan, :compression_backlog, :compression_last_run_at,
-      :days_to_preserve_logs
+      :days_to_preserve_logs, :log_enabled
     )
   end
 

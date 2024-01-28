@@ -54,6 +54,7 @@ en:
         compression_backlog: "Backlog"
         last_change: "Last Change"
         days_to_preserve_logs: "Clear Logs After (days)"
+        log_enabled: "Log Enabled"
       panel:
         public_access: "Public Access"
       widget:
