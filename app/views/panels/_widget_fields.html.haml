@@ -6,7 +6,10 @@
         .col-3.mt-icon.text-right
           = link_to_remove_association fa_icon("trash"), f
       .row
-        = f.input :name, wrapper_html: { class: "col-8" }
+        = f.input :show_label, wrapper_html: { class: "col-4"}, input_html: { "data-reload": true }
+        - if f.object.show_label?
+          = f.input :name, wrapper_html: { class: "col-8" }
+      .row
         = f.input :show_updated, wrapper_html: { class: "col-4" }
       .row
         = f.association :device, collection: Device.all, include_blank: "Select Device...", wrapper_html: { class: "col-6" }

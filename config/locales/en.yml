@@ -59,6 +59,7 @@ en:
         public_access: "Public Access"
       widget:
         show_updated: "Show Updated"
+        show_label: "Show Label"
 
     attribute_options:
       board:

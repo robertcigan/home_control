@@ -5,7 +5,7 @@ class WidgetsController < ApplicationController
 
   load_and_authorize_resource :panel
   load_and_authorize_resource :widget, through: :panel
-
+  before_action :load_reload, only:  [:create, :update]
 
   def index
     respond_with(@widgets)
@@ -57,6 +57,6 @@ class WidgetsController < ApplicationController
 
   def widget_params
     params.require(:widget).permit(:widget_type, :device_id, :program_id, :x, :y, :w, :h, 
-      :color_1, :color_2, :icon, :name, :show_updated)
+      :color_1, :color_2, :icon, :name, :show_updated,  :show_label)
   end
 end
