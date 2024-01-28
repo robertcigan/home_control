@@ -49,10 +49,11 @@ class Device < ApplicationRecord
 
   scope :board, proc { |data| joins(:board).where(boards: { ip: data }) }
   scope :repeated_ws_push, proc { joins(:widgets).distinct.where("devices.updated_at < ?", Time.current - 60.seconds) }
-  scope :for_compression, proc { where.not(compression_type: nil).where.not(compression_type: "") }
+  scope :for_compression, proc { where(log_enabled: true).where.not(compression_type: nil, compression_type: "") }
   scope :for_log_clear,  proc { where.not(days_to_preserve_logs: nil) }
 
-  before_save :log_device_log
+  before_save :log_device_log, if: :log_enabled?
+  after_save :detect_log_enabled_change
   after_create :reset_pins
   after_destroy :reset_pins
   after_update :detect_hw_change
@@ -132,6 +133,13 @@ class Device < ApplicationRecord
       reset_pins
     end
   end
+
+  def detect_log_enabled_change
+    if log_enabled_previously_changed? && !log_enabled
+      device_logs.delete_all
+    end
+  end
+
 
   def send_to_arduino(data)
     board.send_to_arduino(data)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_14_181056) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_28_100222) do
   create_table "board_logs", charset: "utf8", force: :cascade do |t|
     t.integer "board_id"
     t.datetime "created_at", precision: nil, null: false
@@ -81,11 +81,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_14_181056) do
     t.integer "compression_backlog"
     t.datetime "compression_last_run_at", precision: nil
     t.integer "days_to_preserve_logs"
+    t.boolean "log_enabled", default: true, null: false
     t.index ["board_id"], name: "index_devices_on_board_id"
     t.index ["compression_last_run_at"], name: "index_devices_on_compression_last_run_at"
     t.index ["days_to_preserve_logs"], name: "index_devices_on_days_to_preserve_logs"
     t.index ["device_type"], name: "index_devices_on_device_type"
     t.index ["last_change"], name: "index_devices_on_last_change"
+    t.index ["log_enabled"], name: "index_devices_on_log_enabled"
     t.index ["name"], name: "index_devices_on_name"
     t.index ["pin"], name: "index_devices_on_pin"
     t.index ["type"], name: "index_devices_on_type"

@@ -35,17 +35,20 @@
           - if @device.poll?
             .row.my-2
               .col-6= Device.human_attribute_name(:poll)
-              .col-6= @device.poll ? "#{@device.poll}ms" : nil
+              .col-6= @device.poll? ? "#{@device.poll}ms" : nil
           - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) 
             .row.my-2
               .col-6= Device.human_attribute_name(:inverted)
-              .col-6= @device.inverted ? fa_icon("check") : nil
+              .col-6= @device.inverted? ? fa_icon("check") : nil
           .row.my-2
             .col-6 Value
             .col-6.indication= @device.indication
           .row.my-2
             .col-6= Device.human_attribute_name(:last_change)
             .col-6.updated= @device.last_change_text
+          .row.my-2
+            .col-6= Device.human_attribute_name(:log_enabled)
+            .col-6= @device.log_enabled? ? fa_icon("check") : nil
         .col-sm-6
           - if @device.compression_type.present?
             .row.my-2
@@ -58,23 +61,24 @@
               .col-6= Device.human_attribute_name(:compression_backlog)
               .col-6 #{@device.compression_backlog} x #{@device.compression_timespan_to_human.pluralize(@device.compression_backlog)}
 
-.card.shadow.mt-2{ data: { onload_content:  chart_device_device_logs_path(@device) } }
-  .card-body.pt-0
-    .sk-spinner.sk-spinner-wave
-      .sk-rect1
-      .sk-rect2
-      .sk-rect3
-      .sk-rect4
-      .sk-rect5
-      
-.card.shadow.mt-2{ data: { onload_content:  device_device_logs_path(@device) } }
-  .card-body.pt-0
-    .sk-spinner.sk-spinner-wave
-      .sk-rect1
-      .sk-rect2
-      .sk-rect3
-      .sk-rect4
-      .sk-rect5
+- if @device.log_enabled?
+  .card.shadow.mt-2{ data: { onload_content:  chart_device_device_logs_path(@device) } }
+    .card-body.pt-0
+      .sk-spinner.sk-spinner-wave
+        .sk-rect1
+        .sk-rect2
+        .sk-rect3
+        .sk-rect4
+        .sk-rect5
+        
+  .card.shadow.mt-2{ data: { onload_content:  device_device_logs_path(@device) } }
+    .card-body.pt-0
+      .sk-spinner.sk-spinner-wave
+        .sk-rect1
+        .sk-rect2
+        .sk-rect3
+        .sk-rect4
+        .sk-rect5
 
 :javascript
   HomeControl.Devices.initShow();
