@@ -1,3 +1,8 @@
+## Home Control 3.4 (2024-01) ##
+  * Optional widget labels
+  * Optional device log
+  * Refactorised widgets switch and button interactions with backend
+
 ## Home Control 3.3 (2024-01) ##
   * Widget Type Button added to run assigned program
   * Automatic board and device log clearing after specified set of days (setting per board/device)
