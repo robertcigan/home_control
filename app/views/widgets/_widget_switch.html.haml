@@ -1,10 +1,11 @@
 - if widget.device
   .widget.widget-switch.h-100.device{data: { device: widget.device.json_data }, class: "color-1-#{widget.color_1} color-2-#{widget.color_2}" } 
-    = link_to set_device_path(widget.device, device: { value: true }), method: :patch, class: "toggle-off", data: { remote: true } do
-      .widget-header.d-flex.align-items-center.justify-content-center.text-center{class:  widget.show_updated? ? "h-25" : "h-30"}
-        .resizable-font-size
-          = widget
-      .widget-body.d-flex.align-items-center.justify-content-center{class:  widget.show_updated? ? "h-50" : "h-70"}
+    = link_to set_panel_widget_device_path(widget.panel, widget, device: { value: true }), method: :patch, class: "toggle-off", data: { remote: true } do
+      - if widget.show_label?
+        .widget-header.d-flex.align-items-center.justify-content-center.text-center{class: label_height_class(widget)}
+          .resizable-font-size
+            = widget
+      .widget-body.d-flex.align-items-center.justify-content-center{class: indication_height_class(widget)}
         .resizable-font-size
           = fa_icon("toggle-off")
       - if widget.show_updated?
@@ -12,11 +13,12 @@
           .updated.text-center
             = widget.device.last_change_text
 
-    = link_to set_device_path(widget.device, device: { value: false }), method: :patch, class: "toggle-on", data: { remote: true } do
-      .widget-header.d-flex.align-items-center.justify-content-center.text-center{class:  widget.show_updated? ? "h-25" : "h-30"}
-        .resizable-font-size
-          = widget
-      .widget-body.d-flex.align-items-center.justify-content-center{class:  widget.show_updated? ? "h-50" : "h-70"}
+    = link_to set_panel_widget_device_path(widget.panel, widget, device: { value: false }), method: :patch, class: "toggle-on", data: { remote: true } do
+      - if widget.show_label?
+        .widget-header.d-flex.align-items-center.justify-content-center.text-center{class:  label_height_class(widget)}
+          .resizable-font-size
+            = widget
+      .widget-body.d-flex.align-items-center.justify-content-center{class: indication_height_class(widget)}
         .resizable-font-size
           = fa_icon("toggle-on")
       - if widget.show_updated?

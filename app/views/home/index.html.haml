@@ -18,7 +18,7 @@
         - Device.all.each do |device|
           .device.row{id: "device_#{device.id}", data: device.json_data}
             .col-md-6
-              = device
+              = link_to device, device_path(device)
             .col-md-6.text-right
               .updated.label.label-primary
   .col-sm-4
@@ -31,7 +31,7 @@
         - Board.all.each do |board|
           .board.row{id: dom_id(board), data: board.json_data}
             .col-md-6
-              = board
+              = link_to board, board_path(board)
             .col-md-6.text-right
               .updated.label.label-primary
 

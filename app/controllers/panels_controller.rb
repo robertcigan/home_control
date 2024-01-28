@@ -78,7 +78,7 @@ class PanelsController < ApplicationController
     params.require(:panel).permit(:name, :column, :row, :public_access,
       widgets_attributes: [
         :id, :widget_type, :device_id, :program_id, :x, :y, :w, :h, 
-        :color_1, :color_2, :icon, :name, :show_updated, :_destroy]
+        :color_1, :color_2, :icon, :name, :show_updated, :show_label, :_destroy]
     )
   end
 end

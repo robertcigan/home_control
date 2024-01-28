@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_28_100222) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
   create_table "board_logs", charset: "utf8", force: :cascade do |t|
     t.integer "board_id"
     t.datetime "created_at", precision: nil, null: false
@@ -154,11 +154,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_100222) do
     t.string "icon"
     t.string "name"
     t.boolean "show_updated", default: false, null: false
+    t.boolean "show_label", default: true, null: false
     t.index ["created_at"], name: "index_widgets_on_created_at"
     t.index ["device_id"], name: "index_widgets_on_device_id"
     t.index ["name"], name: "index_widgets_on_name"
     t.index ["panel_id"], name: "index_widgets_on_panel_id"
     t.index ["program_id"], name: "index_widgets_on_program_id"
+    t.index ["show_label"], name: "index_widgets_on_show_label"
     t.index ["show_updated"], name: "index_widgets_on_show_updated"
     t.index ["updated_at"], name: "index_widgets_on_updated_at"
   end

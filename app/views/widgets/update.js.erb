@@ -1,0 +1,6 @@
+<% if @widget.errors.any? || @reload %>
+  <%= ajax_modal_render("form") %>
+<% else %>
+  $("#ajax-modal").modal("hide")
+  <%= show_flash %>
+<% end %>

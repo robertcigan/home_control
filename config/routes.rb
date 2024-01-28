@@ -32,6 +32,21 @@ Rails.application.routes.draw do
         patch :update_position
       end
     end
+
+    scope module: "widgets" do
+      resources :widgets, only: [] do
+        resource :device, only: [] do
+          member do
+            patch :set
+          end
+        end
+        resource :program, only: [] do
+          member do
+            patch :run
+          end
+        end
+      end
+    end
   end
   
   get "logs/index" => "logs#index", as: :logs
