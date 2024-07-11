@@ -3,7 +3,7 @@ class Program < ApplicationRecord
   include WebsocketPushChange
   attribute_options :program_type, [:default, :repeated]
   
-  serialize :storage
+  serialize :storage, Hash, coder: YAML
 
   has_many :programs_devices, dependent: :destroy
   has_many :devices, through: :programs_devices
@@ -105,5 +105,15 @@ class Program < ApplicationRecord
 
   def has_error?
     last_run == last_error_at
+  end
+
+  private
+
+  def self.ransackable_attributes(auth_object = nil)
+    authorizable_ransackable_attributes
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    authorizable_ransackable_associations
   end
 end
