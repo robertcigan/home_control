@@ -6,7 +6,7 @@
 server "192.168.0.3", user: "pi", roles: %w{app db web}
 set :deploy_to, "/home/pi/home_control"
 set :rails_env, 'production'
-set :ruby_version, "3.1.2"
+set :ruby_version, "3.3.4"
 set :rvm_ruby_version, -> { "#{fetch(:ruby_version)}@#{fetch(:application)}" }
 set :branch, "master"
 
@@ -22,8 +22,6 @@ set :puma_threads, [0, 4]
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
 
-
-
 # role-based syntax
 # ==================
 
@@ -35,8 +33,6 @@ set :puma_threads, [0, 4]
 # role :app, %w{deploy@example.com}, my_property: :my_value
 # role :web, %w{user1@primary.com user2@additional.com}, other_property: :other_value
 # role :db,  %w{deploy@example.com}
-
-
 
 # Configuration
 # =============

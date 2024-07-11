@@ -22,3 +22,6 @@ To completely disable the onboard WiFi from the firmware on the Pi3, add
 dtoverlay=pi3-disable-wifi
 in /boot/config.txt. This is documented here
 
+WITH HOMEBREW
+
+gem install eventmachine -- --with-cppflags=-I/usr/local/opt/openssl@1.1/include
