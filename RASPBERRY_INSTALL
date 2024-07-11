@@ -1,11 +1,7 @@
 sudo apt-get install mc
 
+#  install rvm rvm.io
 
-# ruby install 2.3.4 (2.4 nefunguje zatim)
-
-./configure --with-openssl-dir=/usr/bin
-make
-sudo make install
 gem install bundler
 
 sudo apt-get install redis-server

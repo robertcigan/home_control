@@ -65,7 +65,7 @@ en:
       board:
         board_type:
           arduino_mega_8b: "Arduino Mega (8bit)"
-          esp8266_bat: "ESP8266 (battery powered)"
+          esp: "ESP8266/ESP32"
           modbus_tcp: "ModBus TCP"
       board_log: 
         log_type:

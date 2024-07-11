@@ -19,10 +19,10 @@
             = fa_icon("check", class: "connected")
             = fa_icon("ban", class: "disconnected")
           %td.ssid
-            - if board.board_type_esp8266_bat?
+            - if board.board_type_esp?
               = board.ssid
           %td.text-right
-            - if board.board_type_esp8266_bat?
+            - if board.board_type_esp?
               %span.signal-strength
                 = board.signal_strength
               \%

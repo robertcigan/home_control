@@ -1,7 +1,7 @@
 class Board < ApplicationRecord
   include WebsocketPushChange
   include AttributeOption
-  attribute_options :board_type, [:arduino_mega_8b, :esp8266_bat, :modbus_tcp]
+  attribute_options :board_type, [:arduino_mega_8b, :esp, :modbus_tcp]
   
   validates :name, :ip, presence: true, uniqueness: { unless: :board_type_modbus_tcp? }
   validates :board_type, presence: true

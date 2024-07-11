@@ -4,7 +4,7 @@
       %tr
         %th= sort_link @search, :created_at, "Time", { }, remote: true
         %th= sort_link @search, :log_type, "Status", { }, remote: true
-        - if @board.board_type_esp8266_bat?
+        - if @board.board_type_esp?
           %th= sort_link @search, :ssid, "SSID", { }, remote: true
           %th= sort_link @search, :signal_strength, "Signal Strength", { }, remote: true
     %tbody
@@ -12,7 +12,7 @@
         %tr
           %td= l(board_log.created_at)
           %td= board_log.indication
-          - if @board.board_type_esp8266_bat?
+          - if @board.board_type_esp?
             %td= board_log.ssid
             %td
               - if board_log.signal_strength
