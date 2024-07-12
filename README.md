@@ -1,11 +1,11 @@
 # Home Control
 
-Home Control is a Ruby on Rails based home automation DIY style system. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports currently AT Mega 2560 boards over ethernet,  ESP8266 and ESP32 boards over WiFi connection and ModBus TCP (read only).
+Home Control is a Ruby on Rails based home automation DIY style project. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports currently AT Mega 2560 boards over ethernet,  ESP8266 and ESP32 boards over WiFi connection and ModBus TCP (read only so far).
 
 ## Stack
 
 The app runs Ruby on Rails Puma server that also runs a Websocket server. Websockets are used to update values on the page without reloading or polling.
-The main thread that does the "automation" and communication with devices is based on Ruby Event Machine and runs separately from the server. MySQL is used as a database. You can run the app on any Linux machine like Ubuntu 20/22, Raspbian on Raspberry Pi 3B and newer. I suggest Raspberry 4 with 2GB of memory or more. 
+The process that does the "automation" and communication with devices is based on Ruby Event Machine and runs separately from the server. MySQL is used as a database. You can run the app on any Linux machine like Ubuntu 20/22, Raspbian on Raspberry Pi 3B and newer. I suggest Raspberry 4 with 2GB of memory or more. 
 
 ## How it works
 
@@ -15,21 +15,26 @@ Once you have the HW setup with boards and devices configured, you can setup pro
 
 To be able to easily control and monitor your entire setup, you can create a panel. Panels are dashboards where you can assemble each dasboard individually and add sections to show values, add buttons or switches to be able to control and monitor your devices.
 
-## Supported Boards
+## Supported HW
 
 Server communicates with boards via TCP connection using easy to read and understand JSON format. It does not use encryption of any kind and should be only used over secured network without public access. Both the server and boards verify and accept connection only from the opposite side based on checking the IP address.
 
+Board FW repository is /robertcigan/home_control_arduino
+
 ### Arduino Mega 2560 with Ethernet Module W5100/5200/W5500
-TODO
+
+Arduino Mega does not come with any network connectivity by default so you need to use either a Ethernet Shield or a Ethernet module and wire it to the board. I use external [W5500 Ethernet Module](https://www.google.com/search?q=W5500+Ethernet+Network+Module&oq=W5500+Ethernet+Network+Module&gs_lcrp=EgZjaHJvbWUyCwgAEEUYExg5GIAEMgoIARAAGBMYFhgeMgoIAhAAGIAEGKIEMgoIAxAAGIAEGKIEMgoIBBAAGIAEGKIEMgoIBRAAGIAEGKIEMgYIBhBFGD3SAQczMTdqMGo0qAIAsAIB&sourceid=chrome&ie=UTF-8) and wire to to SPI header. The SPI Select pin is digital pin 10. 
+
+__Dedicated Pins__
+10 - used by ethernet module
+18,19 - Serial1 (MP3 Player module)
+A0 - A15 assignable analog pins
 
 ### ESP01 (ESP8266)
-TODO
 
 ### ESP32
-TODO
 
 ### Modbus TCP (read only)
-TODO
 
 ## Supported Devices
 
@@ -83,13 +88,13 @@ Controlling via custom Arduino Nano module with 2 relays that then control blind
 
 Commands:
 
-#### Reset devices
+__Reset devices__
 
 `{ reset_devices: true }`
 
 Clears/removes all the device settings from the board. Used before uploading a new set of devices with `add` command.
 
-#### Add device
+__Add device__
 
 `{ 
   add:
@@ -102,16 +107,27 @@ Clears/removes all the device settings from the board. Used before uploading a n
 
 Adds a device with a specific configuration. 
 
-#### Ping
+__Ping__
 
 `{ ping: "true" }`
 
 Pings a device to maintain a connection and expects the `pong` reponse. If the server does not receives a reponse within 25 seconds, it will consider the board to be offline.
 
-## Board specific pins
+## Installation
 
-#### Arduino Mega (2560)
+Follow [this link](/robertcigan/home_control_arduino) for how to flash and setup the board.
 
-10 - used by ethernet module
-18,19 - Serial1 (MP3 Player module)
-A0 - A15 assignable analog pins
+Ubuntu 22 or Raspbian setup step by step
+
+### 1. RVM and Ruby Installation
+_TODO_
+
+### 2. MySQL/Redis
+_TODO_
+
+### 3. Puma server with Nginx proxy
+_TODO_
+
+### 4. Systemd arduino_server service
+_TODO_
+
