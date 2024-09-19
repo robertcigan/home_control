@@ -25,7 +25,6 @@ class AddIndexes < ActiveRecord::Migration[7.0]
     add_index :programs, :updated_at
 
     add_index :programs_devices, :trigger
-    add_index :programs_devices, :variable_name
 
     add_index :widgets, :show_updated
     add_index :widgets, :created_at

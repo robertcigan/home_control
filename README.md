@@ -19,7 +19,7 @@ To be able to easily control and monitor your entire setup, you can create a pan
 
 Server communicates with boards via TCP connection using easy to read and understand JSON format. It does not use encryption of any kind and should be only used over secured network without public access. Both the server and boards verify and accept connection only from the opposite side based on checking the IP address.
 
-Board FW repository is /robertcigan/home_control_arduino
+Board FW repository is https://github.com/robertcigan/home_control_arduino. Use VS Code Platformio plugin to compile & flash it.
 
 ### Arduino Mega 2560 with Ethernet Module W5100/5200/W5500
 

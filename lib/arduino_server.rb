@@ -19,6 +19,7 @@ EventMachine.run do
   EM.start_server(ip_address, 7777, ArduinoMessenger)
 
   uri = "ws://#{ENV['WEBSOCKET_HOST']}#{ENV['WEBSOCKET_PORT'] ? ":#{ENV['WEBSOCKET_PORT']}" : ""}/websockets/"
+  puts "Websocket server: "
   puts uri
   client = ActionCableClient.new(uri, 'ArduinoChannel')
   

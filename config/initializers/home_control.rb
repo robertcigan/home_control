@@ -12,8 +12,8 @@ Rails.application.configure do
       time: "d.L.y HH:mm:ss"
     },
     authentication: {
-      name: "home",
-      password: "control"
+      name: ENV["ADMIN_USERNAME"],
+      password: ENV["ADMIN_PASSWORD"]
     }
   )
 end

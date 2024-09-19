@@ -11,7 +11,10 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
-  create_table "board_logs", charset: "utf8", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "board_logs", force: :cascade do |t|
     t.integer "board_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
@@ -22,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["updated_at"], name: "index_board_logs_on_updated_at"
   end
 
-  create_table "boards", charset: "utf8", force: :cascade do |t|
+  create_table "boards", force: :cascade do |t|
     t.string "ip"
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
@@ -44,7 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["version"], name: "index_boards_on_version"
   end
 
-  create_table "device_logs", charset: "utf8", force: :cascade do |t|
+  create_table "device_logs", force: :cascade do |t|
     t.integer "device_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
@@ -57,7 +60,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["updated_at"], name: "index_device_logs_on_updated_at"
   end
 
-  create_table "devices", id: :integer, charset: "utf8", force: :cascade do |t|
+  create_table "devices", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "device_type"
     t.integer "pin"
@@ -93,7 +96,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["type"], name: "index_devices_on_type"
   end
 
-  create_table "panels", charset: "utf8", force: :cascade do |t|
+  create_table "panels", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
@@ -104,7 +107,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["name"], name: "index_panels_on_name"
   end
 
-  create_table "programs", id: :integer, charset: "utf8", force: :cascade do |t|
+  create_table "programs", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "program_type"
     t.text "code"
@@ -125,12 +128,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["updated_at"], name: "index_programs_on_updated_at"
   end
 
-  create_table "programs_devices", id: :integer, charset: "utf8", force: :cascade do |t|
+  create_table "programs_devices", id: :serial, force: :cascade do |t|
     t.integer "program_id"
     t.integer "device_id"
+    t.string "variable_name"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.string "variable_name"
     t.boolean "trigger", default: false, null: false
     t.index ["device_id"], name: "index_programs_devices_on_device_id"
     t.index ["program_id"], name: "index_programs_devices_on_program_id"
@@ -138,7 +141,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_28_120406) do
     t.index ["variable_name"], name: "index_programs_devices_on_variable_name"
   end
 
-  create_table "widgets", charset: "utf8", force: :cascade do |t|
+  create_table "widgets", force: :cascade do |t|
     t.integer "panel_id", null: false
     t.string "widget_type"
     t.integer "device_id"
