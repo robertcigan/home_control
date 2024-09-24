@@ -1,11 +1,13 @@
-# Home Control
+# Home Control 3.4
+
+[Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
 Home Control is a Ruby on Rails based home automation DIY style project. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports currently AT Mega 2560 boards over ethernet,  ESP8266 and ESP32 boards over WiFi connection and ModBus TCP (read only so far).
 
 ## Stack
 
 The app runs Ruby on Rails Puma server that also runs a Websocket server. Websockets are used to update values on the page without reloading or polling.
-The process that does the "automation" and communication with devices is based on Ruby Event Machine and runs separately from the server. MySQL is used as a database. You can run the app on any Linux machine like Ubuntu 20/22, Raspbian on Raspberry Pi 3B and newer. I suggest Raspberry 4 with 2GB of memory or more. 
+The process that does the "automation" and communication with devices is based on Ruby Event Machine and runs separately from the server. MySQL is used as a database. You can run the app on any Linux machine like Ubuntu 22 and up, Raspbian on Raspberry Pi 3B and newer. I suggest at least Raspberry 4 with 2GB of memory or more.
 
 ## How it works
 

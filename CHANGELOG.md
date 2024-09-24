@@ -1,3 +1,7 @@
+# Changelog
+
+[Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
+
 ## Home Control 3.4 (2024-01)
   * Optional widget labels
   * Optional device log
