@@ -51,6 +51,7 @@ gem "sassc-rails"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem 'dotenv'
 end
 
 group :development do
@@ -83,7 +84,6 @@ gem "chartkick"
 gem "cocoon"
 gem "codemirror-rails"
 gem "coffee-rails"
-gem "envyable"
 gem "eventmachine"
 gem "action_cable_client"
 gem 'event_spitter'
@@ -91,7 +91,7 @@ gem "font_awesome5_rails"
 gem "foreman"
 gem "haml-rails", "~> 2.0"
 gem "kaminari"
-gem "mysql2"
+gem "pg"
 gem "ransack"
 gem "responders"
 gem "simple_form"

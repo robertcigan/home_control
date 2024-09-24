@@ -49,7 +49,7 @@ class Device < ApplicationRecord
 
   scope :board, proc { |data| joins(:board).where(boards: { ip: data }) }
   scope :repeated_ws_push, proc { joins(:widgets).distinct.where("devices.updated_at < ?", Time.current - 60.seconds) }
-  scope :for_compression, proc { where(log_enabled: true).where.not(compression_type: nil, compression_type: "") }
+  scope :for_compression, proc { where(log_enabled: true).where.not(compression_type: nil).where.not(compression_type: "") }
   scope :for_log_clear,  proc { where.not(days_to_preserve_logs: nil) }
 
   before_save :log_device_log, if: :log_enabled?

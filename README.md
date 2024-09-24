@@ -1,25 +1,33 @@
-# Home Control
+# Home Control 3.4
 
-Home Control is a Ruby on Rails based home automation DIY style project. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports currently AT Mega 2560 boards over ethernet,  ESP8266 and ESP32 boards over WiFi connection and ModBus TCP (read only so far).
+[Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
+
+Home Control is a Ruby on Rails based home automation DIY style project. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports both Ethernet and WiFI boards. It also supports ModBus TCP. 
+
+It's designed to be effective in creating both simple and complex automation processes by directly writing Ruby code. The downside is no support for existing WiFi devices so it's indented for hobbyists with general Arduino and electronics knowledge.
 
 ## Stack
 
-The app runs Ruby on Rails Puma server that also runs a Websocket server. Websockets are used to update values on the page without reloading or polling.
-The process that does the "automation" and communication with devices is based on Ruby Event Machine and runs separately from the server. MySQL is used as a database. You can run the app on any Linux machine like Ubuntu 20/22, Raspbian on Raspberry Pi 3B and newer. I suggest Raspberry 4 with 2GB of memory or more. 
+The app runs Ruby on Rails on Puma server that also runs a Websocket server. Websockets are used to update values without reloading or polling.
+The process that does the "automation" and communication with devices is based on Ruby Event Machine and runs separately from the web server. Database backend is PostgreSQL or MySQL. You can run the app on any Linux machine like Ubuntu 22 and up, Raspbian on Raspberry Pi 3B and newer. I suggest at least Raspberry 4 with 2GB of memory or more.
 
 ## How it works
 
-Essentially you setup a board ( Arduino Mega/ ESP or TCP Modbus) and then add devices that are attached on that board with pin assigment or other settings. When you do that, the configuration is sent over to that board. The only initial configuration in boards that must be done is a network setup (via USB serial terminal).You can have many devices like sensors or relays or similar attached to one board, the only limitation is number of pins that is available on each board. That's why I mostly use Arduino Mega. 
+Essentially you setup a board ( Arduino Mega/ ESP or TCP Modbus) and then add devices that are attached on that board with pin assigment or other settings. When you do that, the configuration is sent over to that board. The only initial configuration in boards that must be done is a network setup (via USB serial terminal). You can have multiple devices like sensors or relays attached to one board, the only limitation is number of pins that are available on each board. That's why I mostly use Arduino Mega. 
 
-Once you have the HW setup with boards and devices configured, you can setup programs. Programs are a pieces of ruby code that is run when something happens like a temperature changes, button is pressed etc. Pograms can also be initiated periodically. Programs are written in Ruby and are evaluated on the object `Program` level, which is not a safe practice, but the idea is that you should be the only one having access to the admin part of the app anyway.
+Once you have the HW setup with boards and devices configured, you can create Programs. Programs are a pieces of Ruby code that are run when something happens, like a temperature changes, button is pressed etc. Pograms can also be initiated periodically. Programs are written in Ruby and are evaluated on the object `Program` level, which is not a safe practice, but the idea is that you should be the only one having access to the admin part of the app anyway. The upside is, that you can literally do whatever you want and only your imagination and skills are the limits.
 
-To be able to easily control and monitor your entire setup, you can create a panel. Panels are dashboards where you can assemble each dasboard individually and add sections to show values, add buttons or switches to be able to control and monitor your devices.
+To be able to easily control and monitor your entire setup, you can create a panel. Panels are dashboards where you can create visual controls and add areas to show values, add buttons or switches to be able to control and monitor your devices.
 
 ## Supported HW
+* [Arduino Mega](#arduino-mega-2560-with-ethernet-module-w51005200w5500)
+* [ESP01](#esp01-esp8266)
+* [ESP32](#esp32)
+* [Modbus TCP](#modbus-tcp)
 
-Server communicates with boards via TCP connection using easy to read and understand JSON format. It does not use encryption of any kind and should be only used over secured network without public access. Both the server and boards verify and accept connection only from the opposite side based on checking the IP address.
+Server communicates with boards via TCP connection using easy to read and understand JSON format. It does not use encryption of any kind and should be only used over secured network without public access. Both the server and boards verify and accept connection only based on checking the IP address.
 
-Board FW repository is /robertcigan/home_control_arduino
+Board FW repository is https://github.com/robertcigan/home_control_arduino. Use VS Code Platformio plugin to compile & flash it.
 
 ### Arduino Mega 2560 with Ethernet Module W5100/5200/W5500
 
@@ -34,9 +42,21 @@ A0 - A15 assignable analog pins
 
 ### ESP32
 
-### Modbus TCP (read only)
+### Modbus TCP
+  Read-only
 
 ## Supported Devices
+
+* [Button](#button)
+* [Switch](#switch)
+* [Distance Sensor](#distance-sensor)
+* [DS18B20](#ds18b20-temperature-sensor)
+* [Analog input](#analog-input)
+* [Relay](#relay)
+* [PWM output](#pwm-output)
+* [Sound](#sound)
+* [Blids/Shutters/Curtain](#blindsshuttercurtain-type-device)
+
 
 ### Button
 
@@ -48,7 +68,7 @@ Scans for a signal change and reports to the server when the button was pressed.
 `Digital Input`
 Scans for a signal change and reports to the server when theres any change HI -> LOW or LOW -> HI. 
 
-### Distance
+### Distance sensor
 [Ultrasonic distance sensor](https://projecthub.arduino.cc/Isaac100/getting-started-with-the-hc-sr04-ultrasonic-sensor-7cabe1) 
 
 Check peridically the distance and reports it to the server when changed. Distance value is in centimeters. Configuration pin is a trigger pin, echo pin is automatically used following one. If you set a Pin to ie. 10, then connect trigger pin  of the module to 10 and echo pin to 11. 
@@ -60,7 +80,7 @@ Periodically checks the temperature and repors it to the server when changed. Va
 ### Analog input
 `Analog Input`
 
-Checks for a analog value and reports it when changed to the server. The measurement unit is V. Do not allow to pass more than the board Vcc to the anaglo input voltage, otherwise the board chip may be destroed. Use only analg input pins. To measure voltage on a pin A4, enter 4 as a pin number. 
+Checks for a analog value and reports it when changed to the server. The measurement unit is V. Do not allow to pass more than the board Vcc to the analog input voltage, otherwise the board chip may be destroed. Use only analg input pins. To measure voltage on a pin A4, enter 4 as a pin number. 
 
 ### Relay
 `Digital Output`
@@ -117,17 +137,10 @@ Pings a device to maintain a connection and expects the `pong` reponse. If the s
 
 Follow [this link](/robertcigan/home_control_arduino) for how to flash and setup the board.
 
-Ubuntu 22 or Raspbian setup step by step
+## Contributing
 
-### 1. RVM and Ruby Installation
-_TODO_
+I encourage you to contribute to Home Control project. As I use this project personally, I intend to support it and continue developing new features and maintaining existing ones for a long time. 
 
-### 2. MySQL/Redis
-_TODO_
+## License
 
-### 3. Puma server with Nginx proxy
-_TODO_
-
-### 4. Systemd arduino_server service
-_TODO_
-
+Home Control is released under the [MIT License](https://opensource.org/licenses/MIT).

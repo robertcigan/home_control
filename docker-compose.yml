@@ -1,0 +1,67 @@
+services:
+  app:
+    image: robertcigan/home_control:${HOME_CONTROL_VERSION}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: db
+      POSTGRES_DB: home_control
+      REDIS_URL: "redis://redis:6379/1"
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: 1
+      RAILS_SERVE_STATIC_FILES: 1
+      WEBSOCKET_HOST: ${HOST}
+      WEBSOCKET_PORT: ${PORT}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    ports:
+      - ${PORT}:3000
+    depends_on:
+      db:
+        condition: service_healthy
+    command: bash -c "rm -f tmp/pids/server.pid && RAILS_ENV=production bundle exec rails db:migrate && RAILS_ENV=production bundle exec rails s -p 3000 -b '0.0.0.0'"
+  arduino:
+    image: robertcigan/home_control:${HOME_CONTROL_VERSION}
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: db
+      POSTGRES_DB: home_control
+      REDIS_URL: "redis://redis:6379/1"
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: 1
+      WEBSOCKET_HOST: app
+      WEBSOCKET_PORT: 3000
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    ports:
+      - 7777:7777
+    depends_on:
+      db:
+        condition: service_healthy
+    command: bash -c "RAILS_ENV=production bundle exec rails runner lib/arduino_server.rb"
+  db:
+    image: postgres:alpine3.15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: home_control
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  redis:
+    image: redis:7.0
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/var/lib/redis/data
+volumes:
+  db_data:
+  redis_data:
