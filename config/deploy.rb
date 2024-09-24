@@ -84,6 +84,21 @@ namespace :deploy do
   end
 end
 
+# Automatically create env.yml file based on example file
+
+append :linked_files, "config/env.yml"
+namespace :deploy do
+  namespace :check do
+    before :linked_files do
+      on roles(:app), in: :sequence, wait: 10 do
+        unless test("[ -f #{shared_path}/config/env.yml ]")
+          upload! 'config/env.example.yml', "#{shared_path}/config/env.yml"
+        end
+      end
+    end
+  end
+end
+
 namespace :nginx do
   desc "Restart nginx"
   task :restart do
