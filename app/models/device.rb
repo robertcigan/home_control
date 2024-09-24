@@ -155,4 +155,14 @@ class Device < ApplicationRecord
   def reset_pins
     board.set_pins
   end
+
+  private
+
+  def self.ransackable_attributes(auth_object = nil)
+    authorizable_ransackable_attributes
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    authorizable_ransackable_associations
+  end
 end
