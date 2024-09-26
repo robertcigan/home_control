@@ -22,17 +22,24 @@ https://docs.docker.com/engine/install/linux-postinstall/#configure-docker-to-st
 1. Create new folder in your home directory
   `mkdir home_control`
 2. Download docker-compose.yml and .env file
-  `docker-conpose.yml`
-  `.env.example`
   Rename .env.example to .env
+  `wget https://raw.githubusercontent.com/robertcigan/home_control/refs/heads/master/docker-compose.yml`
+  `wget https://raw.githubusercontent.com/robertcigan/home_control/refs/heads/master/.env.example`
+  `mv .env.example .env`
+
 3. Configure enviroment variables in .env file.
     * set IP address to your RPi static IP address.
     * choose port that the app will be running on (default 7080)
     * set username/password for admin access
     * change the secret key base to something else (best some random string)
-4. Open terminal, change the current directory to the app directory and run docker composer. This command will download HomeControl image, Redis and PostgreSQL images from Docker Hub and start all of them. 
+4. Open terminal, change the current directory to the   app directory and run docker composer. This command will download HomeControl image, Redis and PostgreSQL images from Docker Hub and start all of them. 
   `cd ~/home_control`
+  `docker compose up`
+
+5. Access http://192.168.0.100:7080 (use whatever IP and port is set in the .env file) and verify the app is up and running.
+  
+6. CTRL+C and run the app in the background.
   `docker compose start`
 
-5. Access http://192.168.0.100:7080 (use whatever IP and port is set in the .env file)
-  
+7. Docker container is automatically set to be running after server start. Test that by rebooting the server.
+  `sudo reboot`
