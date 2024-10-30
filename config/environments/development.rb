@@ -70,7 +70,7 @@ Rails.application.configure do
 
   config.action_cable.mount_path = '/websockets'
 
-  config.action_cable.url = "ws://#{ENV['WEBSOCKET_HOST']}#{ENV['WEBSOCKET_PORT'] ? ":#{ENV['WEBSOCKET_PORT']}" : ""}/websockets"
+  config.action_cable.url = "ws://#{ENV['HOST']}#{ENV['PORT'] ? ":#{ENV['PORT']}" : ""}/websockets"
   config.action_cable.allowed_request_origins = [ "http://#{ENV['WEBSOCKET_HOST']}"]
   config.action_cable.disable_request_forgery_protection = true
   

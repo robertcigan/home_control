@@ -1,3 +1,4 @@
+require 'dotenv/load'
 require 'action_cable_client'
 require 'arduino_messenger'
 require 'socket'
@@ -17,8 +18,7 @@ EventMachine.run do
   Signal.trap("TERM") { EventMachine.stop }
 
   EM.start_server(ip_address, 7777, ArduinoMessenger)
-
-  uri = "ws://#{ENV['WEBSOCKET_HOST']}#{ENV['WEBSOCKET_PORT'] ? ":#{ENV['WEBSOCKET_PORT']}" : ""}/websockets/"
+  uri = "ws://#{ENV['HOST']}#{ENV['PORT'] ? ":#{ENV['PORT']}" : ""}/websockets/"
   puts "Websocket server: "
   puts uri
   client = ActionCableClient.new(uri, 'ArduinoChannel')
