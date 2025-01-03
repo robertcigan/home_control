@@ -30,7 +30,6 @@ module HomeControl7
 
     Rails.autoloaders.main.ignore(
       lib.join("assets"),
-      lib.join("capistrano"),
       lib.join("tasks")
     )
 
