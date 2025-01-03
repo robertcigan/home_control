@@ -9,4 +9,4 @@
 2. login to https://hub.docker.com/
   `docker login`
 3. build the version with the version tag and push it to docker hub
-  `docker buildx build --tag robertcigan/home_control:3.4 --platform linux/arm64,linux/arm,linux/amd64 --builder multiplatform --push .`
+  `docker buildx build --tag robertcigan/home_control:3.4.1 --platform linux/arm64,linux/arm,linux/amd64 --builder multiplatform --push .`

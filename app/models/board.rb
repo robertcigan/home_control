@@ -137,7 +137,6 @@ class Board < ApplicationRecord
         cl.read_retry_timeout = 1
         cl.read_retries = 1
         cl.with_slave(slave_address) do |slave|
-          slave.debug = false
           begin
             regs = slave.read_holding_registers(device_block.first.holding_register_address, device_block.size)
             regs.each_with_index do |reg, i|
@@ -175,5 +174,13 @@ class Board < ApplicationRecord
         board_logs.build(connected: !connected_at.nil?, ssid: ssid, signal_strength: signal_strength)
       end
     end
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    authorizable_ransackable_attributes
+  end
+
+  def self.ransackable_associations(auth_object = nil)
+    authorizable_ransackable_associations
   end
 end

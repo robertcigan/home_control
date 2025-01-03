@@ -41,7 +41,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    command: bash -c "RAILS_ENV=production bundle exec rails runner lib/arduino_server.rb"
+    command: bash -c "RAILS_ENV=production bundle exec rails runner 'ArduinoServer.run'"
   db:
     image: postgres:alpine3.15
     restart: unless-stopped

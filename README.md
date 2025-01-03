@@ -1,4 +1,4 @@
-# Home Control 3.4
+# Home Control 3.4.1
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
