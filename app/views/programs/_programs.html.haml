@@ -2,12 +2,12 @@
   %table.table.table-hover.table-striped
     %thead
       %tr
-        %th= sort_link @search, :name, "Name", {}, remote: true
-        %th= sort_link @search, :program_type, "Type", {}, remote: true
-        %th= sort_link @search, :last_run, "Last Run", {}, remote: true
-        %th.text-right= sort_link @search, :runtime, "Runtime", {}, remote: true
+        %th= sort_link @search, :name, "Name", remote: true
+        %th= sort_link @search, :program_type, "Type", remote: true
+        %th= sort_link @search, :last_run, "Last Run", remote: true
+        %th.text-right= sort_link @search, :runtime, "Runtime", remote: true
         %th.text-right Thread Utilization
-        %th.text-center= sort_link @search, :enabled, "Status", {}, remote: true
+        %th.text-center= sort_link @search, :enabled, "Status", remote: true
         %th
     %tbody
       - @programs.each do |program|

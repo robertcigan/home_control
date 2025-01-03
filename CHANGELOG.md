@@ -1,3 +1,12 @@
+# Changelog
+
+[Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
+
+## Home Control 3.4.1 (2025-01-03)
+  * Rails 7.1.5.1
+  * Ruby 3.3.6
+  * Updated bundle
+
 ## Home Control 3.4 (2024-01)
   * Optional widget labels
   * Optional device log

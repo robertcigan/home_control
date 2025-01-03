@@ -2,11 +2,11 @@
   %table.table.table-hover.table-striped
     %thead
       %tr
-        %th= sort_link @search, :created_at, "Time", { }, remote: true
-        %th= sort_link @search, :log_type, "Status", { }, remote: true
+        %th= sort_link @search, :created_at, "Time", remote: true
+        %th= sort_link @search, :connected, "Status", remote: true
         - if @board.board_type_esp?
-          %th= sort_link @search, :ssid, "SSID", { }, remote: true
-          %th= sort_link @search, :signal_strength, "Signal Strength", { }, remote: true
+          %th= sort_link @search, :ssid, "SSID", remote: true
+          %th= sort_link @search, :signal_strength, "Signal Strength", remote: true
     %tbody
       - @board_logs.each do |board_log|
         %tr

@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.4"
+ruby "3.3.6"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "7.1.3.4"
+gem "rails", "7.1.5.1"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -51,6 +51,8 @@ gem "sassc-rails"
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
+  gem 'dotenv'
+  gem "pry"
 end
 
 group :development do
@@ -76,14 +78,12 @@ group :test do
   gem "webdrivers"
 end
 
-gem "pry"
 gem "amoeba"
 gem "cancancan"
 gem "chartkick"
 gem "cocoon"
 gem "codemirror-rails"
 gem "coffee-rails"
-gem "envyable"
 gem "eventmachine"
 gem "action_cable_client"
 gem 'event_spitter'
@@ -91,7 +91,7 @@ gem "font_awesome5_rails"
 gem "foreman"
 gem "haml-rails", "~> 2.0"
 gem "kaminari"
-gem "mysql2"
+gem "pg"
 gem "ransack"
 gem "responders"
 gem "simple_form"

@@ -36,8 +36,9 @@
 /config/master.key
 
 # Don't check in credentials 
-config/env.yml
 config/database.yml
 
 .DS_Store
 node_modules
+
+.env

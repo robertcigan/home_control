@@ -137,7 +137,6 @@ class Board < ApplicationRecord
         cl.read_retry_timeout = 1
         cl.read_retries = 1
         cl.with_slave(slave_address) do |slave|
-          slave.debug = false
           begin
             regs = slave.read_holding_registers(device_block.first.holding_register_address, device_block.size)
             regs.each_with_index do |reg, i|

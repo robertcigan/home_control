@@ -1,3 +1,5 @@
+Obsolete install "manual" with direct deploy via Capistrano
+
 sudo apt-get install mc
 
 #  install rvm rvm.io

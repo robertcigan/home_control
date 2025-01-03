@@ -23,8 +23,16 @@ module HomeControl7
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    lib = root.join("lib")
     config.time_zone = "Prague"
-    config.autoload_paths += %W(#{config.root}/lib)
+    config.autoload_paths += [lib]
     config.active_record.yaml_column_permitted_classes = [ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Symbol, Time]
+
+    Rails.autoloaders.main.ignore(
+      lib.join("assets"),
+      lib.join("capistrano"),
+      lib.join("tasks")
+    )
+
   end
 end

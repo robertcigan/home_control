@@ -6,7 +6,7 @@
 server "192.168.0.3", user: "pi", roles: %w{app db web}
 set :deploy_to, "/home/pi/home_control"
 set :rails_env, 'production'
-set :ruby_version, "3.3.4"
+set :ruby_version, "3.3.6"
 set :rvm_ruby_version, -> { "#{fetch(:ruby_version)}@#{fetch(:application)}" }
 set :branch, "master"
 

@@ -1,6 +1,7 @@
+require "ostruct"
 Rails.application.configure do
   config.home_control = OpenStruct.new(
-    version: "3.4",
+    version: "3.4.1",
     luxon_formats: {
       second: "HH:mm:ss",
       minute: "HH:mm",
@@ -12,8 +13,8 @@ Rails.application.configure do
       time: "d.L.y HH:mm:ss"
     },
     authentication: {
-      name: "home",
-      password: "control"
+      name: ENV["ADMIN_USERNAME"],
+      password: ENV["ADMIN_PASSWORD"]
     }
   )
 end

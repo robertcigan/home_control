@@ -16,7 +16,8 @@ class Program < ApplicationRecord
   
   scope :default, -> { where(program_type: ProgramType::DEFAULT) }
   scope :repeated, -> { where(program_type: ProgramType::REPEATED) }
-  scope :repeated_to_run, -> { where(enabled: true, program_type: ProgramType::REPEATED).where("(TO_SECONDS(UTC_TIMESTAMP()) - TO_SECONDS(last_run)) >= COALESCE(repeat_every, 1)")}
+  # scope :repeated_to_run, -> { where(enabled: true, program_type: ProgramType::REPEATED).where("(TO_SECONDS(UTC_TIMESTAMP()) - TO_SECONDS(last_run)) >= COALESCE(repeat_every, 1)")}
+  scope :repeated_to_run, -> { where(enabled: true, program_type: ProgramType::REPEATED).where("(now() - last_run) >= interval '1 seconds' * COALESCE(repeat_every, 1)")}
   
   before_save :set_default_storage
   
