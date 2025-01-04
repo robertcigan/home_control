@@ -6,6 +6,7 @@
   * Rails 7.1.5.1
   * Ruby 3.3.6
   * Updated bundle
+  * When updating from previous version, the docker-compose.yml in Arduino container is changed to run 'ArduinoServer.run' instead of 'lib/arduino_server.rb'. Change that in you existing docker-compose.yml file on your server/machine.
 
 ## Home Control 3.4 (2024-01)
   * Optional widget labels
