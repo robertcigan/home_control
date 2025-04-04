@@ -4,8 +4,10 @@
     .row
       = form.input :name, wrapper_html: { class: "col-sm-6" }
       = form.input :device_type, collection: Device.device_types_to_collection, input_html: { data: { reload: true } }, wrapper_html: { class: "col-sm-6" }
-    
+    .row
       = form.association :board, input_html: { data: { reload: true } }, wrapper_html: { class: "col-sm-6" }
+      - if @device.board && @device.board.board_type_modbus_tcp?
+        = form.input :virtual_writable, wrapper_html: { class: "col-sm-6" }
     - if @device.board
       - if @device.board.board_type_modbus_tcp?
         .row
@@ -34,7 +36,7 @@
             = form.input :compression_backlog, hint: "How many compression timespans should pass to start the compression", wrapper_html: { class: "col-sm-6 col-md-4" }
       .row
         = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
-        
+
   .modal-footer
     = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
     = form.button :submit, @device.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }

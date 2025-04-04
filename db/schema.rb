@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_03_114007) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_29_211246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -85,6 +85,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_03_114007) do
     t.datetime "compression_last_run_at", precision: nil
     t.integer "days_to_preserve_logs"
     t.boolean "log_enabled", default: true, null: false
+    t.boolean "virtual_writable", default: false, null: false
     t.index ["board_id"], name: "index_devices_on_board_id"
     t.index ["compression_last_run_at"], name: "index_devices_on_compression_last_run_at"
     t.index ["days_to_preserve_logs"], name: "index_devices_on_days_to_preserve_logs"
@@ -94,6 +95,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_03_114007) do
     t.index ["name"], name: "index_devices_on_name"
     t.index ["pin"], name: "index_devices_on_pin"
     t.index ["type"], name: "index_devices_on_type"
+    t.index ["virtual_writable"], name: "index_devices_on_virtual_writable"
   end
 
   create_table "panels", force: :cascade do |t|

@@ -2,7 +2,7 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
-Home Control is a Ruby on Rails based home automation DIY style project. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports both Ethernet and WiFI boards. It also supports ModBus TCP. 
+Home Control is a Ruby on Rails based home automation DIY style project. It's targeted towards hobby tinkerer with a basic programming skills to write your own programs to control your devices. It uses Arduino on the HW side and supports both Ethernet and WiFI boards. It also supports ModBus TCP.
 
 It's designed to be effective in creating both simple and complex automation processes by directly writing Ruby code. The downside is no support for existing WiFi devices so it's indented for hobbyists with general Arduino and electronics knowledge.
 
@@ -13,7 +13,7 @@ The process that does the "automation" and communication with devices is based o
 
 ## How it works
 
-Essentially you setup a board ( Arduino Mega/ ESP or TCP Modbus) and then add devices that are attached on that board with pin assigment or other settings. When you do that, the configuration is sent over to that board. The only initial configuration in boards that must be done is a network setup (via USB serial terminal). You can have multiple devices like sensors or relays attached to one board, the only limitation is number of pins that are available on each board. That's why I mostly use Arduino Mega. 
+Essentially you setup a board ( Arduino Mega/ ESP or TCP Modbus) and then add devices that are attached on that board with pin assigment or other settings. When you do that, the configuration is sent over to that board. The only initial configuration in boards that must be done is a network setup (via USB serial terminal). You can have multiple devices like sensors or relays attached to one board, the only limitation is number of pins that are available on each board. That's why I mostly use Arduino Mega.
 
 Once you have the HW setup with boards and devices configured, you can create Programs. Programs are a pieces of Ruby code that are run when something happens, like a temperature changes, button is pressed etc. Pograms can also be initiated periodically. Programs are written in Ruby and are evaluated on the object `Program` level, which is not a safe practice, but the idea is that you should be the only one having access to the admin part of the app anyway. The upside is, that you can literally do whatever you want and only your imagination and skills are the limits.
 
@@ -31,7 +31,7 @@ Board FW repository is https://github.com/robertcigan/home_control_arduino. Use 
 
 ### Arduino Mega 2560 with Ethernet Module W5100/5200/W5500
 
-Arduino Mega does not come with any network connectivity by default so you need to use either a Ethernet Shield or a Ethernet module and wire it to the board. I use external [W5500 Ethernet Module](https://www.google.com/search?q=W5500+Ethernet+Network+Module&oq=W5500+Ethernet+Network+Module&gs_lcrp=EgZjaHJvbWUyCwgAEEUYExg5GIAEMgoIARAAGBMYFhgeMgoIAhAAGIAEGKIEMgoIAxAAGIAEGKIEMgoIBBAAGIAEGKIEMgoIBRAAGIAEGKIEMgYIBhBFGD3SAQczMTdqMGo0qAIAsAIB&sourceid=chrome&ie=UTF-8) and wire to to SPI header. The SPI Select pin is digital pin 10. 
+Arduino Mega does not come with any network connectivity by default so you need to use either a Ethernet Shield or a Ethernet module and wire it to the board. I use external [W5500 Ethernet Module](https://www.google.com/search?q=W5500+Ethernet+Network+Module&oq=W5500+Ethernet+Network+Module&gs_lcrp=EgZjaHJvbWUyCwgAEEUYExg5GIAEMgoIARAAGBMYFhgeMgoIAhAAGIAEGKIEMgoIAxAAGIAEGKIEMgoIBBAAGIAEGKIEMgoIBRAAGIAEGKIEMgYIBhBFGD3SAQczMTdqMGo0qAIAsAIB&sourceid=chrome&ie=UTF-8) and wire to to SPI header. The SPI Select pin is digital pin 10.
 
 __Dedicated Pins__
 10 - used by ethernet module
@@ -43,7 +43,7 @@ A0 - A15 assignable analog pins
 ### ESP32
 
 ### Modbus TCP
-  Read-only
+  Read- and write to registers over ethernet.
 
 ## Supported Devices
 
@@ -57,21 +57,20 @@ A0 - A15 assignable analog pins
 * [Sound](#sound)
 * [Blids/Shutters/Curtain](#blindsshuttercurtain-type-device)
 
-
 ### Button
 
-`Digital Input` 
-Scans for a signal change and reports to the server when the button was pressed. Server stores the latest time of the button press. 
+`Digital Input`
+Scans for a signal change and reports to the server when the button was pressed. Server stores the latest time of the button press.
 
 ### Switch
 
 `Digital Input`
-Scans for a signal change and reports to the server when theres any change HI -> LOW or LOW -> HI. 
+Scans for a signal change and reports to the server when theres any change HI -> LOW or LOW -> HI.
 
 ### Distance sensor
-[Ultrasonic distance sensor](https://projecthub.arduino.cc/Isaac100/getting-started-with-the-hc-sr04-ultrasonic-sensor-7cabe1) 
+[Ultrasonic distance sensor](https://projecthub.arduino.cc/Isaac100/getting-started-with-the-hc-sr04-ultrasonic-sensor-7cabe1)
 
-Check peridically the distance and reports it to the server when changed. Distance value is in centimeters. Configuration pin is a trigger pin, echo pin is automatically used following one. If you set a Pin to ie. 10, then connect trigger pin  of the module to 10 and echo pin to 11. 
+Check peridically the distance and reports it to the server when changed. Distance value is in centimeters. Configuration pin is a trigger pin, echo pin is automatically used following one. If you set a Pin to ie. 10, then connect trigger pin  of the module to 10 and echo pin to 11.
 
 ### DS18B20 temperature sensor
 
@@ -80,12 +79,12 @@ Periodically checks the temperature and repors it to the server when changed. Va
 ### Analog input
 `Analog Input`
 
-Checks for a analog value and reports it when changed to the server. The measurement unit is V. Do not allow to pass more than the board Vcc to the analog input voltage, otherwise the board chip may be destroed. Use only analg input pins. To measure voltage on a pin A4, enter 4 as a pin number. 
+Checks for a analog value and reports it when changed to the server. The measurement unit is V. Do not allow to pass more than the board Vcc to the analog input voltage, otherwise the board chip may be destroed. Use only analg input pins. To measure voltage on a pin A4, enter 4 as a pin number.
 
 ### Relay
 `Digital Output`
 
-This is a output device only that is controlled using LOW or HI state of the output pin. 
+This is a output device only that is controlled using LOW or HI state of the output pin.
 
 ### PWM output
 `Analog Output`
@@ -102,7 +101,7 @@ Uses hardcoded Serial1 class to send commands to the player so connect it to Ser
 ### Blinds/Shutter/Curtain type device
 `Digital Output`
 
-Controlling via custom Arduino Nano module with 2 relays that then control blinds/shutters/curtain where you can only allow power on one or the other signal wire. Requires you to use custom Arduino board with 2 relay module. Open pin is connected to the pin set in the device configuration and close pin is set to the following one. 
+Controlling via custom Arduino Nano module with 2 relays that then control blinds/shutters/curtain where you can only allow power on one or the other signal wire. Requires you to use custom Arduino board with 2 relay module. Open pin is connected to the pin set in the device configuration and close pin is set to the following one.
 
 ## Communication protocol
 
@@ -116,7 +115,7 @@ Clears/removes all the device settings from the board. Used before uploading a n
 
 __Add device__
 
-`{ 
+`{
   add:
   {
     type: "switch"
@@ -125,7 +124,7 @@ __Add device__
   }
 }`
 
-Adds a device with a specific configuration. 
+Adds a device with a specific configuration.
 
 __Ping__
 
@@ -139,7 +138,7 @@ Follow [this link](/robertcigan/home_control_arduino) for how to flash and setup
 
 ## Contributing
 
-I encourage you to contribute to Home Control project. As I use this project personally, I intend to support it and continue developing new features and maintaining existing ones for a long time. 
+I encourage you to contribute to Home Control project. As I use this project personally, I intend to support it and continue developing new features and maintaining existing ones for a long time.
 
 ## License
 

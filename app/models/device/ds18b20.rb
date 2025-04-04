@@ -6,32 +6,32 @@ class Device::Ds18b20 < Device
   def set(new_value)
     update(value: new_value)
   end
-  
+
   def status
     value
   end
-  
+
   def indication
     unit.present? ? "#{value}#{unit}" : "#{value}°C"
   end
-  
+
   def value
     value_decimal
   end
-  
+
   def value=(input)
     self.value_decimal = input
   end
 
-  def get_value_from_arduino
-    send_to_arduino(read: { id: id })
+  def get_value_from_board
+    send_to_board(read: { id: id })
   end
 
   def setup_pin
-    send_to_arduino(add: { id: id, type: "ds18b20", pin: pin, poll: poll || 30000 } )
+    send_to_board(add: { id: id, type: "ds18b20", pin: pin, poll: poll || 30000 } )
   end
 
-  def readable_value?
+  def readable?
     true
   end
 
@@ -44,13 +44,13 @@ class Device::Ds18b20 < Device
   end
 
   protected
-  
+
   def detect_change
     if previous_changes.key?(:value_decimal)
       trigger_programs
     end
   end
-  
+
   def log_device_log
     if value_decimal_changed?
       self.last_change = Time.current

@@ -55,6 +55,7 @@ en:
         last_change: "Last Change"
         days_to_preserve_logs: "Clear Logs After (days)"
         log_enabled: "Log Enabled"
+        virtual_writable: "Writable?"
       panel:
         public_access: "Public Access"
       widget:
@@ -67,7 +68,7 @@ en:
           arduino_mega_8b: "Arduino Mega (8bit)"
           esp: "ESP8266/ESP32"
           modbus_tcp: "ModBus TCP"
-      board_log: 
+      board_log:
         log_type:
           connected: "Connected"
           disconnected: "Disconected"
