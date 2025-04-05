@@ -177,7 +177,6 @@ class Board < ApplicationRecord
 
   def write_modbus(device)
     begin
-      puts "#{Time.now} Modbus Write - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
       ModBus::TCPClient.connect(ip, 502) do |cl|
         cl.read_retry_timeout = 1
         cl.read_retries = 1
@@ -187,8 +186,13 @@ class Board < ApplicationRecord
             if device.modbus_data_type_int16?
               new_value = new_value >= 0 ? new_value : (new_value + 65536)
             end
-            puts "Writing #{new_value} to #{device.holding_register_address}"
-            slave.write_single_register(device.holding_register_address, new_value)
+            current_value = slave.read_holding_register(device.holding_register_address)
+            if current_value != new_value
+              puts "#{Time.now} Modbus Write - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+              slave.write_single_register(device.holding_register_address, new_value)
+            else
+              puts "#{Time.now} Modbus already set - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+            end
           end
         end
       end

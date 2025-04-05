@@ -2,6 +2,9 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.4.3 (2025-03-05)
+  * Write to Modbus register only if the value is different (read first then write)
+
 ## Home Control 3.4.2 (2025-03-04)
   * Added checkbox Writable? to virtual devices
   * Added support for writing to ModBus devices - holding registers (based on Writable? checkbox)
