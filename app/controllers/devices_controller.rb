@@ -28,7 +28,7 @@ class DevicesController < ApplicationController
   def create
     @device = Device.new(device_params)
     if !@reload && @device.save
-      flash.now[:notice] = "Device was successfully created." 
+      flash.now[:notice] = "Device was successfully created."
     end
     respond_with(@device, location: :devices, reload: @reload)
   end
@@ -58,7 +58,7 @@ class DevicesController < ApplicationController
 
   def device_params
     params.require(:device).permit(
-      :name, :board_id, :device_type, :pin, 
+      :name, :board_id, :device_type, :pin, :virtual_writable,
       :inverted, :poll, :holding_register_address, :scale,
       :value, :value_boolean, :value_integer, :value_string, :value_decimal, :unit, :modbus_data_type,
       :compression_type, :compression_timespan, :compression_backlog, :compression_last_run_at,

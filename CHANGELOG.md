@@ -2,6 +2,12 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.4.2 (2025-03-04)
+  * Added checkbox Writable? to virtual devices
+  * Added support for writing to ModBus devices - holding registers (based on Writable? checkbox)
+  * ArduinoServer code refactoring
+  * Refactoring devices read/write methods
+
 ## Home Control 3.4.1 (2025-01-03)
   * Rails 7.1.5.1
   * Ruby 3.3.6

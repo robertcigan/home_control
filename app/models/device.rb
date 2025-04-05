@@ -6,11 +6,11 @@ class Device < ApplicationRecord
   def self.device_types_to_collection
     I18n.t("activerecord.attribute_options.device.device_type").to_a.map{|i| [i.last, "Device::#{i.first.to_s.camelize}"] }
   end
-  
+
   def device_type_to_human
     I18n.t("activerecord.attribute_options.device.device_type.#{device_type.sub("Device::", "").underscore}") if device_type.present?
   end
-  
+
   I18n.t("activerecord.attribute_options.device.device_type").each do |option, name|
     scope "device_type_#{option.to_s}".to_sym, -> { where(device_type: "Device::#{option.to_s.camelize}") }
 
@@ -34,17 +34,17 @@ class Device < ApplicationRecord
 
   include WebsocketPushChange
   include LogCompression
-  
+
   validates :name, :device_type, presence: true
   validates :pin, uniqueness: { scope: :board_id, allow_nil: true }
   validates :holding_register_address, presence: true, if: -> (device) { device.board && device.board.board_type_modbus_tcp? }
   validates :compression_timespan, :compression_backlog, presence: { if:  proc { |device| device.compression_type.present? } }
-  
+
   has_many :device_logs, dependent: :delete_all
   has_many :programs_devices, dependent: :destroy
   has_many :programs, through: :programs_devices
   has_many :widgets, dependent: :destroy
-  
+
   belongs_to :board, optional: true
 
   scope :board, proc { |data| joins(:board).where(boards: { ip: data }) }
@@ -69,19 +69,19 @@ class Device < ApplicationRecord
   def json_data
     super.merge(status: status.to_s, updated: last_change_text, value: value.to_s, indication: indication.to_s)
   end
-  
+
   def status
     nil
   end
-  
-  def readable_value?
+
+  def readable?
     false
   end
-  
-  def writable_value?
+
+  def writable?
     false
   end
-  
+
   def toggle?
     false
   end
@@ -89,18 +89,12 @@ class Device < ApplicationRecord
   def poll?
     false
   end
-  
+
   def indication
     unit.present? ? "#{value}#{unit}" : value
   end
 
   def value
-  end
-  
-  def get_value_from_arduino
-  end
-  
-  def set_value_to_arduino
   end
 
   def value_attribute
@@ -124,6 +118,10 @@ class Device < ApplicationRecord
     logs_to_clear.delete_all
   end
 
+  def send_to_board(data)
+    board.send_to_board(data)
+  end
+
   protected
 
   def detect_hw_change
@@ -140,11 +138,6 @@ class Device < ApplicationRecord
     end
   end
 
-
-  def send_to_arduino(data)
-    board.send_to_arduino(data)
-  end
-
   def trigger_programs
     Program.joins(:programs_devices).where(programs_devices: { device_id: self.id, trigger: true }, program_type: Program::ProgramType::DEFAULT, enabled: true).each(&:run)
   end
@@ -153,6 +146,7 @@ class Device < ApplicationRecord
   end
 
   def reset_pins
+    board.reset_devices
     board.set_pins
   end
 

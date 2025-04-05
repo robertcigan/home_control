@@ -2,7 +2,7 @@ class Board < ApplicationRecord
   include WebsocketPushChange
   include AttributeOption
   attribute_options :board_type, [:arduino_mega_8b, :esp, :modbus_tcp]
-  
+
   validates :name, :ip, presence: true, uniqueness: { unless: :board_type_modbus_tcp? }
   validates :board_type, presence: true
   validates :slave_address, :data_read_interval, presence: true, if: :board_type_modbus_tcp?
@@ -20,14 +20,10 @@ class Board < ApplicationRecord
     name.present? ? name : "UNKNOWN"
   end
 
-  def ping
-    send_to_arduino({ ping: true })
-  end
-
   def connected?
     !connected_at.nil? && (connected_at > (Time.current - 25.seconds))
   end
-  
+
   def connected; connected?; end
 
   def disconnected!
@@ -63,34 +59,55 @@ class Board < ApplicationRecord
       puts "RECEIVED WRONG JSON: " + data.to_s
     end
   end
-  
+
   def json_data
     super.merge(status: connected.to_s, ssid: ssid, "signal-strength": signal_strength)
   end
-  
+
+  def ping
+    if board_type_arduino_mega_8b? || board_type_esp?
+      send_to_arduino({ ping: true })
+    end
+  end
+
+  def reset_devices
+    if board_type_arduino_mega_8b? || board_type_esp?
+      send_to_arduino({ reset_devices: true })
+    end
+  end
+
+
+  def send_to_board(data)
+    if board_type_arduino_mega_8b? || board_type_esp?
+      send_to_arduino(data)
+    elsif board_type_modbus_tcp?
+      send_to_modbus(data)
+    end
+  end
+
   def send_to_arduino(data)
     ActionCable.server.broadcast("arduino", { ip: ip, data: data.to_json } )
   end
 
+  def send_to_modbus(data)
+    ActionCable.server.broadcast("modbus", data )
+  end
+
   def set_pins
-    send_to_arduino({ reset_devices: true })
-    # send devices pin assignments
-    devices.each do |device|
-      if device.respond_to?(:setup_pin)
-        device.setup_pin
-      end
+    devices.select{|device| device.respond_to?(:setup_pin) }.each do |device|
+      device.setup_pin
     end
   end
 
   def read_values_from_devices
-    devices.reload.select{|device| device.readable_value? }.each do |device|
-      device.get_value_from_arduino
+    devices.reload.select{|device| device.readable? }.each do |device|
+      device.get_value_from_board
     end
   end
 
   def write_values_to_devices
-    devices.reload.select{|device| device.writable_value? }.each do |device|
-      device.set_value_to_arduino 
+    devices.reload.select{|device| device.writable? && device.respond_to?(:set_value_to_board) }.each do |device|
+      device.set_value_to_board
     end
   end
 
@@ -107,7 +124,7 @@ class Board < ApplicationRecord
   end
 
   def read_modbus # group by consecutive address blocks
-    devices_to_read = devices.where.not(holding_register_address: nil).order(:holding_register_address).load
+    devices_to_read = devices.where.not(holding_register_address: nil).where(virtual_writable: false).order(:holding_register_address).load
     device_blocks = []
     single_block = []
     devices_to_read.each_with_index do |device, i|
@@ -157,7 +174,30 @@ class Board < ApplicationRecord
       disconnected!
     end
   end
-  
+
+  def write_modbus(device)
+    begin
+      puts "#{Time.now} Modbus Write - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+      ModBus::TCPClient.connect(ip, 502) do |cl|
+        cl.read_retry_timeout = 1
+        cl.read_retries = 1
+        cl.with_slave(slave_address) do |slave|
+          begin
+            new_value = device.scale ? (device.value * device.scale) : device.value
+            if device.modbus_data_type_int16?
+              new_value = new_value >= 0 ? new_value : (new_value + 65536)
+            end
+            puts "Writing #{new_value} to #{device.holding_register_address}"
+            slave.write_single_register(device.holding_register_address, new_value)
+          end
+        end
+      end
+      connected!
+    rescue ModBus::Errors::ModBusException, Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::EHOSTDOWN, Errno::ECONNREFUSED => e
+      puts "#{Time.now} Modbus Write Error - #{name} / #{ip} - #{e.message}"
+    end
+  end
+
   def clear_logs
     logs_to_clear = board_logs.where("created_at < ?", Time.current - days_to_preserve_logs.days)
     logs_to_clear.delete_all

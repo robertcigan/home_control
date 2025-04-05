@@ -17,7 +17,7 @@ class Device::BoardTest < Device
   private
 
   def board_test
-    send_to_arduino("t")
+    send_to_board("t")
   end
 
   def log_device_log

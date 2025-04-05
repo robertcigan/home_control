@@ -24,10 +24,10 @@ class Device::Switch < Device
   end
 
   def setup_pin
-    send_to_arduino(add: { id: id, type: "switch", pin: pin, poll: poll || 250, inverted: inverted } )
+    send_to_board(add: { id: id, type: "switch", pin: pin, poll: poll || 250, inverted: inverted } )
   end
 
-  def readable_value?
+  def readable?
     true
   end
 
@@ -35,8 +35,8 @@ class Device::Switch < Device
     true
   end
 
-  def get_value_from_arduino
-    send_to_arduino(read: { id: id })
+  def get_value_from_board
+    send_to_board(read: { id: id })
   end
 
   def value_attribute
@@ -53,7 +53,7 @@ class Device::Switch < Device
   def log_device_log
     if value_boolean_changed?
       self.last_change = Time.current
-      device_logs.build(value_boolean: value_boolean) 
+      device_logs.build(value_boolean: value_boolean)
     end
   end
 end
