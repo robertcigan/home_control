@@ -1,4 +1,4 @@
-- page_title @program 
+- page_title @program
 
 - content_for(:section_title) do
   .card.shadow.program{ data: { program: @program.json_data }}
@@ -32,7 +32,7 @@
             .col-6
               %span.thread-utilisation> !
               \%
-            
+
         .col-sm-6
           .row.my-2
             .col-6
@@ -74,6 +74,15 @@
         %code= @program.code.gsub("\n", "<br/>").html_safe
       .col-md-6
         %code= @program.compiled_code.gsub("\n", "<br/>").html_safe
+
+.card.shadow.mt-2
+  .card-body.pt-0
+    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+      %h3 Output Log
+    .row
+      .col-12
+        %pre.output-log{ style: "max-height: 300px; overflow-y: auto;" }
+          = @program.output.present? ? @program.output : "No output yet"
 
 :javascript
   HomeControl.Programs.initShow();
