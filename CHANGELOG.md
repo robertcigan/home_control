@@ -2,6 +2,10 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.4.4 (2025-05-24)
+  * Add program logs to be able to debug programs better
+  * Add database backups page for downloading SQL and custom PG format
+
 ## Home Control 3.4.3 (2025-03-05)
   * Write to Modbus register only if the value is different (read first then write)
 
