@@ -32,6 +32,30 @@
             %br/
             %code time_between("12:00", "14:00")
             Return true if current time is in the range
+            %br/
+            %br/
+            %strong Logging methods:
+            %br/
+            %code log_debug("message")
+            Debug level message
+            %br/
+            %code log_info("message")
+            Info level message
+            %br/
+            %code log_warn("message")
+            Warning level message
+            %br/
+            %code log_error("message")
+            Error level message
+            %br/
+            %br/
+            %strong Example:
+            %br/
+            %code
+              log_info("Starting temperature check")
+              if teplota_device.value > 30
+              &nbsp;&nbsp;log_warn("Temperature too high")
+              end
 
       .col-sm-6#devices-section
         %h3 Devices
@@ -40,7 +64,7 @@
             = render 'programs_device_fields', f: programs_device
           .links
             = link_to_add_association fa_icon("plus", text: "Add"), form, :programs_devices, class: "btn btn-secondary btn-sm"
-    
+
   .modal-footer
     = link_to "Hide Devices", "#", class: "btn btn-link mr-auto", id: "hide_devices"
     = link_to "Show Devices", "#", class: "btn btn-link mr-auto", id: "show_devices"

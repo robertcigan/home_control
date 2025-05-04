@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_29_211246) do
+ActiveRecord::Schema[7.1].define(version: 2025_05_04_154933) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -122,6 +122,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_29_211246) do
     t.boolean "enabled", default: false, null: false
     t.integer "runtime"
     t.datetime "last_error_at", precision: nil
+    t.text "compiled_code"
+    t.text "output"
     t.index ["created_at"], name: "index_programs_on_created_at"
     t.index ["enabled"], name: "index_programs_on_enabled"
     t.index ["last_error_at"], name: "index_programs_on_last_error_at"
