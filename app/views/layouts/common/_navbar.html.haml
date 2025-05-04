@@ -14,5 +14,7 @@
         = link_to "Programs", programs_path, class: "nav-link"
       %li.nav-item{ class: ("active" if current_page?(panels_path)) }
         = link_to "Panels", panels_path, class: "nav-link"
+      %li.nav-item{ class: ("active" if current_page?(backup_path)) }
+        = link_to "Backups", backup_path, class: "nav-link"
   .ml-auto.text-secondary
     v#{Rails.configuration.home_control.version}

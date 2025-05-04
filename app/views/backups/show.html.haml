@@ -1,0 +1,20 @@
+- page_title "Database Backups"
+
+- content_for(:section_title) do
+  .card.shadow
+    .card-body.pt-0
+      .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+        %h1 Database Backups
+      .list-group.mt-4
+      = link_to download_backup_path(format: 'sql'), class: 'list-group-item list-group-item-action' do
+        .d-flex.w-100.justify-content-between
+          %h5.mb-1 SQL Format
+          %small.text-muted .sql
+        %p.mb-1
+          Backup in plain SQL format, suitable for reading and editing. More compatible with different database systems.
+      = link_to download_backup_path(format: 'custom'), class: 'list-group-item list-group-item-action' do
+        .d-flex.w-100.justify-content-between
+          %h5.mb-1 Binary Format
+          %small.text-muted .dump
+        %p.mb-1
+          Backup in PostgreSQL custom format, suitable for quick restoration.
