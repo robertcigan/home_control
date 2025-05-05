@@ -1,1 +1,4 @@
 <%= show_flash %>
+if ($("#<%= dom_id(@program) %>_output_log").length) {
+  <%= replace_with_render("##{dom_id(@program)}_output_log", "programs/output_log", program: @program ) %>
+}

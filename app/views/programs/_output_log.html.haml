@@ -1,0 +1,2 @@
+%pre.output-log{ id: "#{dom_id(program)}_output_log", style: "max-height: 300px; overflow-y: auto;" }
+  = program.output.present? ? program.output : "No output yet"

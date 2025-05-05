@@ -95,13 +95,15 @@ class Program < ApplicationRecord
   private
 
   def precompile_code
-    prepend_variables = ""
-    temp_code = code.dup
-    programs_devices.each do |programs_device|
-      prepend_variables << "#{programs_device.variable_name}_device = Device.find(#{programs_device.device_id})\n"
-      temp_code.gsub!("{{#{programs_device.variable_name}}}", "#{programs_device.variable_name}_device")
+    if code_changed? || code.present? && compiled_code.blank?
+      prepend_variables = ""
+      temp_code = code.dup
+      programs_devices.each do |programs_device|
+        prepend_variables << "#{programs_device.variable_name}_device = Device.find(#{programs_device.device_id})\n"
+        temp_code.gsub!("{{#{programs_device.variable_name}}}", "#{programs_device.variable_name}_device")
+      end
+      self.compiled_code = [prepend_variables, temp_code].join("\n")
     end
-    self.compiled_code = [prepend_variables, temp_code].join("\n")
   end
 
   def self.ransackable_attributes(auth_object = nil)
