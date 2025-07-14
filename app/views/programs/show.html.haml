@@ -68,20 +68,20 @@
 .card.shadow.mt-2
   .card-body.pt-0
     .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+      %h3 Output Log
+    .row
+      .col-12
+        = render 'output_log', program: @program
+
+.card.shadow.mt-2
+  .card-body.pt-0
+    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
       %h3 Code
     .row
       .col-md-6
         %code= @program.code.gsub("\n", "<br/>").html_safe
       .col-md-6
         %code= @program.compiled_code.gsub("\n", "<br/>").html_safe
-
-.card.shadow.mt-2
-  .card-body.pt-0
-    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
-      %h3 Output Log
-    .row
-      .col-12
-        = render 'output_log', program: @program
 
 :javascript
   HomeControl.Programs.initShow();
