@@ -146,8 +146,10 @@ class Device < ApplicationRecord
   end
 
   def reset_pins
-    board.reset_devices
-    board.set_pins
+    if board
+      board.reset_devices
+      board.set_pins
+    end
   end
 
   private

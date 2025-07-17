@@ -71,6 +71,13 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+
+  # RSpec for testing
+  gem "rspec-rails"
+  gem "factory_bot_rails"
+  gem "shoulda-matchers"
+  gem "database_cleaner-active_record"
+  gem "timecop"
 end
 
 gem "amoeba"

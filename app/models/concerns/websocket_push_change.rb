@@ -2,7 +2,7 @@ module WebsocketPushChange
   extend ActiveSupport::Concern
 
   included do
-    after_commit :push_value_change
+    after_commit :push_value_change, on: [:update]
   end
 
   def websocket_channel_name

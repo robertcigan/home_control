@@ -49,8 +49,10 @@ class Program < ApplicationRecord
     if runtime
       if program_type_repeated?
         runtime / (repeat_every * 10.0)
-      elsif program_type_default?
+      elsif program_type_default? && last_run
         runtime / ((Time.current - last_run) * 10.0)
+      else
+        0.0
       end
     else
       0.0
