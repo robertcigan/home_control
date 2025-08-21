@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :program do
     sequence(:name) { |n| "Program #{n}" }
-    program_type { "default" }
+    program_type { Program::ProgramType::DEFAULT }
     code { "string = 'Hello World'" }
     enabled { false }
     runtime { 0 }
@@ -10,7 +10,7 @@ FactoryBot.define do
     output { nil }
 
     trait :repeated do
-      program_type { "repeated" }
+      program_type { Program::ProgramType::REPEATED }
       repeat_every { 10 }
     end
   end

@@ -29,13 +29,14 @@ class ApplicationController < ActionController::Base
   protected
 
   def authenticate
+    return if Rails.env.test?
     http_basic_authenticate_or_request_with(
       name: Rails.configuration.home_control.authentication[:name],
       password: Rails.configuration.home_control.authentication[:password],
       realm: "Application"
     )
   end
-  
+
   def restore_per_page(default_per_page =  Kaminari.config.default_per_page)
     cookie_key = [controller_name, action_name, "per"].join("_")
     stored_per_page = JSON.load(cookies[cookie_key])

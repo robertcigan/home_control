@@ -10,6 +10,11 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
+# Capybara configuration
+require 'capybara/rspec'
+require 'capybara/cuprite'
+require 'capybara-screenshot/rspec'
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -99,4 +104,58 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
     with.library :rails
   end
+end
+
+# Capybara configuration
+Capybara.register_driver :cuprite do |app|
+  Capybara::Cuprite::Driver.new(
+    app,
+    window_size: [1200, 800],
+    browser_options: {
+      'disable-gpu': true,
+      'no-sandbox': true,
+      'disable-dev-shm-usage': true
+    },
+    process_timeout: 30,
+    timeout: 30,
+    extra_http_headers: {
+      'Authorization' => 'Basic ' + Base64.strict_encode64('admin:password')
+    },
+  )
+end
+
+Capybara.javascript_driver = :cuprite
+Capybara.default_driver = :rack_test
+Capybara.server = :puma, { Silent: true }
+Capybara.default_max_wait_time = 5
+
+# Screenshot configuration for failed tests
+Capybara.save_path = "tmp/capybara"
+Capybara.automatic_label_click = true
+
+# Capybara-screenshot configuration
+Capybara::Screenshot.prune_strategy = :keep_last_run
+Capybara::Screenshot.autosave_on_failure = true
+Capybara::Screenshot.append_timestamp = true
+
+Capybara.configure do |config|
+  config.match = :prefer_exact
+end
+
+# Set test authentication credentials
+ENV["ADMIN_USERNAME"] = "admin"
+ENV["ADMIN_PASSWORD"] = "password"
+
+# Feature helpers for waiting on modal form reloads
+module FeatureHelpers
+  def wait_for_modal_reload
+    using_wait_time 1 do
+      page.has_css?("#ajax-modal input[name='reload']")
+    end
+    expect(page).to have_no_css("#ajax-modal input[name='reload']")
+  end
+end
+
+RSpec.configure do |config|
+  config.include FeatureHelpers, type: :feature
 end
