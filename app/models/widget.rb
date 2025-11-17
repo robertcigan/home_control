@@ -1,7 +1,7 @@
 class Widget < ApplicationRecord
   include AttributeOption
   attribute_options :widget_type, [:switch, :button, :boolean_value, :text_value]
-  
+
   attribute_options :color_1, [:blue, :indigo, :purple, :pink, :red, :orange, :yellow, :green, :teal, :cyan, :white, :gray, :gray_dark]
   attribute_options :color_2, [:blue, :indigo, :purple, :pink, :red, :orange, :yellow, :green, :teal, :cyan, :white, :gray, :gray_dark]
   attribute_options :icon, [:cog, :lightbulb, :toggle]

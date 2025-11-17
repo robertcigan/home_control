@@ -31,10 +31,6 @@ class Device::Button < Device
     true
   end
 
-  # def value_attribute
-  #   :last_change
-  # end
-
   protected
 
   def detect_change

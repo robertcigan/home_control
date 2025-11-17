@@ -50,13 +50,19 @@ class Board < ApplicationRecord
             device.set()
           end
         else
-          puts "RECEIVED WRONG DEVICE DATA: " + data.to_s
+          unless Rails.env.test?
+            puts "RECEIVED WRONG DEVICE DATA: " + data.to_s
+          end
         end
       else
-        puts "RECEIVED WRONG DATA: " + data.to_s
+        unless Rails.env.test?
+          puts "RECEIVED WRONG DATA: " + data.to_s
+        end
       end
     else
-      puts "RECEIVED WRONG JSON: " + data.to_s
+      unless Rails.env.test?
+        puts "RECEIVED WRONG JSON: " + data.to_s
+      end
     end
   end
 
@@ -149,7 +155,6 @@ class Board < ApplicationRecord
 
   def read_modbus_block(device_block)
     begin
-      #puts "#{Time.now} Reading Modbus started - #{name} / #{ip}"
       ModBus::TCPClient.connect(ip, 502) do |cl|
         cl.read_retry_timeout = 1
         cl.read_retries = 1
@@ -167,10 +172,11 @@ class Board < ApplicationRecord
           end
         end
       end
-      #puts "#{Time.now} Reading Modbus ended - #{name} / #{ip}"
       connected!
     rescue ModBus::Errors::ModBusException, Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::EHOSTDOWN, Errno::ECONNREFUSED => e
-      puts "#{Time.now} Modbus Error - #{name} / #{ip} - #{e.message}"
+      unless Rails.env.test?
+        puts "#{Time.now} Modbus Error - #{name} / #{ip} - #{e.message}"
+      end
       disconnected!
     end
   end
@@ -188,17 +194,23 @@ class Board < ApplicationRecord
             end
             current_value = slave.read_holding_register(device.holding_register_address)
             if current_value != new_value
-              puts "#{Time.now} Modbus Write - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+              unless Rails.env.test?
+                puts "#{Time.now} Modbus Write - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+              end
               slave.write_single_register(device.holding_register_address, new_value)
             else
-              puts "#{Time.now} Modbus already set - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+              unless Rails.env.test?
+                puts "#{Time.now} Modbus already set - #{name} / #{self.ip} - #{slave_address} - #{device.holding_register_address} - #{device.value}"
+              end
             end
           end
         end
       end
       connected!
     rescue ModBus::Errors::ModBusException, Errno::EHOSTUNREACH, Errno::ENETUNREACH, Errno::EHOSTDOWN, Errno::ECONNREFUSED => e
-      puts "#{Time.now} Modbus Write Error - #{name} / #{ip} - #{e.message}"
+      unless Rails.env.test?
+        puts "#{Time.now} Modbus Write Error - #{name} / #{ip} - #{e.message}"
+      end
     end
   end
 

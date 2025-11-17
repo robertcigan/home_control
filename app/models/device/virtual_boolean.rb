@@ -30,7 +30,7 @@ class Device::VirtualBoolean < Device
   end
 
   def writable?
-    virtual_writable? && board.board_type_modbus_tcp?
+    virtual_writable? && !!board && board.board_type_modbus_tcp?
   end
 
   def set_value_to_board
