@@ -2,6 +2,11 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.4.6 (2025-11-17)
+  * Bugfix: fix downloading DB backups
+  * Rails updated to 7.2
+  * In program details page, show logs first without height limit
+
 ## Home Control 3.4.5 (2025-05-25)
   * Bugfix: prevent program compilation all the time
   * Show new output log when program run manually
