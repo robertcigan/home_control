@@ -37,6 +37,7 @@ RSpec.feature "Boards", type: :feature do
         fill_in "Name", with: "New Arduino Board"
         fill_in "IP", with: "192.168.1.100"
         select "Arduino Mega (8bit)", from: "Type"
+        expect(page).to have_field("Clear Logs After (days)")
         fill_in "Clear Logs After (days)", with: "30"
         click_button "Create"
       end
@@ -164,6 +165,52 @@ RSpec.feature "Boards", type: :feature do
       expect(page).to have_content("ModBus TCP")
       expect(page).to have_content("Address")
       expect(page).to have_content("1")
+    end
+  end
+
+  describe "ActionCable realtime updates" do
+    scenario "updates connected state on index when board connects", js: true do
+      esp_board.update!(connected_at: nil, ssid: nil, signal_strength: nil)
+      visit boards_path
+      board_row = find("tr.board", text: "ESP32 Board")
+      esp_board.update!(connected_at: Time.current, ssid: "NewWiFi", signal_strength: 42)
+      expect(board_row.find(".ssid")).to have_content("NewWiFi", wait: 10)
+      expect(board_row.find(".signal-strength")).to have_content("42", wait: 10)
+    end
+
+    scenario "updates connected state on index when board disconnects", js: true do
+      esp_board.update!(connected_at: Time.current, ssid: "TestWiFi", signal_strength: 80)
+      visit boards_path
+      board_row = find("tr.board", text: "ESP32 Board")
+      expect(board_row.find(".ssid")).to have_content("TestWiFi")
+      esp_board.update!(connected_at: nil, ssid: nil, signal_strength: nil)
+      expect(board_row.find(".ssid")).to have_text("", wait: 10)
+      expect(board_row.find(".signal-strength")).to have_text("", wait: 10)
+    end
+
+    scenario "updates connected state on show page over cable", js: true do
+      esp_board.update!(connected_at: nil, ssid: nil, signal_strength: nil)
+      visit board_path(esp_board)
+      card = find(".card.board")
+      esp_board.update!(connected_at: Time.current, ssid: "LiveWiFi", signal_strength: 55)
+      expect(card.find(".ssid")).to have_content("LiveWiFi", wait: 10)
+      expect(card.find(".signal-strength")).to have_content("55", wait: 10)
+    end
+  end
+
+  describe "reload form round-trip" do
+    scenario "preserves entered values when board type changes without creating a record", js: true do
+      visit boards_path
+      click_link "Add Board"
+      within "#ajax-modal" do
+        fill_in "Name", with: "Reload Test Board"
+        fill_in "IP", with: "192.168.1.200"
+        select "ESP8266/ESP32", from: "Type"
+        wait_for_modal_reload
+        expect(page).to have_field("Name", with: "Reload Test Board")
+        expect(page).to have_field("IP", with: "192.168.1.200")
+      end
+      expect(Board.find_by(name: "Reload Test Board")).to be_nil
     end
   end
 end

@@ -239,6 +239,9 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.10-x86_64-darwin)
       racc (~> 1.4)
+    parallel (2.1.0)
+    parallel_tests (5.7.0)
+      parallel
     pg (1.6.2)
     pg (1.6.2-x86_64-darwin)
     popper_js (1.16.1)
@@ -431,6 +434,7 @@ DEPENDENCIES
   jquery-rails
   kaminari
   launchy
+  parallel_tests
   pg
   pry
   puma (~> 6.0)

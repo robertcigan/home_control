@@ -98,6 +98,15 @@ RSpec.feature "Panels", type: :feature do
       panel.touch
       expect(page).to have_css(".grid-stack-item[gs-w='1'][gs-h='1']")
     end
+
+    scenario "updates text value widget indication over cable", js: true do
+      analog = create(:analog_input, name: "Temp Sensor", board: arduino_board, pin: 5, value_decimal: 10.0)
+      create(:widget, :type_text_value, panel: panel, device: analog, x: 0, y: 0, w: 2, h: 2, show_label: true)
+      visit panel_path(panel)
+      expect(page).to have_css(".widget-text-value .indication", text: "10.0")
+      analog.update(value_decimal: 42.5)
+      expect(page).to have_css(".widget-text-value .indication", text: "42.5")
+    end
   end
 
   describe "widgets in panel" do
@@ -150,6 +159,31 @@ RSpec.feature "Panels", type: :feature do
       end
       expect(page).to have_no_css(".grid-stack-item")
       expect { widget.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe "reload form round-trip" do
+    scenario "preserves entered values when widget type changes without creating a record", js: true do
+      visit panels_path
+      click_link "Add Panel"
+      within "#ajax-modal" do
+        fill_in "Name", with: "Reload Panel"
+        click_link "Add"
+        wait_for_modal_reload
+        within "#widgets" do
+          first("select").select "Text Value"
+          wait_for_modal_reload
+          fill_in "Name", with: "Status Widget"
+          select "Relay A", from: "Device"
+        end
+        first("select").select "Switch"
+        wait_for_modal_reload
+        within "#widgets" do
+          expect(page).to have_field("Name", with: "Status Widget")
+        end
+        expect(page).to have_field("Name", with: "Reload Panel")
+      end
+      expect(Panel.find_by(name: "Reload Panel")).to be_nil
     end
   end
 end

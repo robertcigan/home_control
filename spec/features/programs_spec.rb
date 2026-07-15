@@ -180,6 +180,20 @@ RSpec.feature "Programs", type: :feature do
       expect(page).to have_css(".last-run", text: formatted)
     end
   end
+
+  describe "reload form round-trip" do
+    scenario "preserves entered values when program type changes without creating a record", js: true do
+      visit programs_path
+      click_link "Add Program"
+      within "#ajax-modal" do
+        fill_in "Name", with: "Reload Program"
+        select "Repeated", from: "Program type"
+        wait_for_modal_reload
+        expect(page).to have_field("Name", with: "Reload Program")
+      end
+      expect(Program.find_by(name: "Reload Program")).to be_nil
+    end
+  end
 end
 
 

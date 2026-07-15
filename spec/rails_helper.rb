@@ -28,7 +28,7 @@ require 'capybara-screenshot/rspec'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -66,7 +66,7 @@ RSpec.configure do |config|
   # behaviour is considered legacy and will be removed in a future version.
   #
   # To enable this behaviour uncomment the line below.
-  # config.infer_spec_type_from_file_location!
+  config.infer_spec_type_from_file_location!
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
@@ -93,7 +93,9 @@ RSpec.configure do |config|
     DatabaseCleaner.start
   end
 
-  config.after(:each) do
+  # append_after ensures cleaning runs after Capybara.reset_sessions!,
+  # so in-flight app requests can't hold table locks during truncation
+  config.append_after(:each) do
     DatabaseCleaner.clean
   end
 end
@@ -153,6 +155,14 @@ module FeatureHelpers
       page.has_css?("#ajax-modal input[name='reload']")
     end
     expect(page).to have_no_css("#ajax-modal input[name='reload']")
+  end
+
+  # For AJAX effects with no DOM feedback (e.g. background form submits) —
+  # polls until the block returns true instead of asserting immediately
+  def wait_until(timeout: Capybara.default_max_wait_time)
+    Timeout.timeout(timeout) do
+      sleep 0.1 until yield
+    end
   end
 end
 

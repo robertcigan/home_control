@@ -53,6 +53,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'dotenv'
   gem "pry"
+  gem "parallel_tests"
 end
 
 group :development do
