@@ -28,21 +28,21 @@ RSpec.feature "Panels", type: :feature do
     end
   end
 
-  describe "creating panels via modal" do
+  describe "creating panels via form page" do
     scenario "creates a panel with one widget", js: true do
       visit panels_path
       click_link "Add Panel"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Panel"
-        check "Public Access"
-        click_link "Add"
-        within "#widgets" do
-          first("select").select "Switch"
-          wait_for_modal_reload
-          select "Relay A", from: "Device"
-        end
-        click_button "Create"
+      fill_in "Name", with: "New Panel"
+      check "Public Access"
+      click_link "Add"
+      within "#widgets" do
+        select_tom "Switch"
       end
+      wait_for_form_reload
+      within "#widgets" do
+        select_tom "Relay A", from: "Device"
+      end
+      click_button "Create"
       expect(page).to have_content("Panel was successfully created")
       expect(page).to have_content("New Panel")
     end
@@ -50,30 +50,28 @@ RSpec.feature "Panels", type: :feature do
     scenario "shows validation errors on failure", js: true do
       visit panels_path
       click_link "Add Panel"
-      within "#ajax-modal" do
-        fill_in "Name", with: ""
-        click_button "Create"
-        expect(page).to have_content("can't be blank")
-      end
+      fill_in "Name", with: ""
+      click_button "Create"
+      expect(page).to have_content("can't be blank")
     end
   end
 
-  describe "editing panels via modal" do
+  describe "editing panels via form page" do
     scenario "edits a panel name", js: true do
+      create(:widget, panel: panel, widget_type: "text_value", device: relay_device)
+
       visit panels_path
       within "#panels table tbody tr:nth-child(1)" do
         click_link "Edit"
       end
-      within "#ajax-modal" do
-        first("a.remove_fields").click
-        wait_for_modal_reload
-        fill_in "Name", with: "Changed name"
-        click_button "Update"
-      end
+      first("a.remove_fields").click
+      fill_in "Name", with: "Changed name"
+      click_button "Update"
       expect(page).to have_content("Panel was successfully updated")
       within "#panels table tbody tr:nth-child(1)" do
         expect(page).to have_content("Changed name")
       end
+      expect(panel.reload.widgets).to be_empty
     end
   end
 
@@ -91,12 +89,12 @@ RSpec.feature "Panels", type: :feature do
     end
 
     scenario "reloads panel when widget changes (push)", js: true do
-      widget = create(:widget, :type_switch, panel: panel, device: relay_device, x: 0, y: 0, w: 2, h: 2, show_label: true)
+      widget = create(:widget, :type_switch, panel: panel, device: relay_device, x: 0, y: 0, w: 3, h: 4, show_label: true)
       visit panel_path(panel)
-      expect(page).to have_css(".grid-stack-item[gs-w='2'][gs-h='2']")
-      widget.update(w: 1, h: 1)
+      expect(page).to have_css(".grid-stack-item[gs-w='3'][gs-h='4']")
+      widget.update!(w: 2, h: 2)
       panel.touch
-      expect(page).to have_css(".grid-stack-item[gs-w='1'][gs-h='1']")
+      expect(page).to have_css(".grid-stack-item[gs-w='2'][gs-h='2']")
     end
 
     scenario "updates text value widget indication over cable", js: true do
@@ -110,25 +108,26 @@ RSpec.feature "Panels", type: :feature do
   end
 
   describe "widgets in panel" do
-    scenario "adds a widget via modal", js: true do
+    scenario "adds a widget via form page", js: true do
       visit panels_path
       click_link "Add Panel"
-      within "#ajax-modal" do
-        fill_in "Name", with: "With Widget"
-        click_link "Add"
-        wait_for_modal_reload
-        within "#widgets" do
-          first("select").select "Text Value"
-          select "Relay A", from: "Device"
-          wait_for_modal_reload
-        end
-        click_button "Create"
+      fill_in "Name", with: "With Widget"
+      click_link "Add"
+      wait_for_form_reload
+      within "#widgets" do
+        select_tom "Text Value"
       end
+      wait_for_form_reload
+      within "#widgets" do
+        select_tom "Relay A", from: "Device"
+      end
+      wait_for_form_reload
+      click_button "Create"
       expect(page).to have_content("Panel was successfully created")
       expect(Panel.exists?(name: "With Widget")).to be true
     end
 
-    scenario "edits a widget via modal", js: true do
+    scenario "edits a widget via form page", js: true do
       existing_panel = create(:panel, name: "Edit Panel")
       widget = create(:widget, panel: existing_panel, widget_type: "text_value", device: relay_device)
       visit panels_path
@@ -137,10 +136,8 @@ RSpec.feature "Panels", type: :feature do
         find(".grid-stack-item-content").hover
         click_link "Edit", href: edit_panel_widget_path(existing_panel, existing_panel.widgets.first)
       end
-      within "#ajax-modal" do
-        fill_in "Name", with: "Status"
-        click_button "Update"
-      end
+      fill_in "Name", with: "Status"
+      click_button "Update"
       expect(page).to have_content("Widget was successfully updated")
       expect { widget.reload }.to change { widget.name }.to("Status")
     end
@@ -152,10 +149,9 @@ RSpec.feature "Panels", type: :feature do
       click_link "Layout", href: panel_widgets_path(existing_panel)
       within first(".grid-stack-item") do
         find(".grid-stack-item-content").hover
-        find("a[href='#{panel_widget_path(existing_panel, existing_panel.widgets.first)}'][data-method='delete']").click
-      end
-      within "#confirm-modal" do
-        click_link "Confirm"
+        accept_confirm do
+          find("a[href='#{panel_widget_path(existing_panel, existing_panel.widgets.first)}'][data-turbo-method='delete']").click
+        end
       end
       expect(page).to have_no_css(".grid-stack-item")
       expect { widget.reload }.to raise_error(ActiveRecord::RecordNotFound)
@@ -166,26 +162,24 @@ RSpec.feature "Panels", type: :feature do
     scenario "preserves entered values when widget type changes without creating a record", js: true do
       visit panels_path
       click_link "Add Panel"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Reload Panel"
-        click_link "Add"
-        wait_for_modal_reload
-        within "#widgets" do
-          first("select").select "Text Value"
-          wait_for_modal_reload
-          fill_in "Name", with: "Status Widget"
-          select "Relay A", from: "Device"
-        end
-        first("select").select "Switch"
-        wait_for_modal_reload
-        within "#widgets" do
-          expect(page).to have_field("Name", with: "Status Widget")
-        end
-        expect(page).to have_field("Name", with: "Reload Panel")
+      fill_in "Name", with: "Reload Panel"
+      click_link "Add"
+      wait_for_form_reload
+      within "#widgets" do
+        select_tom "Text Value"
       end
+      wait_for_form_reload
+      within "#widgets" do
+        fill_in "Name", with: "Status Widget"
+        select_tom "Relay A", from: "Device"
+      end
+      select_tom "Switch"
+      wait_for_form_reload
+      within "#widgets" do
+        expect(page).to have_field("Name", with: "Status Widget")
+      end
+      expect(page).to have_field("Name", with: "Reload Panel")
       expect(Panel.find_by(name: "Reload Panel")).to be_nil
     end
   end
 end
-
-

@@ -31,7 +31,7 @@ RSpec.feature "Devices index", type: :feature do
 
     scenario "filters devices by type", js: true do
       visit devices_path
-      select "Switch", from: "q_device_type_in"
+      select_and_submit "Switch", from: "q_device_type_in"
       expect(page).to have_no_content("Test Arduino Relay")
       expect(page).to have_content("Test Switch")
       expect(page).to have_no_content("Test Relay")
@@ -40,7 +40,7 @@ RSpec.feature "Devices index", type: :feature do
 
     scenario "filters devices by board", js: true do
       visit devices_path
-      select "ESP Board", from: "q_board_id_eq"
+      select_and_submit "ESP Board", from: "q_board_id_eq"
       expect(page).to have_no_content("Test Switch")
       expect(page).to have_no_content("Test Analog")
       expect(page).to have_no_content("Test Arduino Relay")
@@ -62,7 +62,7 @@ RSpec.feature "Devices index", type: :feature do
       55.times { |i| create(:switch, name: "Per Page #{i}", board: arduino_board, pin: i + 50) }
       visit devices_path
       expect(page).to have_css("table tbody tr", count: 20)
-      find("select#per").find(:option, "50").select_option
+      select_tom "50", from: "per"
       expect(page).to have_css("table tbody tr", count: 50, wait: 10)
       visit devices_path
       expect(page).to have_css("table tbody tr", count: 50, wait: 10)

@@ -3,14 +3,12 @@ require "rails_helper"
 RSpec.feature "Devices management", type: :feature do
   include_context "devices feature setup"
 
-  describe "editing devices via modal" do
+  describe "editing devices via form page" do
     scenario "edits an existing device", js: true do
       visit devices_path
       click_link "Edit", href: edit_device_path(switch_device)
-      within "#ajax-modal" do
-        fill_in "Name", with: "Updated Switch"
-        click_button "Update"
-      end
+      fill_in "Name", with: "Updated Switch"
+      click_button "Update"
       expect(page).to have_content("Device was successfully updated")
       expect(page).to have_content("Updated Switch")
       switch_device.reload
@@ -21,12 +19,10 @@ RSpec.feature "Devices management", type: :feature do
       modbus_device = create(:virtual_boolean, :modbus_writable, name: "Modbus Device", board: modbus_board)
       visit devices_path
       click_link "Edit", href: edit_device_path(modbus_device)
-      within "#ajax-modal" do
-        fill_in "Holding Register", with: "200"
-        fill_in "Value Scale", with: "2"
-        select "int16", from: "ModBus Data Type"
-        click_button "Update"
-      end
+      fill_in "Holding Register", with: "200"
+      fill_in "Value Scale", with: "2"
+      select_tom "int16", from: "ModBus Data Type"
+      click_button "Update"
       expect(page).to have_content("Device was successfully updated")
       modbus_device.reload
       expect(modbus_device.holding_register_address).to eq(200)
@@ -38,9 +34,8 @@ RSpec.feature "Devices management", type: :feature do
   describe "removing devices" do
     scenario "removes a device", js: true do
       visit devices_path
-      find("a[href='#{device_path(switch_device)}'][data-method='delete']").click
-      within "#confirm-modal" do
-        click_link "Confirm"
+      accept_confirm do
+        find("a[href='#{device_path(switch_device)}'][data-turbo-method='delete']").click
       end
       expect(page).to have_content("Device was successfully removed")
       expect(page).not_to have_content("Test Switch")

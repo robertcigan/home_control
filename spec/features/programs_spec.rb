@@ -23,7 +23,7 @@ RSpec.feature "Programs", type: :feature do
       create(:program, :repeated, name: "Repeater")
 
       visit programs_path
-      select "Repeated", from: "q_program_type_eq"
+      select_and_submit "Repeated", from: "q_program_type_eq"
       expect(page).to have_content("Repeater")
       expect(page).to have_no_content("Alpha")
     end
@@ -48,28 +48,29 @@ RSpec.feature "Programs", type: :feature do
     end
   end
 
-  describe "create/edit via modal" do
+  describe "create/edit via form page" do
     scenario "creates a default program with devices", js: true do
       programs = Program.count
       visit programs_path
       click_link "Add Program"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Program"
-        select "Input activated", from: "Program type"
-        wait_for_modal_reload
-        expect(page).to have_css('#ajax-modal .CodeMirror')
-        code = "log_info('hello')\n"
-        page.execute_script("var cm=document.querySelector('#ajax-modal .CodeMirror').CodeMirror; cm.setValue(#{"log_info('hello')\n".to_json}); cm.save();")
-        click_link "Add"
-        within "#programs_devices" do
-          first("select").select "Relay A"
-          wait_for_modal_reload
-          fill_in "Variable Name", with: "relay"
-          wait_for_modal_reload
-          check "Trigger"
-        end
-        click_button "Create"
+      fill_in "Name", with: "New Program"
+      select_and_reload "Input activated", from: "Program type"
+      expect(page).to have_css('.cm-editor')
+      code = "log_info('hello')\n"
+      page.execute_script("var el=document.querySelector('.cm-editor'); el.editorView.dispatch({changes:{from:0,to:el.editorView.state.doc.length,insert:#{code.to_json}}});")
+      click_link "Add"
+      within "#programs_devices" do
+        select_tom "Relay A"
       end
+      wait_for_form_reload
+      within "#programs_devices" do
+        fill_in "Variable Name", with: "relay"
+      end
+      wait_for_form_reload
+      within "#programs_devices" do
+        check "Trigger"
+      end
+      click_button "Create"
       expect(page).to have_content("Program was successfully created")
       expect(page).to have_content("New Program")
       expect(Program.count).to eq(programs + 1)
@@ -78,22 +79,18 @@ RSpec.feature "Programs", type: :feature do
     scenario "shows validation errors on failure", js: true do
       visit programs_path
       click_link "Add Program"
-      within "#ajax-modal" do
-        fill_in "Name", with: ""
-        click_button "Create"
-        expect(page).to have_content("can't be blank")
-      end
+      fill_in "Name", with: ""
+      click_button "Create"
+      expect(page).to have_content("can't be blank")
     end
   end
 
-  describe "editing programs via modal" do
+  describe "editing programs via form page" do
     scenario "edits an existing program", js: true do
       visit programs_path
       click_link "Edit", href: edit_program_path(program)
-      within "#ajax-modal" do
-        fill_in "Name", with: "Updated Program"
-        click_button "Update"
-      end
+      fill_in "Name", with: "Updated Program"
+      click_button "Update"
       expect(page).to have_content("Program was successfully updated")
       expect(page).to have_content("Updated Program")
     end
@@ -109,9 +106,8 @@ RSpec.feature "Programs", type: :feature do
       visit program_path(program)
       find(".toggle-off").click
       expect(page).to have_content("turned on")
-      find(".fa-play").find(:xpath, "..").click
-      within "#confirm-modal" do
-        click_link "Confirm"
+      accept_confirm do
+        find(".fa-play").find(:xpath, "..").click
       end
       expect(page).to have_content("successfully run")
       expect(page).to have_content("mocked run")
@@ -126,9 +122,8 @@ RSpec.feature "Programs", type: :feature do
       end
 
       visit program_path(program)
-      find(".fa-play").find(:xpath, "..").click
-      within "#confirm-modal" do
-        click_link "Confirm"
+      accept_confirm do
+        find(".fa-play").find(:xpath, "..").click
       end
       expect(page).to have_content("Program #{program.name} successfully run")
       expect(page).to have_content("boom")
@@ -139,16 +134,14 @@ RSpec.feature "Programs", type: :feature do
   end
 
   describe "duplicate", js: true do
-    scenario "copies an existing program via modal" do
+    scenario "copies an existing program via form page" do
       programs = Program.count
       visit program_path(program)
       click_link "Copy program"
-      within "#ajax-modal" do
-        expect(page).to have_field("Name", with: program.name)
-        fill_in "Name", with: "Copied Program"
-        expect(page).to have_field("Name", with: "Copied Program")
-        click_button "Create"
-      end
+      expect(page).to have_field("Name", with: program.name)
+      fill_in "Name", with: "Copied Program"
+      expect(page).to have_field("Name", with: "Copied Program")
+      click_button "Create"
       expect(page).to have_content("Program was successfully created")
       expect(Program.count).to eq(programs + 1)
       copied_program = Program.order(:id).last
@@ -161,9 +154,8 @@ RSpec.feature "Programs", type: :feature do
     scenario "removes a program", js: true do
       programs = Program.count
       visit programs_path
-      find("a[href='#{program_path(program)}'][data-method='delete']").click
-      within "#confirm-modal" do
-        click_link "Confirm"
+      accept_confirm do
+        find("a[href='#{program_path(program)}'][data-turbo-method='delete']").click
       end
       expect(page).to have_content("Program was successfully removed")
       expect(Program.count).to eq(programs - 1)
@@ -174,10 +166,15 @@ RSpec.feature "Programs", type: :feature do
   describe "ActionCable realtime updates" do
     scenario "shows last run/time updates pushed over cable", js: true do
       visit program_path(program)
-      program.update(last_run: Time.current - 1.minute, runtime: 7)
+      card = find(".card.program")
+      wait_for_action_cable
+
+      last_run_at = Time.zone.parse("2025-06-15 12:00:00")
+      program.update!(last_run: last_run_at, runtime: 7)
       formatted = I18n.l(program.reload.last_run, format: :custom)
-      expect(page).to have_content(formatted)
-      expect(page).to have_css(".last-run", text: formatted)
+
+      expect(card.find(".last-run")).to have_content(formatted, wait: 10)
+      expect(card.find(".runtime")).to have_content("7", wait: 10)
     end
   end
 
@@ -185,15 +182,10 @@ RSpec.feature "Programs", type: :feature do
     scenario "preserves entered values when program type changes without creating a record", js: true do
       visit programs_path
       click_link "Add Program"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Reload Program"
-        select "Repeated", from: "Program type"
-        wait_for_modal_reload
-        expect(page).to have_field("Name", with: "Reload Program")
-      end
+      fill_in "Name", with: "Reload Program"
+      select_and_reload "Repeated", from: "Program type"
+      expect(page).to have_field("Name", with: "Reload Program")
       expect(Program.find_by(name: "Reload Program")).to be_nil
     end
   end
 end
-
-

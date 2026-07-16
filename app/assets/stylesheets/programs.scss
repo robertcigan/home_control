@@ -1,6 +1,8 @@
-.CodeMirror {
+.cm-editor {
   border: 1px solid;
   height: auto;
+  min-height: 20rem;
+  font-size: 0.9rem;
 }
 
 .program {

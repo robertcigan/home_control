@@ -16,13 +16,13 @@ gem "sprockets-rails"
 gem "puma", "~> 6.0"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-# gem "importmap-rails"
+gem "importmap-rails"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-#gem "turbo-rails"
+gem "turbo-rails"
 
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-# gem "stimulus-rails"
+gem "stimulus-rails"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
@@ -43,7 +43,7 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 gem "bootsnap", require: false
 
 # Use Sass to process CSS
-gem "sassc-rails"
+gem "dartsass-sprockets"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -86,10 +86,6 @@ end
 
 gem "amoeba"
 gem "cancancan"
-gem "chartkick"
-gem "cocoon"
-gem "codemirror-rails"
-gem "coffee-rails"
 gem "eventmachine"
 gem "action_cable_client"
 gem 'event_spitter'
@@ -104,8 +100,4 @@ gem "simple_form"
 gem "exception_notification"
 gem "rmodbus"
 
-gem 'bootstrap', '~> 4.6.0'
-gem 'jquery-rails'
-gem "select2-rails"
-gem "turbolinks", "~> 5"
-gem "animate-rails"
+gem "bootstrap", "~> 5.3"

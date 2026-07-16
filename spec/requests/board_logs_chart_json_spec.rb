@@ -44,4 +44,33 @@ RSpec.describe "Board logs chart JSON", type: :request do
       expect(signal["data"].last.last).to eq(0.9)
     end
   end
+
+  it "keeps all connection points and caps aggregated signal series" do
+    Timecop.freeze(frozen_time) do
+      stub_const("BoardLog::MAX_CHART_POINTS", 8)
+      min = frozen_time.beginning_of_day
+      max = frozen_time.end_of_day
+      cap = BoardLog::MAX_CHART_POINTS
+      extra = cap + 15
+
+      extra.times do |i|
+        create(:board_log, board: board, connected: i.even?, signal_strength: 50 + i,
+          created_at: min + (i * 3).minutes)
+      end
+
+      connection = BoardLog.chart_connection_series(board, min, max)
+      signal = BoardLog.chart_signal_series(board, min, max)
+
+      # 2 logs from before block fall inside the day window + extras
+      expect(connection.length).to eq(2 + extra)
+      expect(connection.map(&:last)).to all(be_in([0, 1]))
+      expect(signal.length).to be <= cap
+
+      get chart_board_board_logs_path(board, format: :json, timespan: "day", min: min, max: max)
+      data = JSON.parse(response.body)
+      signal_json = data.find { |series| series["name"] == "Signal Strength" }
+      expect(signal_json["data"].length).to be <= (cap + 2)
+      expect(signal_json["data"].map(&:last).compact).to all(be_a(Numeric))
+    end
+  end
 end

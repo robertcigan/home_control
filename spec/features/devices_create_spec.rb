@@ -3,24 +3,20 @@ require "rails_helper"
 RSpec.feature "Devices creation", type: :feature do
   include_context "devices feature setup"
 
-  describe "creating devices via modal" do
+  describe "creating devices via form page" do
     scenario "creates a Switch device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Switch"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Switch", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Inverted")
-        expect(page).to have_field("Pin/Address", visible: :visible)
-        fill_in "Pin/Address", with: "4"
-        check "Inverted"
-        check "Log Enabled"
-        fill_in "Clear Logs After (days)", with: "30"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Switch"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Switch", from: "Type"
+      expect(page).to have_field("Inverted")
+      expect(page).to have_field("Pin/Address", visible: :visible)
+      fill_in "Pin/Address", with: "4"
+      check "Inverted"
+      check "Log Enabled"
+      fill_in "Clear Logs After (days)", with: "30"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Switch")
       device = Device.find_by(name: "New Switch")
@@ -35,20 +31,16 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a Relay device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Relay"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        expect(page).to have_select("Board", selected: "Arduino Board")
-        select "Relay", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_select("Type", selected: "Relay")
-        expect(page).to have_field("Inverted")
-        expect(page).to have_field("Pin/Address", visible: :visible)
-        fill_in "Pin/Address", with: "5"
-        check "Inverted"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Relay"
+      select_and_reload "Arduino Board", from: "Board"
+      expect_tom_select_selected("Board", selected: "Arduino Board")
+      select_and_reload "Relay", from: "Type"
+      expect_tom_select_selected("Type", selected: "Relay")
+      expect(page).to have_field("Inverted")
+      expect(page).to have_field("Pin/Address", visible: :visible)
+      fill_in "Pin/Address", with: "5"
+      check "Inverted"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Relay")
       device = Device.find_by(name: "New Relay")
@@ -60,18 +52,14 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates an Analog Input device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Analog"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Analog Input", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        fill_in "Poll", with: "500"
-        fill_in "Unit", with: "V"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Analog"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Analog Input", from: "Type"
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      fill_in "Poll", with: "500"
+      fill_in "Unit", with: "V"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Analog")
       device = Device.find_by(name: "New Analog")
@@ -84,18 +72,14 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a Button device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Button"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Button", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Inverted")
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        check "Inverted"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Button"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Button", from: "Type"
+      expect(page).to have_field("Inverted")
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      check "Inverted"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Button")
       device = Device.find_by(name: "New Button")
@@ -107,17 +91,13 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a PWM device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New PWM"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "PWM output", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        fill_in "Value", with: "50"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New PWM"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "PWM output", from: "Type"
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      fill_in "Value", with: "50"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New PWM")
       device = Device.find_by(name: "New PWM")
@@ -129,21 +109,17 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a DS18B20 Temperature Sensor", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Temp Sensor"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        expect(page).to have_select("Board", selected: "Arduino Board")
-        select "DS18B20 Temperature Sensor", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_select("Type", selected: "DS18B20 Temperature Sensor")
-        expect(page).to have_field("Poll")
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        expect(find_field("Pin/Address").value).to eq("5")
-        fill_in "Unit", with: "°C"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Temp Sensor"
+      select_and_reload "Arduino Board", from: "Board"
+      expect_tom_select_selected("Board", selected: "Arduino Board")
+      select_and_reload "DS18B20 Temperature Sensor", from: "Type"
+      expect_tom_select_selected("Type", selected: "DS18B20 Temperature Sensor")
+      expect(page).to have_field("Poll")
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      expect(find_field("Pin/Address").value).to eq("5")
+      fill_in "Unit", with: "°C"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Temp Sensor")
       device = Device.find_by(name: "New Temp Sensor")
@@ -155,19 +131,15 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a Distance Sensor", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Distance"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Distance", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Poll")
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        expect(find_field("Pin/Address").value).to eq("5")
-        fill_in "Unit", with: "cm"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Distance"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Distance", from: "Type"
+      expect(page).to have_field("Poll")
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      expect(find_field("Pin/Address").value).to eq("5")
+      fill_in "Unit", with: "cm"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Distance")
       device = Device.find_by(name: "New Distance")
@@ -179,18 +151,14 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a Curtain/Blinds device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Curtain"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Blinds/Shutter/Curtain", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Inverted")
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        check "Inverted"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Curtain"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Blinds/Shutter/Curtain", from: "Type"
+      expect(page).to have_field("Inverted")
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      check "Inverted"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Curtain")
       device = Device.find_by(name: "New Curtain")
@@ -202,16 +170,12 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a Sound device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Sound"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Sound", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "5"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Sound"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Sound", from: "Type"
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "5"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Sound")
       device = Device.find_by(name: "New Sound")
@@ -222,16 +186,12 @@ RSpec.feature "Devices creation", type: :feature do
     scenario "creates a Board Test device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Board Test"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Board Test", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Pin/Address")
-        fill_in "Pin/Address", with: "10"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Board Test"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Board Test", from: "Type"
+      expect(page).to have_field("Pin/Address")
+      fill_in "Pin/Address", with: "10"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Board Test")
       device = Device.find_by(name: "New Board Test")

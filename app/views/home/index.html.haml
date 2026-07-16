@@ -1,39 +1,33 @@
-.row.mt
+.row.mt-3
   .col-sm-4
-    .panel.panel-primary
-      .panel-heading
-        %h3.panel-title 
-          Panels
-          .pull-right.badge= Panel.count
-      .panel-body
+    .card.border-primary.mb-3
+      .card-header.bg-primary.text-white.d-flex.justify-content-between.align-items-center
+        %h3.mb-0 Panels
+        %span.badge.text-bg-light= Panel.count
+      .card-body
         - Panel.all.each do |panel|
-          = link_to panel, panel, class: "btn btn-md btn-default", target: "_blank"
+          = link_to panel, panel, class: "btn btn-md btn-outline-secondary me-1 mb-1", target: "_blank"
   .col-sm-4
-    .panel.panel-primary
-      .panel-heading
-        %h3.panel-title 
-          Devices
-          .pull-right.badge= Device.count
-      .panel-body
+    .card.border-primary.mb-3
+      .card-header.bg-primary.text-white.d-flex.justify-content-between.align-items-center
+        %h3.mb-0 Devices
+        %span.badge.text-bg-light= Device.count
+      .card-body
         - Device.all.each do |device|
           .device.row{id: "device_#{device.id}", data: device.json_data}
             .col-md-6
               = link_to device, device_path(device)
-            .col-md-6.text-right
-              .updated.label.label-primary
+            .col-md-6.text-end
+              .updated.badge.text-bg-primary
   .col-sm-4
-    .panel.panel-primary
-      .panel-heading
-        %h3.panel-title 
-          Boards
-          .pull-right.badge= Board.count
-      .panel-body
+    .card.border-primary.mb-3
+      .card-header.bg-primary.text-white.d-flex.justify-content-between.align-items-center
+        %h3.mb-0 Boards
+        %span.badge.text-bg-light= Board.count
+      .card-body
         - Board.all.each do |board|
           .board.row{id: dom_id(board), data: board.json_data}
             .col-md-6
               = link_to board, board_path(board)
-            .col-md-6.text-right
-              .updated.label.label-primary
-
-:javascript
-  //HomeControl.Home.init();
+            .col-md-6.text-end
+              .updated.badge.text-bg-primary

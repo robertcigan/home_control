@@ -1,16 +1,12 @@
 - page_title "Programs"
 
 - content_for(:action_button) do
-  = link_to fa_icon("plus", class: "pr-2", text: "Add Program"), new_program_path, class: "btn btn-primary", data: { toggle: "ajax-modal", class: "modal-lg", title: "Add Program" }
+  = link_to fa_icon("plus", class: "pe-2", text: "Add Program"), new_program_path, class: "btn btn-primary"
 
-= simple_form_for @search, url: programs_path, remote: true, method: :get, wrapper: :inline_form, html: { id: "program_search", class: "form-inline" } do |form|
-  = form.search_field :name_cont, placeholder: "Search by Name", class: "form-control search-field mb-2 mr-2"
-  = form.input :program_type_eq, collection: Program.program_types_to_collection, required: false, label: false, wrapper_html: { class: "mb-2 mr-2"}, input_html: { data: { autosubmit: true, placeholder: "All Types" }}
-  .mr-2.mb-2
+= turbo_frame_tag "programs" do
+  = simple_form_for @search, url: programs_path, method: :get, wrapper: :inline_form, html: { id: "program_search", class: "d-flex flex-wrap gap-2 mb-2", data: { controller: "search-form autosubmit" } } do |form|
+    = form.search_field :name_cont, placeholder: "Search by Name", class: "form-control search-field"
+    = form.input :program_type_eq, collection: Program.program_types_to_collection, required: false, label: false, include_blank: "All Types", wrapper: :inline_form, input_html: { data: { controller: "select", autosubmit: true, placeholder: "All Types" }}
     = render "common/per_page"
 
-#programs
   = render "programs"
-
-:javascript
-  HomeControl.Programs.initIndex();

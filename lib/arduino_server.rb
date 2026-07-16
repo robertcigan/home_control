@@ -7,50 +7,20 @@ require 'resolv-replace'
 class ArduinoServer
   class << self
     def handle_arduino_boards(uri)
-      arduino_client_connected = false
-      arduino_client = ActionCableClient.new(uri, 'ArduinoChannel')
-      arduino_client.connected do
-        arduino_client_connected = true
-        puts "#{Time.now} successfully connected to Websockets"
-      end
-
-      arduino_client.received do | message |
-        if message && message['message']
-          # puts "#{Time.now} Sending: #{message["message"]["data"]} to #{message['message']['ip']}"
-          if (found_connected_client = ArduinoMessenger.connected_clients.find { |c| c.ip == message['message']['ip'] })
+      start_action_cable_client(uri, "ArduinoChannel") do |message|
+        if message && message["message"]
+          if (found_connected_client = ArduinoMessenger.connected_clients.find { |c| c.ip == message["message"]["ip"] })
             found_connected_client.send_command(message["message"]["data"])
           else
             puts "#{Time.now} Command not sent! No connection to Arduino!"
           end
         end
       end
-
-      arduino_client.errored do |message|
-        puts "#{Time.now} ERROR: " + message
-      end
-
-      arduino_client.disconnected do
-        arduino_client_connected = false
-        puts "#{Time.now} disconnected from Websockets"
-      end
-
-      EventMachine::PeriodicTimer.new(10) do
-        unless arduino_client_connected
-          arduino_client.reconnect!
-        end
-      end
     end
 
     def handle_modbus_boards(uri)
-      modbus_client_connected = false
-      modbus_client = ActionCableClient.new(uri, 'ModbusChannel')
-      modbus_client.connected do
-        modbus_client_connected = true
-        puts "#{Time.now} successfully connected to Websockets"
-      end
-
-      modbus_client.received do | message |
-        if message && message['message']
+      start_action_cable_client(uri, "ModbusChannel") do |message|
+        if message && message["message"]
           EM.defer(
             proc do
               begin
@@ -69,19 +39,52 @@ class ArduinoServer
           )
         end
       end
+    end
 
-      modbus_client.errored do |message|
-        puts "#{Time.now} ERROR: " + message
+    # Fresh connect instead of gem reconnect! (that only reopens TCP and breaks WS handshake).
+    def start_action_cable_client(uri, channel, &on_message)
+      state = { connected: false, client: nil }
+
+      open_client = lambda do
+        if state[:client]
+          begin
+            state[:client]._websocket_client.close
+          rescue StandardError
+          end
+          state[:client] = nil
+        end
+
+        client = ActionCableClient.new(uri, channel, false)
+        state[:client] = client
+        state[:connected] = false
+
+        client.connected do
+          state[:connected] = true
+          puts "#{Time.now} successfully connected to Websockets (#{channel})"
+        end
+
+        client.disconnected do
+          state[:connected] = false
+          puts "#{Time.now} disconnected from Websockets (#{channel})"
+        end
+
+        client.connect!
+
+        client.errored do |message|
+          puts "#{Time.now} ERROR (#{channel}): #{message}"
+        end
+
+        client.received do |message|
+          on_message.call(message)
+        end
       end
 
-      modbus_client.disconnected do
-        modbus_client_connected = false
-        puts "#{Time.now} disconnected from Websockets"
-      end
+      open_client.call
 
       EventMachine::PeriodicTimer.new(10) do
-        unless modbus_client_connected
-          modbus_client.reconnect!
+        if !state[:connected]
+          puts "#{Time.now} reconnecting Websockets (#{channel})..."
+          open_client.call
         end
       end
     end
@@ -262,6 +265,23 @@ class ArduinoServer
     end
 
 
+    # Prefer explicit ACTION_CABLE_URL from Procfile; fall back to HOST/PORT.
+    # Use 127.0.0.1 (not localhost) to avoid IPv6 (::1) mismatch with Puma.
+    # No trailing slash — some WS clients fail on /websockets/ → /websockets redirects.
+    def websocket_uri
+      configured = ENV["ACTION_CABLE_URL"].to_s
+      if !configured.empty?
+        configured.sub(%r{/\z}, "")
+      else
+        host = ENV.fetch("HOST", "127.0.0.1")
+        if host == "localhost"
+          host = "127.0.0.1"
+        end
+        port = ENV.fetch("PORT", "3000")
+        "ws://#{host}:#{port}/websockets"
+      end
+    end
+
     def run
       ip = Socket.ip_address_list.detect{|intf| intf.ipv4_private?}
       ip_address = ip ? ip.ip_address : "127.0.0.1"
@@ -273,12 +293,12 @@ class ArduinoServer
         Signal.trap("TERM") { EventMachine.stop }
 
         EM.start_server(ip_address, 7777, ArduinoMessenger)
-        websocket_uri = "ws://#{ENV['HOST']}#{ENV['PORT'] ? ":#{ENV['PORT']}" : ""}/websockets/"
-        puts "Websocket server: "
-        puts websocket_uri
+        uri = websocket_uri
+        puts "Websocket server: #{uri}"
+        puts "ENV PORT=#{ENV["PORT"].inspect} HOST=#{ENV["HOST"].inspect}"
 
-        handle_arduino_boards(websocket_uri)
-        handle_modbus_boards(websocket_uri)
+        handle_arduino_boards(uri)
+        handle_modbus_boards(uri)
         ping_boards
         read_write_boards
         detect_disconnected_boards

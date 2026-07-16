@@ -7,13 +7,11 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual Boolean device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Virtual Boolean"
-        select "Virtual Boolean", from: "Type"
-        check "Value boolean"
-        fill_in "Unit", with: "V"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Virtual Boolean"
+      select_and_reload "Virtual Boolean", from: "Type"
+      check "Value boolean"
+      fill_in "Unit", with: "V"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Virtual Boolean")
       device = Device.find_by(name: "New Virtual Boolean")
@@ -25,14 +23,12 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual Decimal device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Virtual Decimal"
-        select "Virtual Decimal", from: "Type"
-        expect(page).to have_no_field("Writable?")
-        fill_in "Value", with: "3.14"
-        fill_in "Unit", with: "V"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Virtual Decimal"
+      select_and_reload "Virtual Decimal", from: "Type"
+      expect(page).to have_no_field("Writable?")
+      fill_in "Value", with: "3.14"
+      fill_in "Unit", with: "V"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Virtual Decimal")
       device = Device.find_by(name: "New Virtual Decimal")
@@ -44,14 +40,12 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual Integer device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Virtual Integer"
-        select "Virtual Integer", from: "Type"
-        expect(page).to have_no_field("Writable?")
-        fill_in "Value", with: "42"
-        fill_in "Unit", with: "rpm"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Virtual Integer"
+      select_and_reload "Virtual Integer", from: "Type"
+      expect(page).to have_no_field("Writable?")
+      fill_in "Value", with: "42"
+      fill_in "Unit", with: "rpm"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Virtual Integer")
       device = Device.find_by(name: "New Virtual Integer")
@@ -63,13 +57,11 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual String device", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "New Virtual String"
-        select "Virtual String", from: "Type"
-        expect(page).to have_no_field("Writable?")
-        fill_in "Value", with: "Hello World"
-        click_button "Create"
-      end
+      fill_in "Name", with: "New Virtual String"
+      select_and_reload "Virtual String", from: "Type"
+      expect(page).to have_no_field("Writable?")
+      fill_in "Value", with: "Hello World"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("New Virtual String")
       device = Device.find_by(name: "New Virtual String")
@@ -82,18 +74,14 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual Boolean device for Modbus TCP board", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Modbus Virtual Boolean"
-        select "Modbus Board", from: "Board"
-        wait_for_modal_reload
-        select "Virtual Boolean", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Writable?")
-        fill_in "Holding Register", with: "100"
-        fill_in "Value Scale", with: "10"
-        select "uint16", from: "ModBus Data Type"
-        click_button "Create"
-      end
+      fill_in "Name", with: "Modbus Virtual Boolean"
+      select_and_reload "Modbus Board", from: "Board"
+      select_and_reload "Virtual Boolean", from: "Type"
+      expect(page).to have_field("Writable?")
+      fill_in "Holding Register", with: "100"
+      fill_in "Value Scale", with: "10"
+      select_tom "uint16", from: "ModBus Data Type"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("Modbus Virtual Boolean")
       device = Device.find_by(name: "Modbus Virtual Boolean")
@@ -108,19 +96,15 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual Decimal device for Modbus TCP board", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Modbus Virtual Decimal"
-        select "Modbus Board", from: "Board"
-        wait_for_modal_reload
-        select "Virtual Decimal", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Writable?")
-        fill_in "Holding Register", with: "101"
-        fill_in "Value Scale", with: "10"
-        select "int16", from: "ModBus Data Type"
-        fill_in "Unit", with: "°C"
-        click_button "Create"
-      end
+      fill_in "Name", with: "Modbus Virtual Decimal"
+      select_and_reload "Modbus Board", from: "Board"
+      select_and_reload "Virtual Decimal", from: "Type"
+      expect(page).to have_field("Writable?")
+      fill_in "Holding Register", with: "101"
+      fill_in "Value Scale", with: "10"
+      select_tom "int16", from: "ModBus Data Type"
+      fill_in "Unit", with: "°C"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("Modbus Virtual Decimal")
       device = Device.find_by(name: "Modbus Virtual Decimal")
@@ -136,19 +120,15 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a Virtual Integer device for Modbus TCP board", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Modbus Virtual Integer"
-        select "Modbus Board", from: "Board"
-        wait_for_modal_reload
-        select "Virtual Integer", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Writable?")
-        fill_in "Holding Register", with: "102"
-        fill_in "Value Scale", with: "100"
-        select "uint16", from: "ModBus Data Type"
-        fill_in "Unit", with: "rpm"
-        click_button "Create"
-      end
+      fill_in "Name", with: "Modbus Virtual Integer"
+      select_and_reload "Modbus Board", from: "Board"
+      select_and_reload "Virtual Integer", from: "Type"
+      expect(page).to have_field("Writable?")
+      fill_in "Holding Register", with: "102"
+      fill_in "Value Scale", with: "100"
+      select_tom "uint16", from: "ModBus Data Type"
+      fill_in "Unit", with: "rpm"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("Modbus Virtual Integer")
       device = Device.find_by(name: "Modbus Virtual Integer")
@@ -166,22 +146,17 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "creates a device with log compression", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Compressed Device"
-        select "Arduino Board", from: "Board"
-        wait_for_modal_reload
-        select "Analog Input", from: "Type"
-        wait_for_modal_reload
-        fill_in "Pin/Address", with: "5"
-        check "Log Enabled"
-        wait_for_modal_reload
-        select "Average Value", from: "Device Log Compression"
-        wait_for_modal_reload
-        select "5 minutes", from: "Timespan"
-        fill_in "Backlog", with: "12"
-        fill_in "Clear Logs After (days)", with: "7"
-        click_button "Create"
-      end
+      fill_in "Name", with: "Compressed Device"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Analog Input", from: "Type"
+      fill_in "Pin/Address", with: "5"
+      check "Log Enabled"
+      wait_for_form_reload
+      select_and_reload "Average Value", from: "Device Log Compression"
+      select_tom "5 minutes", from: "Timespan"
+      fill_in "Backlog", with: "12"
+      fill_in "Clear Logs After (days)", with: "7"
+      click_button "Create"
       expect(page).to have_content("Device was successfully created")
       expect(page).to have_content("Compressed Device")
       device = Device.find_by(name: "Compressed Device")
@@ -197,17 +172,13 @@ RSpec.feature "Devices virtual and Modbus creation", type: :feature do
     scenario "preserves entered values when device type changes without creating a record", js: true do
       visit devices_path
       click_link "Add Device"
-      within "#ajax-modal" do
-        fill_in "Name", with: "Reload Test Device"
-        select "Arduino Board", from: "Board"
-        select "Relay", from: "Type"
-        wait_for_modal_reload
-        fill_in "Pin/Address", with: "7"
-        select "Switch", from: "Type"
-        wait_for_modal_reload
-        expect(page).to have_field("Name", with: "Reload Test Device")
-        expect(page).to have_field("Pin/Address", with: "7")
-      end
+      fill_in "Name", with: "Reload Test Device"
+      select_and_reload "Arduino Board", from: "Board"
+      select_and_reload "Relay", from: "Type"
+      fill_in "Pin/Address", with: "7"
+      select_and_reload "Switch", from: "Type"
+      expect(page).to have_field("Name", with: "Reload Test Device")
+      expect(page).to have_field("Pin/Address", with: "7")
       expect(Device.find_by(name: "Reload Test Device")).to be_nil
     end
   end

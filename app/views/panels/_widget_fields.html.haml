@@ -1,10 +1,11 @@
-.nested-fields.mb-4.col-md-6
+.nested-fields.mb-4.col-md-6{ data: { new_record: f.object.new_record? } }
+  = f.hidden_field :_destroy
   .card.bg-light
     .card-body
       .row
-        = f.input :widget_type, collection: Widget.widget_types_to_collection, wrapper_html: { class: "col-9" }
-        .col-3.mt-icon.text-right
-          = link_to_remove_association fa_icon("trash"), f
+        = f.input :widget_type, collection: Widget.widget_types_to_collection, wrapper_html: { class: "col-9" }, input_html: { data: { controller: "select", reload: true } }
+        .col-3.mt-icon.text-end
+          = link_to fa_icon("trash"), "#", class: "remove_fields", data: { action: "nested-form#remove" }
       .row
         = f.input :show_label, wrapper_html: { class: "col-4"}, input_html: { "data-reload": true }
         - if f.object.show_label?
@@ -12,8 +13,8 @@
       .row
         = f.input :show_updated, wrapper_html: { class: "col-4" }
       .row
-        = f.association :device, collection: Device.all, include_blank: "Select Device...", wrapper_html: { class: "col-6" }
-        = f.association :program, collection: Program.all, include_blank: "Select Program...", wrapper_html: { class: "col-6" }
+        = f.association :device, collection: Device.all, include_blank: "Select Device...", wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+        = f.association :program, collection: Program.all, include_blank: "Select Program...", wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
       .row
-        = f.input :color_1, collection: Widget.color_1s_to_collection, wrapper_html: { class: "col-6" }
-        = f.input :color_2, collection: Widget.color_2s_to_collection, wrapper_html: { class: "col-6" }
+        = f.input :color_1, collection: Widget.color_1s_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+        = f.input :color_2, collection: Widget.color_2s_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }

@@ -29,7 +29,7 @@ RSpec.feature "Widget Layout", type: :feature do
       item.setAttribute('gs-y', '3');
       item.setAttribute('gs-w', '4');
       item.setAttribute('gs-h', '2');
-      $(item).trigger('widget:update');
+      item.dispatchEvent(new CustomEvent('widget:update'));
     JS
     wait_until { widget.reload.x == 2 }
     expect(widget).to have_attributes(x: 2, y: 3, w: 4, h: 2)

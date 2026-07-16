@@ -10,40 +10,42 @@ RSpec.feature "Device Logs", type: :feature do
 
     scenario "displays value history chart with navigation", js: true do
       visit device_path(device)
-      expect(page).to have_css(".sk-spinner", visible: false, wait: 10)
-      expect(page).to have_css("#device_history")
-      expect(page).to have_css("canvas")
+      expect(page).to have_css("#device_history", wait: 10)
+      expect(page).to have_css(".chart-canvas canvas", wait: 10)
     end
 
     scenario "navigates chart by selecting different time intervals", js: true do
       visit device_path(device)
-      expect(page).to have_css("#device_history")
-      expect(page).to have_link("Year")
-      expect(page).to have_link("Month")
-      expect(page).to have_link("Week")
-      expect(page).to have_link("Day")
-      expect(page).to have_link("Hour")
+      expect(page).to have_css("#device_history", wait: 10)
+      expect(page).to have_button("Year")
+      expect(page).to have_button("Month")
+      expect(page).to have_button("Week")
+      expect(page).to have_button("Day")
+      expect(page).to have_button("Hour")
 
-      click_link "Week"
+      click_button "Week"
       expect(page).to have_selector(".nav-link.active", text: "Week")
-      click_link "Month"
+      expect(page).to have_css(".chart-canvas canvas")
+      click_button "Month"
       expect(page).to have_selector(".nav-link.active", text: "Month")
+      expect(page).to have_css(".chart-canvas canvas")
     end
 
     scenario "navigates chart by moving through days", js: true do
       Timecop.freeze(Time.parse("2025-01-01 12:00:00")) do
         visit device_path(device)
         expect(page).to have_css("#device_history")
-        click_link "Day"
+        click_button "Day"
         expect(page).to have_css(".btn.btn-success", text: "1.1.2025")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.mr-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.me-2").click
         end
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "31.12.2024")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.ml-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.ms-2").click
         end
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "1.1.2025")
+        expect(page).to have_css(".chart-canvas canvas")
       end
     end
 
@@ -51,16 +53,17 @@ RSpec.feature "Device Logs", type: :feature do
       Timecop.freeze(Time.parse("2025-01-01 12:00:00")) do
         visit device_path(device)
         expect(page).to have_css("#device_history")
-        click_link "Hour"
+        click_button "Hour"
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "1.1.2025 12h")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.mr-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.me-2").click
         end
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "1.1.2025 11h")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.ml-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.ms-2").click
         end
         expect(page).to have_selector(".btn.btn-success", text: "1.1.2025 12h")
+        expect(page).to have_css(".chart-canvas canvas")
       end
     end
   end
@@ -71,9 +74,8 @@ RSpec.feature "Device Logs", type: :feature do
 
     scenario "displays line chart for numeric device", js: true do
       visit device_path(device)
-      expect(page).to have_css(".sk-spinner", visible: false, wait: 10)
-      expect(page).to have_css("#device_history")
-      expect(page).to have_css("canvas")
+      expect(page).to have_css("#device_history", wait: 10)
+      expect(page).to have_css(".chart-canvas canvas", wait: 10)
     end
   end
 
@@ -83,9 +85,8 @@ RSpec.feature "Device Logs", type: :feature do
 
     scenario "displays chart for string device", js: true do
       visit device_path(device)
-      expect(page).to have_css(".sk-spinner", visible: false, wait: 10)
-      expect(page).to have_css("#device_history")
-      expect(page).to have_css("canvas")
+      expect(page).to have_css("#device_history", wait: 10)
+      expect(page).to have_css(".chart-canvas canvas", wait: 10)
     end
   end
 
@@ -96,7 +97,7 @@ RSpec.feature "Device Logs", type: :feature do
 
     scenario "displays device logs", js: true do
       visit device_path(device)
-      expect(page).to have_css(".sk-spinner", visible: false, wait: 10)
+      expect(page).to have_css("#device_logs table", wait: 10)
       within "#device_logs" do
         expect(page).to have_content("off")
         expect(page).to have_content("on")

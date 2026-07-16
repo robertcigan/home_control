@@ -1,5 +1,5 @@
 class Widgets::ProgramsController < ApplicationController
-  respond_to :js
+  respond_to :html
 
   load_resource :panel
   load_resource :widget, through: :panel
@@ -8,9 +8,9 @@ class Widgets::ProgramsController < ApplicationController
 
   def run
     @program = @widget.program
-    if @panel.public_access? || authenticate == true    
+    if @panel.public_access? || authenticate == true
       @program.run
-      respond_with(@program)
     end
+    head :no_content
   end
 end

@@ -1,9 +1,8 @@
 class ProgramsController < ApplicationController
-  responders :ajax_modal, :collection
-  respond_to :html, only: [:show, :index, :destroy]
-  respond_to :js, except: [:show]
+  responders :collection
+  respond_to :html, :turbo_stream
 
-  before_action :load_reload, only:  [:create, :update]
+  before_action :load_reload, only: [:create, :update]
   load_and_authorize_resource
 
   def index
@@ -30,26 +29,31 @@ class ProgramsController < ApplicationController
 
   def create
     @program = Program.new(program_params)
-    if !@reload && @program.save
-      flash.now[:notice] = "Program was successfully created." 
+    if @reload
+      render :new, status: :unprocessable_entity
+    else
+      if @program.save
+        flash[:notice] = "Program was successfully created."
+      end
+      respond_with(@program, location: :programs)
     end
-    respond_with(@program, location: :programs, reload: @reload)
   end
 
   def update
     if @reload
       @program.assign_attributes(program_params)
+      render :edit, status: :unprocessable_entity
     else
       @program.update(program_params)
+      if @program.errors.empty?
+        flash[:notice] = "Program was successfully updated."
+      end
+      respond_with(@program, location: :programs)
     end
-    flash.now[:notice] = "Program was successfully updated."  if @program.errors.empty?
-    respond_with(@program, location:  :programs, reload: @reload)
   end
 
   def destroy
-    @program.destroy
-    flash.now[:notice] = "Program was successfully removed."
-    respond_with(@program, location: :programs)
+    destroy_with_turbo_stream(@program, location: programs_path, notice: "Program was successfully removed.")
   end
 
   def set
@@ -62,21 +66,48 @@ class ProgramsController < ApplicationController
     else
       flash.now[:alert] = "Program #{@program} update errors"
     end
-    respond_with(@program)
+
+    respond_to do |format|
+      format.turbo_stream do
+        render turbo_stream: helpers.turbo_stream_flash
+      end
+      format.html do
+        flash[:notice] = flash.now[:notice] if flash.now[:notice].present?
+        flash[:alert] = flash.now[:alert] if flash.now[:alert].present?
+        redirect_back fallback_location: @program, status: :see_other
+      end
+    end
   end
-  
+
   def run
     @program.run
-    unless params[:silent]
+    if params[:silent]
+      head :no_content
+    else
       flash.now[:notice] = "Program #{@program} successfully run"
+
+      respond_to do |format|
+        format.turbo_stream do
+          streams = helpers.turbo_stream_flash
+          streams << turbo_stream.replace(
+            "#{helpers.dom_id(@program)}_output_log",
+            partial: "programs/output_log",
+            locals: { program: @program }
+          )
+          render turbo_stream: streams
+        end
+        format.html do
+          flash[:notice] = flash.now[:notice]
+          redirect_back fallback_location: @program, status: :see_other
+        end
+      end
     end
-    respond_with(@program)
   end
-  
+
   private
 
   def program_params
-    params.require(:program).permit(:name, :program_type, :code, :repeat_every, :enabled, 
+    params.require(:program).permit(:name, :program_type, :code, :repeat_every, :enabled,
       programs_devices_attributes: [:id, :device_id, :variable_name, :trigger, :_destroy]
     )
   end

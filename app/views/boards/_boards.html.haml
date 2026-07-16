@@ -2,17 +2,17 @@
   %table.table.table-hover.table-striped
     %thead
       %tr
-        %th= sort_link @search, :name, "Name", remote: true
-        %th= sort_link @search, :ip, "IP", remote: true
-        %th= sort_link @search, :board_type, "Type", remote: true
-        %th.text-center= sort_link @search, :connected_at, "Connected", remote: true
-        %th= sort_link @search, :ssid, "SSID", remote: true
-        %th.text-right= sort_link @search, :ssid, "Signal Strength", remote: true
+        %th= sort_link @search, :name, "Name"
+        %th= sort_link @search, :ip, "IP"
+        %th= sort_link @search, :board_type, "Type"
+        %th.text-center= sort_link @search, :connected_at, "Connected"
+        %th= sort_link @search, :ssid, "SSID"
+        %th.text-end= sort_link @search, :ssid, "Signal Strength"
         %th
     %tbody
       - @boards.each do |board|
-        %tr.board{ data: { board: board.json_data }}
-          %td= link_to board, board
+        %tr.board{ id: dom_id(board), data: { board: board.json_data }}
+          %td= link_to board, board, data: { turbo_frame: "_top" }
           %td= board.ip
           %td= board.board_type_to_human
           %td.text-center
@@ -21,20 +21,17 @@
           %td.ssid
             - if board.board_type_esp?
               = board.ssid
-          %td.text-right
+          %td.text-end
             - if board.board_type_esp?
               %span.signal-strength
                 = board.signal_strength
               \%
 
-          %td.text-nowrap.text-right.actions
-            = link_to fa_icon("pencil-alt"), edit_board_path(board), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-md", title: "Edit Board" }
-            = link_to fa_icon("trash"), board, method: :delete, data: { confirm: 'Are you sure?', remote: true }, class: "ml btn btn-sm btn-danger"
+          %td.text-nowrap.text-end.actions
+            = link_to fa_icon("pencil-alt"), edit_board_path(board), title: "Edit", class: "btn btn-sm btn-primary", data: { turbo_frame: "_top" }
+            = link_to fa_icon("trash"), board, class: "ml btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }
 
 .page-pagination
   .pagination-description
     = page_entries_info @boards
-  = paginate @boards, remote: true
-
-:javascript
-  HomeControl.Boards.initList();
+  = paginate @boards
