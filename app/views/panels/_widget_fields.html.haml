@@ -15,6 +15,10 @@
       .row
         = f.association :device, collection: Device.all, include_blank: "Select Device...", wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
         = f.association :program, collection: Program.all, include_blank: "Select Program...", wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+      - if f.object.widget_type_chart?
+        .row
+          = f.input :time_window_hours, wrapper_html: { class: "col-6" }, input_html: { step: "any" }
+          = f.input :chart_type, collection: Widget.chart_types_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
       .row
         = f.input :color_1, collection: Widget.color_1s_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
         = f.input :color_2, collection: Widget.color_2s_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }

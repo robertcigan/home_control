@@ -40,20 +40,8 @@ class DeviceLogsController < ApplicationController
       end
     end
 
-    chart_type = if @device.value_attribute == :value_boolean
-      "step-area"
-    elsif @device.value_attribute == :value_decimal || @device.value_attribute == :value_integer
-      "line"
-    else
-      "points"
-    end
-    title_y = if @device.value_attribute == :value_boolean
-      "On/Off"
-    elsif @device.unit.present?
-      @device.unit
-    else
-      "Value"
-    end
+    chart_type = helpers.device_chart_type(@device)
+    title_y = helpers.device_chart_y_title(@device)
 
     @chart_data_attributes = helpers.chart_data_attributes(
       chart_device_device_logs_path(@device, format: :json),

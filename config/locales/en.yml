@@ -61,6 +61,8 @@ en:
       widget:
         show_updated: "Show Updated"
         show_label: "Show Label"
+        time_window_hours: "Time Window (hours)"
+        chart_type: "Chart Type"
 
     attribute_options:
       board:
@@ -109,6 +111,13 @@ en:
           button: "Button"
           boolean_value: "Boolean Value"
           text_value: "Text Value"
+          chart: "Chart"
+        chart_type:
+          auto: "Auto"
+          line: "Line"
+          area: "Area"
+          step_area: "Step Area"
+          points: "Points"
         color_1:
           blue: "Blue"
           indigo: "Indigo"

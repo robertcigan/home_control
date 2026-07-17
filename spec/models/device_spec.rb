@@ -151,6 +151,42 @@ RSpec.describe Device, type: :model do
       expect(json_data[:indication]).to eq("")
       expect(json_data[:updated]).to be_present
     end
+
+    it 'exposes ts from last_change and chart_value' do
+      device = create(:ds18b20, value_decimal: 21.5, last_change: Time.zone.parse('2025-06-15 12:00:00'))
+      json_data = device.json_data
+
+      expect(json_data[:ts]).to eq((device.last_change.to_f * 1000).to_i)
+      expect(json_data[:chart_value]).to eq(21.5)
+    end
+
+    it 'sends nil ts when last_change is missing' do
+      device = build(:ds18b20, value_decimal: 21.5, last_change: nil)
+      expect(device.json_data[:ts]).to be_nil
+    end
+  end
+
+  describe '#numeric_chart_value' do
+    it 'maps boolean true/false to 1/0 and nil to nil' do
+      expect(build(:relay, value_boolean: true).numeric_chart_value).to eq(1)
+      expect(build(:relay, value_boolean: false).numeric_chart_value).to eq(0)
+      expect(build(:relay, value_boolean: nil).numeric_chart_value).to be_nil
+    end
+
+    it 'returns integer and decimal values as-is' do
+      expect(build(:virtual_integer, value_integer: 42).numeric_chart_value).to eq(42)
+      expect(build(:ds18b20, value_decimal: 21.5).numeric_chart_value).to eq(21.5)
+    end
+
+    it 'maps present string values to 1 and blank to nil' do
+      expect(build(:virtual_string, value_string: 'ok').numeric_chart_value).to eq(1)
+      expect(build(:virtual_string, value_string: '').numeric_chart_value).to be_nil
+      expect(build(:virtual_string, value_string: nil).numeric_chart_value).to be_nil
+    end
+
+    it 'returns nil when the device has no value_attribute' do
+      expect(build(:device).numeric_chart_value).to be_nil
+    end
   end
 
   describe '#status' do

@@ -8,6 +8,8 @@
       = render partial: "widgets/widget_switch", locals: { widget: widget }
     - elsif widget.widget_type_button?
       = render partial: "widgets/widget_button", locals: { widget: widget }
+    - elsif widget.widget_type_chart?
+      = render partial: "widgets/widget_chart", locals: { widget: widget }
     - else
       Not implemented
 

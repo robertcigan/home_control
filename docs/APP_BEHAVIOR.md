@@ -77,8 +77,9 @@ Web UI (write path):  Rails controller -> model save -> after_commit detect_chan
 - Exceptions to authentication:
   - `PanelsController#show` — skips the before_action; renders the panel when
     `panel.public_access?` **or** basic auth passes.
-  - `Widgets::DevicesController#set` and `Widgets::ProgramsController#run` — same
-    pattern; a public panel is fully operable without login.
+  - `Widgets::DevicesController#set`, `Widgets::ProgramsController#run`, and
+    `Widgets::ChartsController#show` — same pattern; a public panel is fully operable
+    without login (including chart JSON series data).
 - CanCanCan is present but `Ability` grants `can :manage, :all` — effectively single-user.
 - Global rescues: `StaleObjectError` → flash + redirect (or `render_exception` for JS),
   `InvalidAuthenticityToken` → redirect to referer with "Please try again".
@@ -200,7 +201,7 @@ Payloads (`json_data`):
 | Model | Payload keys |
 |---|---|
 | Board | `id`, `status` ("true"/"false" = connected), `ssid`, `signal-strength` |
-| Device | `id`, `status`, `updated` (localized last_change), `value`, `indication` |
+| Device | `id`, `status`, `updated` (localized last_change), `value`, `indication`, `ts` (last_change as ms epoch, or null), `chart_value` (numeric series value) |
 | Program | `id`, `enabled`, `runtime` (ms), `thread-utilisation`, `last-run`, `last-error-at`, `has-error` |
 | Panel | `id` only |
 
@@ -224,7 +225,8 @@ Browser handling (all in CoffeeScript channels + section files):
   so initial state and live updates share one code path.
 - The automation process re-broadcasts every device that has widgets and hasn't changed
   for 60 s (`ArduinoServer.push_device_values`, scope `Device.repeated_ws_push`) — a
-  keep-fresh mechanism for panel dashboards.
+  keep-fresh mechanism for panel dashboards. Chart widgets key live points off `ts`
+  from `last_change`, so these keep-alive pushes do not append duplicate series points.
 
 > **Hotwire mapping:** this is the Action Cable → Turbo Streams part. Options:
 > `broadcasts_to` with stream/partial replacement per `dom_id`, or keep the JSON
@@ -380,12 +382,17 @@ Dashboards built from widgets on a gridstack grid (panel `column` × `row`, defa
   `layouts/panel`, no navbar).
 - **Panel New/Edit modal:** name, `public_access` checkbox, plus nested **widgets**
   via cocoon (widget_type, show_label→name, show_updated, device/program selects,
-  color_1/color_2). Panel `column`/`row` inputs exist but are commented out.
+  color_1/color_2; for chart also `time_window_hours` and `chart_type`). Panel
+  `column`/`row` inputs exist but are commented out.
 - **Widget types:** `switch` (device on/off control — two stacked links,
   CSS-swapped by device state), `button` (runs a program), `boolean_value` (cog icon,
-  spinning when true), `text_value` (live `.indication` text). All support label
-  header, last-updated footer, two configurable colors; validation: device required
-  for switch/boolean/text, program required for button.
+  spinning when true), `text_value` (live `.indication` text), `chart` (ECharts line
+  series for a log-enabled device). All support label header, last-updated footer, two
+  configurable colors; validation: device required for switch/boolean/text/chart,
+  program required for button. Chart-only: device must have `log_enabled`,
+  `time_window_hours` > 0 (default 24), `chart_type` in
+  `auto` / `line` / `area` / `step_area` / `points` (`auto` picks step-area for
+  boolean, line for numeric, points otherwise; `color_2` drives the series line color).
 - **Dashboard (`show`):** static (non-editable) gridstack, `cellHeight` = 100/rows %.
   Live behavior: device/program updates via cable (2.7) + font auto-resize (2.9).
   **Any panel/widget change broadcast on the `panels` stream reloads the page** via
@@ -397,6 +404,11 @@ Dashboards built from widgets on a gridstack grid (panel `column` × `row`, defa
   - Widget button: `PATCH /panels/:pid/widgets/:id/program/run?silent=true`
     (`Widgets::ProgramsController#run`, public-aware) — silent (no flash), feedback via
     ProgramChannel + the mousedown "running" animation.
+  - Chart widget: loads history via `GET /panels/:pid/widgets/:id/chart`
+    (`Widgets::ChartsController#show`, public-aware JSON) for the configured time
+    window (prepends last value before the window, appends current device value), then
+    appends live points from DeviceChannel (`ts` + `chart_value`) in the Stimulus
+    `widget-chart` controller.
 - **Layout editor (`/panels/:id/widgets`):** editable gridstack (drag & resize; resize
   handles always shown on mobile UAs). On every gridstack `change`, each moved item
   writes x/y/w/h into hidden fields of an embedded `form_with` and submits it →
@@ -483,4 +495,4 @@ Rails scaffold leftover, unused. Candidate for deletion during cleanup.
 
 ---
 
-*Document generated 2026-07-13 against v3.4.6 (Rails 8.1.3, Ruby 3.3.6).*
+*Document generated 2026-07-17 against v3.5.1 (Rails 8.1.3, Ruby 3.3.6).*

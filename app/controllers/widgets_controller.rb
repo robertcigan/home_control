@@ -92,6 +92,6 @@ class WidgetsController < ApplicationController
 
   def widget_params
     params.require(:widget).permit(:widget_type, :device_id, :program_id, :x, :y, :w, :h,
-      :color_1, :color_2, :icon, :name, :show_updated, :show_label)
+      :color_1, :color_2, :icon, :name, :show_updated, :show_label, :time_window_hours, :chart_type)
   end
 end

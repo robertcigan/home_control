@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import * as echarts from "echarts"
+import { seriesOptions as buildSeriesOptions } from "lib/chart_series_options"
 
 export default class extends Controller {
   static targets = ["canvas", "label", "forward"]
@@ -448,29 +449,7 @@ export default class extends Controller {
   }
 
   seriesOptions(name, data) {
-    const points = (data || []).map((pair) => [new Date(pair[0]).getTime(), pair[1]])
-    const options = {
-      type: "line",
-      showSymbol: false,
-      data: points
-    }
-
-    if (name) {
-      options.name = name
-    }
-
-    if (this.typeValue === "step-area") {
-      options.step = "end"
-      options.areaStyle = {}
-    } else if (this.typeValue === "points") {
-      // Keep series type "line" so dataZoom / slider / mini-graph stay unchanged;
-      // hide the stroke and show markers only (legacy Chart.js showLine: false).
-      options.showSymbol = true
-      options.symbolSize = 8
-      options.lineStyle = { width: 0, opacity: 0 }
-    }
-
-    return options
+    return buildSeriesOptions(this.typeValue, name, data)
   }
 
   rangeForTimespan(timespan, reference) {

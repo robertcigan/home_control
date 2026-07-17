@@ -2,6 +2,11 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.5.1 (2026-07-17)
+  * Added chart panel widgets (ECharts) with configurable time window and chart type
+  * Live chart updates over DeviceChannel; shared series options for device and widget charts
+  * Chart JSON endpoint for panel widgets (public-access aware)
+
 ## Home Control 3.5.0 (2026-07-17)
   * Rails upgraded to 8.1; bundle updated (Puma 8, Redis 5, Bootstrap 5.3, and related gems)
   * Frontend migrated from Turbolinks/CoffeeScript/jQuery to Turbo, Stimulus, and importmap

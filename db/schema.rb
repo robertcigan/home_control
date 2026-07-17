@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_05_04_154933) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_17_160138) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -146,6 +146,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_05_04_154933) do
   end
 
   create_table "widgets", force: :cascade do |t|
+    t.string "chart_type", default: "auto", null: false
     t.string "color_1"
     t.string "color_2"
     t.datetime "created_at", null: false
@@ -157,6 +158,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_05_04_154933) do
     t.integer "program_id"
     t.boolean "show_label", default: true, null: false
     t.boolean "show_updated", default: false, null: false
+    t.decimal "time_window_hours", precision: 10, scale: 3, default: "24.0", null: false
     t.datetime "updated_at", null: false
     t.integer "w"
     t.string "widget_type"
