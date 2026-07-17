@@ -1,25 +1,26 @@
-= simple_form_for([@panel, @widget], remote: true) do |form|
-  .modal-body
-    = form.error_notification
-    .row
-      = form.input :widget_type, collection: Widget.widget_types_to_collection, wrapper_html: { class: "col-6" }
-    .row
-      = form.input :show_label, wrapper_html: { class: "col-4"} , input_html: { "data-reload": true }
-      - if @widget.show_label?
-        = form.input :name, wrapper_html: { class: "col-8" }
-    .row
-      = form.input :show_updated, wrapper_html: { class: "col-4 pt-0" }
-    .row
-      = form.association :device, include_blank: "Select Device...", wrapper_html: { class: "col-6" }
-      = form.association :program, include_blank: "Select Program...", wrapper_html: { class: "col-6" }
-    .row
-      = form.input :color_1, collection: Widget.color_1s_to_collection, wrapper_html: { class: "col-6" }
-      = form.input :color_2, collection: Widget.color_2s_to_collection, wrapper_html: { class: "col-6" }
-    
-    
-  .modal-footer
-    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
-    = form.button :submit, @widget.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
+= simple_form_for([@panel, @widget], html: { data: { controller: "reload-form" } }) do |form|
+  .card.shadow
+    .card-body
+      = form.error_notification
+      .row
+        = form.input :widget_type, collection: Widget.widget_types_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select", reload: true } }
+      .row
+        = form.input :show_label, wrapper_html: { class: "col-4"} , input_html: { "data-reload": true }
+        - if @widget.show_label?
+          = form.input :name, wrapper_html: { class: "col-8" }
+      .row
+        = form.input :show_updated, wrapper_html: { class: "col-4 pt-0" }
+      .row
+        = form.association :device, include_blank: "Select Device...", wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+        = form.association :program, include_blank: "Select Program...", wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+      - if @widget.widget_type_chart?
+        .row
+          = form.input :time_window_hours, wrapper_html: { class: "col-6" }, input_html: { step: "any" }
+          = form.input :chart_type, collection: Widget.chart_types_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+      .row
+        = form.input :color_1, collection: Widget.color_1s_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
+        = form.input :color_2, collection: Widget.color_2s_to_collection, wrapper_html: { class: "col-6" }, input_html: { data: { controller: "select" } }
 
-:javascript
-  HomeControl.Widgets.initForm();
+    .card-footer.form-actions
+      = link_to "Cancel", panel_widgets_path(@panel), class: "btn btn-link"
+      = form.button :submit, @widget.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { turbo_submits_with: "Please wait…" }

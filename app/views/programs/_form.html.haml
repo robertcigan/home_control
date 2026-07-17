@@ -1,75 +1,76 @@
-= simple_form_for(@program, remote: true) do |form|
-  .modal-body
-    = form.error_notification
-    .row
-      .col-sm-5
-        = form.input :name
-      .col-sm-5
-        = form.input :program_type, collection: Program.program_types_to_collection, input_html: { data: { reload: true }}
-      .col-sm-2
-        = form.input :repeat_every, label: "Repeat (s)"
+= simple_form_for(@program, html: { data: { controller: "reload-form toggle-section nested-form code-editor" } }) do |form|
+  .card.shadow
+    .card-body
+      = form.error_notification
+      .row
+        .col-sm-5
+          = form.input :name
+        .col-sm-5
+          = form.input :program_type, collection: Program.program_types_to_collection, input_html: { data: { controller: "select", reload: true }}
+        .col-sm-2
+          = form.input :repeat_every, label: "Repeat (s)"
 
-    .row
-      .col-sm-6#code-section
-        %h3 Code
-        = form.input :code, label: false, input_html: { rows: 30 }
-        .small
-          %p.help-block
-            %code device.set(value)
-            Relay | Virtual
-            %br/
-            %code device.activate(vol, dir, file)
-            Sound
-            %br/
-            %code board.activate()
-            Board Test
-            %br/
-            %code set(key, value)
-            Stores value under the key in persistent storage
-            %br/
-            %code get(key)
-            Retreives value of the key from persistent storage
-            %br/
-            %code time_between("12:00", "14:00")
-            Return true if current time is in the range
-            %br/
-            %br/
-            %strong Logging methods:
-            %br/
-            %code log_debug("message")
-            Debug level message
-            %br/
-            %code log_info("message")
-            Info level message
-            %br/
-            %code log_warn("message")
-            Warning level message
-            %br/
-            %code log_error("message")
-            Error level message
-            %br/
-            %br/
-            %strong Example:
-            %br/
-            %code
-              log_info("Starting temperature check")
-              if teplota_device.value > 30
-              &nbsp;&nbsp;log_warn("Temperature too high")
-              end
+      .row
+        .col-sm-6#code-section
+          %h3 Code
+          = form.input :code, label: false, input_html: { rows: 30 }
+          .small
+            %p.help-block
+              %code device.set(value)
+              Relay | Virtual
+              %br/
+              %code device.activate(vol, dir, file)
+              Sound
+              %br/
+              %code board.activate()
+              Board Test
+              %br/
+              %code set(key, value)
+              Stores value under the key in persistent storage
+              %br/
+              %code get(key)
+              Retreives value of the key from persistent storage
+              %br/
+              %code time_between("12:00", "14:00")
+              Return true if current time is in the range
+              %br/
+              %br/
+              %strong Logging methods:
+              %br/
+              %code log_debug("message")
+              Debug level message
+              %br/
+              %code log_info("message")
+              Info level message
+              %br/
+              %code log_warn("message")
+              Warning level message
+              %br/
+              %code log_error("message")
+              Error level message
+              %br/
+              %br/
+              %strong Example:
+              %br/
+              %code
+                log_info("Starting temperature check")
+                if teplota_device.value > 30
+                &nbsp;&nbsp;log_warn("Temperature too high")
+                end
 
-      .col-sm-6#devices-section
-        %h3 Devices
-        #programs_devices
-          = form.simple_fields_for :programs_devices do |programs_device|
-            = render 'programs_device_fields', f: programs_device
-          .links
-            = link_to_add_association fa_icon("plus", text: "Add"), form, :programs_devices, class: "btn btn-secondary btn-sm"
+        .col-sm-6#devices-section
+          %h3 Devices
+          #programs_devices
+            = form.simple_fields_for :programs_devices do |programs_device|
+              = render 'programs_device_fields', f: programs_device
+            %template{ data: { nested_form_target: "template" } }
+              = form.simple_fields_for :programs_devices, ProgramsDevice.new, child_index: "NEW_RECORD" do |programs_device|
+                = render 'programs_device_fields', f: programs_device
+            .links
+              = link_to fa_icon("plus", text: "Add"), "#", class: "btn btn-secondary btn-sm", data: { action: "nested-form#add" }
 
-  .modal-footer
-    = link_to "Hide Devices", "#", class: "btn btn-link mr-auto", id: "hide_devices"
-    = link_to "Show Devices", "#", class: "btn btn-link mr-auto", id: "show_devices"
-    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
-    = form.button :submit, @program.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
-
-:javascript
-  HomeControl.Programs.initForm()
+    .card-footer.form-actions
+      = link_to "Hide Devices", "#", class: "btn btn-link me-auto", id: "hide_devices"
+      = link_to "Show Devices", "#", class: "btn btn-link me-auto", id: "show_devices"
+      = link_to "Cancel", programs_path, class: "btn btn-link"
+      = form.button :submit, @program.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { turbo_submits_with: "Please wait…" }

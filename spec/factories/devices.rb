@@ -88,6 +88,34 @@ FactoryBot.define do
       compression_backlog { 10 }
     end
 
+    trait :compression_average_min1 do
+      with_compression
+      compression_type { "average" }
+      compression_timespan { "min1" }
+      compression_backlog { 2 }
+    end
+
+    trait :compression_w_average_min5 do
+      with_compression
+      compression_type { "w_average" }
+      compression_timespan { "min5" }
+      compression_backlog { 2 }
+    end
+
+    trait :compression_end_value_hour do
+      with_compression
+      compression_type { "end_value" }
+      compression_timespan { "hour" }
+      compression_backlog { 2 }
+    end
+
+    trait :compression_max_value_day do
+      with_compression
+      compression_type { "max_value" }
+      compression_timespan { "day" }
+      compression_backlog { 2 }
+    end
+
     trait :with_log_clearing do
       days_to_preserve_logs { 7 }
     end

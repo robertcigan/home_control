@@ -94,7 +94,6 @@ module LogCompression
           when Device::CompressionType::W_AVERAGE
             device_logs_objects = [device_logs.where("created_at < ?", starts_at).order(:created_at).last] + device_logs_timespan.order(:created_at).load.to_a
             total_weight_value = 0
-            puts "Compressing #{id}"
             logs_count = device_logs_objects.size
             device_logs_objects.each_with_index do |device_log, i|
               unless device_log.nil? || device_log.send(value_attribute).nil?                    

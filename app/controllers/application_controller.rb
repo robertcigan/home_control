@@ -52,4 +52,53 @@ class ApplicationController < ActionController::Base
   def current_user
     nil
   end
+
+  # Removes the row via Turbo Stream when delete is triggered from an index
+  # turbo-frame (keeps filters/pagination). Otherwise redirects (e.g. show page).
+  def destroy_with_turbo_stream(resource, location:, notice:, always_stream: false)
+    if resource.destroy
+      respond_to do |format|
+        format.turbo_stream do
+          if always_stream || list_frame_destroy_request?
+            flash.now[:notice] = notice
+            render turbo_stream: [
+              turbo_stream.remove(resource),
+              *helpers.turbo_stream_flash
+            ]
+          else
+            flash[:notice] = notice
+            redirect_to location, status: :see_other
+          end
+        end
+        format.html do
+          flash[:notice] = notice
+          redirect_to location, status: :see_other
+        end
+      end
+    else
+      message = resource.errors.full_messages.to_sentence
+      if message.blank?
+        message = "Could not remove record."
+      end
+
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:alert] = message
+          render turbo_stream: helpers.turbo_stream_flash
+        end
+        format.html do
+          flash[:alert] = message
+          redirect_to location, status: :see_other
+        end
+      end
+    end
+  end
+
+  def list_frame_destroy_request?
+    if turbo_frame_request?
+      turbo_frame_request_id != "_top"
+    else
+      false
+    end
+  end
 end

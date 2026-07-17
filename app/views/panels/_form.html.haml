@@ -1,23 +1,21 @@
-= simple_form_for(@panel, remote: true) do |form|
-  .modal-body
-    = form.error_notification
-    = form.input :name
-    = form.input :public_access, wrapper_html: { class: "single-checkbox" }
-    -# .row
-    -#   = form.input :column, wrapper_html: { class: "col-6" }
-    -#   = form.input :row, wrapper_html: { class: "col-6" }
+= simple_form_for(@panel, html: { data: { controller: "reload-form nested-form" } }) do |form|
+  .card.shadow
+    .card-body
+      = form.error_notification
+      = form.input :name
+      = form.input :public_access, wrapper_html: { class: "single-checkbox" }
 
-    %h3 Widgets
-    .container
-      #widgets.row
-        = form.simple_fields_for :widgets do |widget_form|
-          = render 'widget_fields', f: widget_form
-        .links.col-12
-          = link_to_add_association fa_icon("plus", text: "Add", class: "mr-2"), form, :widgets, class: "btn btn-primary btn-sm"
-    
-  .modal-footer
-    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
-    = form.button :submit, @panel.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
+      %h3 Widgets
+      .container
+        #widgets.row
+          = form.simple_fields_for :widgets do |widget_form|
+            = render 'widget_fields', f: widget_form
+          %template{ data: { nested_form_target: "template" } }
+            = form.simple_fields_for :widgets, Widget.new, child_index: "NEW_RECORD" do |widget_form|
+              = render 'widget_fields', f: widget_form
+          .links.col-12
+            = link_to fa_icon("plus", text: "Add", class: "me-2"), "#", class: "btn btn-primary btn-sm", data: { action: "nested-form#add" }
 
-:javascript
-  HomeControl.Panels.initForm();
+    .card-footer.form-actions
+      = link_to "Cancel", panels_path, class: "btn btn-link"
+      = form.button :submit, @panel.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { turbo_submits_with: "Please wait…" }

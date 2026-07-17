@@ -1,63 +1,58 @@
 module ChartsHelper
-  def chart_options(min, max, options = {})
-    options[:stepped] = false if options[:stepped].nil?
-    options[:points] = true if options[:points].nil?
-    options[:curved] = false if options[:curved].nil?
-    options[:refresh] = 0 if options[:refresh].nil?
-    options[:title_y] = "Value" if options[:title_y].nil?
-    options[:lines] = true if options[:lines].nil?
-    options[:type] = "line" if options[:type].nil?
+  def chart_data_attributes(url, min, max, options = {})
+    {
+      controller: "chart",
+      chart_url_value: url,
+      chart_type_value: options[:type] || "line",
+      chart_y_title_value: options[:title_y] || "",
+      chart_timespan_value: options[:timespan] || "day",
+      chart_multi_value: options.fetch(:multi, false),
+      chart_min_value: min.iso8601,
+      chart_max_value: max.iso8601,
+      chart_now_value: Time.current.iso8601
+    }
+  end
 
-    timespan = max - min
-    unit = if timespan >= 10.months.to_i
-      "month"
-    elsif timespan >= 5.days.to_i
-      "day"
-    elsif timespan >= 12.hours.to_i
-      "hour"
-    elsif timespan > 30.minutes.to_i 
-      "minute"
+  def chart_window_label(min, timespan)
+    format = case timespan
+    when "hour"
+      :day_and_hour
+    when "month"
+      :month
+    when "year"
+      :year
     else
-      "second"
+      :date
     end
 
-    chart_options = {
-      type: options[:type],
-      curve: options[:curved],
-      points: options[:points],
-      refresh: options[:refresh],
-      dataset: { stepped: options[:stepped], showLine: options[:lines] },
-      library: {
-        scales: {
-          x: {
-            type: 'time',
-            max: max,
-            min: min,
-            time: {
-              tooltipFormat: Rails.configuration.home_control.luxon_formats[:time],
-              isoWeekday: true,
-              unit: unit,
-              displayFormats: {
-                month: Rails.configuration.home_control.luxon_formats[:month], 
-                day: Rails.configuration.home_control.luxon_formats[:day],
-                hour: Rails.configuration.home_control.luxon_formats[:hour],
-                minute: Rails.configuration.home_control.luxon_formats[:minute],
-                second: Rails.configuration.home_control.luxon_formats[:second]
-              }
-            },
-            title: {
-              display: true,
-              text: 'Date/Time'
-            }
-          },
-          y: {
-            title: {
-              display: true,
-              text: options[:title_y]
-            }
-          }
-        }
-      }
-    }    
+    I18n.l(min, format: format)
+  end
+
+  def device_chart_type(device)
+    if device.value_attribute == :value_boolean
+      "step-area"
+    elsif device.value_attribute == :value_decimal || device.value_attribute == :value_integer
+      "line"
+    else
+      "points"
+    end
+  end
+
+  def widget_chart_type(widget)
+    if widget.chart_type_auto? || widget.chart_type.blank?
+      device_chart_type(widget.device)
+    elsif widget.chart_type_step_area?
+      "step-area"
+    else
+      widget.chart_type
+    end
+  end
+
+  def device_chart_y_title(device)
+    if device.unit.present?
+      device.unit
+    else
+      ""
+    end
   end
 end

@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.6"
+ruby "3.4.10"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "7.2.3"
+gem "rails", "8.1.3"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -13,22 +13,22 @@ gem "sprockets-rails"
 # gem "sqlite3", "~> 1.4"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6.0"
+gem "puma", "~> 8.0"
 
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-# gem "importmap-rails"
+gem "importmap-rails"
 
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
-#gem "turbo-rails"
+gem "turbo-rails"
 
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
-# gem "stimulus-rails"
+gem "stimulus-rails"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
 # Use Redis adapter to run Action Cable in production
-gem "redis", "~> 4.0"
+gem "redis", "~> 5.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -42,8 +42,12 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
+# Ruby 3.4+ extracted stdlib gems
+gem "ostruct"
+gem "resolv-replace"
+
 # Use Sass to process CSS
-gem "sassc-rails"
+gem "dartsass-sprockets"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
@@ -53,6 +57,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem 'dotenv'
   gem "pry"
+  gem "parallel_tests"
 end
 
 group :development do
@@ -85,16 +90,12 @@ end
 
 gem "amoeba"
 gem "cancancan"
-gem "chartkick"
-gem "cocoon"
-gem "codemirror-rails"
-gem "coffee-rails"
 gem "eventmachine"
 gem "action_cable_client"
 gem 'event_spitter'
 gem "font_awesome5_rails"
 gem "foreman"
-gem "haml-rails", "~> 2.0"
+gem "haml-rails", "~> 3.0"
 gem "kaminari"
 gem "pg"
 gem "ransack"
@@ -103,8 +104,4 @@ gem "simple_form"
 gem "exception_notification"
 gem "rmodbus"
 
-gem 'bootstrap', '~> 4.6.0'
-gem 'jquery-rails'
-gem "select2-rails"
-gem "turbolinks", "~> 5"
-gem "animate-rails"
+gem "bootstrap", "~> 5.3"

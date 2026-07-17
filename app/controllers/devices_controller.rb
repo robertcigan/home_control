@@ -1,9 +1,8 @@
 class DevicesController < ApplicationController
-  responders :ajax_modal, :collection
-  respond_to :html, only: [:show, :index, :destroy]
-  respond_to :js, except: [:show]
+  responders :collection
+  respond_to :html, :turbo_stream
 
-  before_action :load_reload, only:  [:create, :update]
+  before_action :load_reload, only: [:create, :update]
   load_and_authorize_resource
 
   def index
@@ -27,31 +26,36 @@ class DevicesController < ApplicationController
 
   def create
     @device = Device.new(device_params)
-    if !@reload && @device.save
-      flash.now[:notice] = "Device was successfully created."
+    if @reload
+      render :new, status: :unprocessable_entity
+    else
+      if @device.save
+        flash[:notice] = "Device was successfully created."
+      end
+      respond_with(@device, location: :devices)
     end
-    respond_with(@device, location: :devices, reload: @reload)
   end
 
   def update
     if @reload
       @device.assign_attributes(device_params)
+      render :edit, status: :unprocessable_entity
     else
       @device.update(device_params)
+      if @device.errors.empty?
+        flash[:notice] = "Device was successfully updated."
+      end
+      respond_with(@device, location: :devices)
     end
-    flash.now[:notice] = "Device was successfully updated."  if @device.errors.empty?
-    respond_with(@device, location:  :devices, reload: @reload)
   end
 
   def destroy
-    @device.destroy
-    flash.now[:notice] = "Device was successfully removed."
-    respond_with(@device, location:  :devices)
+    destroy_with_turbo_stream(@device, location: devices_path, notice: "Device was successfully removed.")
   end
 
   def set
     @device.update(device_set_params)
-    respond_with(@device)
+    head :no_content
   end
 
   private

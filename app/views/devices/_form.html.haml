@@ -1,45 +1,43 @@
-= simple_form_for(@device, url: @device.new_record? ? devices_path : device_path(@device), as: 'device', remote: true) do |form|
-  .modal-body
-    = form.error_notification
-    .row
-      = form.input :name, wrapper_html: { class: "col-sm-6" }
-      = form.input :device_type, collection: Device.device_types_to_collection, input_html: { data: { reload: true } }, wrapper_html: { class: "col-sm-6" }
-    .row
-      = form.association :board, input_html: { data: { reload: true } }, wrapper_html: { class: "col-sm-6" }
-      - if @device.board && @device.board.board_type_modbus_tcp?
-        = form.input :virtual_writable, wrapper_html: { class: "col-sm-6" }
-    - if @device.board
-      - if @device.board.board_type_modbus_tcp?
-        .row
-          = form.input :holding_register_address, wrapper_html: { class: "col-sm-4" }
-          = form.input :scale, hint: "(10, 100, 1000...)", wrapper_html: { class: "col-sm-4" }
-          = form.input :modbus_data_type, collection: Device.modbus_data_types_to_collection, wrapper_html: { class: "col-sm-4" }
-      - else
-        = form.input :pin
-    .row
-      - if @device.poll?
-        = form.input :poll, wrapper_html: { class: "col-sm-4" }, hint: "HW poll of the pin in ms"
-      - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) || @device.is_a?(Device::Curtain)
-        = form.input :inverted, wrapper_html: { class: "col-sm-4" }
-      = form.input :log_enabled, wrapper_html: { class: "col-sm-4" }, input_html: { data: { reload: true} }, hint: "Removes all existing logs when disabled!"
-    %hr
-    .row
-      - if @device.device_type && @device.value_attribute
-        = form.input @device.value_attribute, wrapper_html: { class: "col-sm-6" }
-      = form.input :unit, wrapper_html: { class: "col-sm-6" }
-    - if @device.log_enabled?
-      - if @device.compressable?
-        .row
-          = form.input :compression_type, collection: Device.compression_types_to_collection, input_html: { data: { reload: true} }, wrapper_html: { class: "col-sm-6 col-md-4" }
-          - if @device.compression_type.present?
-            = form.input :compression_timespan, collection: Device.compression_timespans_to_collection, wrapper_html: { class: "col-sm-6 col-md-4" }
-            = form.input :compression_backlog, hint: "How many compression timespans should pass to start the compression", wrapper_html: { class: "col-sm-6 col-md-4" }
+= simple_form_for(@device, url: @device.new_record? ? devices_path : device_path(@device), as: 'device', html: { data: { controller: "reload-form" } }) do |form|
+  .card.shadow
+    .card-body
+      = form.error_notification
       .row
-        = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
+        = form.input :name, wrapper_html: { class: "col-sm-6" }
+        = form.input :device_type, collection: Device.device_types_to_collection, input_html: { data: { controller: "select", reload: true } }, wrapper_html: { class: "col-sm-6" }
+      .row
+        = form.association :board, input_html: { data: { controller: "select", reload: true } }, wrapper_html: { class: "col-sm-6" }
+        - if @device.board && @device.board.board_type_modbus_tcp?
+          = form.input :virtual_writable, wrapper_html: { class: "col-sm-6" }
+      - if @device.board
+        - if @device.board.board_type_modbus_tcp?
+          .row
+            = form.input :holding_register_address, wrapper_html: { class: "col-sm-4" }
+            = form.input :scale, hint: "(10, 100, 1000...)", wrapper_html: { class: "col-sm-4" }
+            = form.input :modbus_data_type, collection: Device.modbus_data_types_to_collection, wrapper_html: { class: "col-sm-4" }, input_html: { data: { controller: "select" } }
+        - else
+          = form.input :pin
+      .row
+        - if @device.poll?
+          = form.input :poll, wrapper_html: { class: "col-sm-4" }, hint: "HW poll of the pin in ms"
+        - if @device.is_a?(Device::Switch) || @device.is_a?(Device::Button) || @device.is_a?(Device::Relay) || @device.is_a?(Device::Curtain)
+          = form.input :inverted, wrapper_html: { class: "col-sm-4" }
+        = form.input :log_enabled, wrapper_html: { class: "col-sm-4" }, input_html: { data: { reload: true} }, hint: "Removes all existing logs when disabled!"
+      %hr
+      .row
+        - if @device.device_type && @device.value_attribute
+          = form.input @device.value_attribute, wrapper_html: { class: "col-sm-6" }
+        = form.input :unit, wrapper_html: { class: "col-sm-6" }
+      - if @device.log_enabled?
+        - if @device.compressable?
+          .row
+            = form.input :compression_type, collection: Device.compression_types_to_collection, input_html: { data: { controller: "select", reload: true} }, wrapper_html: { class: "col-sm-6 col-md-4" }
+            - if @device.compression_type.present?
+              = form.input :compression_timespan, collection: Device.compression_timespans_to_collection, wrapper_html: { class: "col-sm-6 col-md-4" }, input_html: { data: { controller: "select" } }
+              = form.input :compression_backlog, hint: "How many compression timespans should pass to start the compression", wrapper_html: { class: "col-sm-6 col-md-4" }
+        .row
+          = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
 
-  .modal-footer
-    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
-    = form.button :submit, @device.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
-
-:javascript
-  HomeControl.Devices.initForm()
+    .card-footer.form-actions
+      = link_to "Cancel", devices_path, class: "btn btn-link"
+      = form.button :submit, @device.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { turbo_submits_with: "Please wait…" }

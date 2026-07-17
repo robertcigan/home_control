@@ -1,3 +1,5 @@
+@use "bootstrap_bundle" as *;
+
 .fs-1 { font-size: $h1-font-size; }
 .fs-2 { font-size: $h2-font-size; }
 .fs-3 { font-size: $h3-font-size; }
@@ -25,3 +27,5 @@
 
 .h-70 { height: 70% !important; }
 .h-30 { height: 30% !important; }
+.h-15 { height: 15% !important; }
+.h-85 { height: 85% !important; }

@@ -1,5 +1,5 @@
 class Widgets::DevicesController < ApplicationController
-  respond_to :js
+  respond_to :html
 
   load_resource :panel
   load_resource :widget, through: :panel
@@ -10,8 +10,8 @@ class Widgets::DevicesController < ApplicationController
     @device = @widget.device
     if @panel.public_access? || authenticate == true
       @device.update(device_set_params)
-      respond_with(@device)
     end
+    head :no_content
   end
 
   private

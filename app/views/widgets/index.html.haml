@@ -1,11 +1,8 @@
 - page_title @panel.name
 
 - content_for(:action_button) do
-  = link_to fa_icon("plus", class: "pr-2", text: "Add Widget"), new_panel_widget_path(@panel), class: "btn btn-primary", data: { toggle: "ajax-modal", class: "modal-sm", title: "Add Widget" }
+  = link_to fa_icon("plus", class: "pe-2", text: "Add Widget"), new_panel_widget_path(@panel), class: "btn btn-primary"
 
-.grid-stack.grid-stack-edit.bg-light.border
+.grid-stack.grid-stack-edit.bg-light.border{ data: { controller: "grid-editor", grid_editor_column_value: @panel.column, grid_editor_row_value: @panel.row }}
   - @panel.widgets.each do |widget|
     = render widget, edit: true
-
-:javascript
-  HomeControl.Widgets.initIndex(#{@panel.column}, #{@panel.row});

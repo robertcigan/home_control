@@ -1,10 +1,8 @@
-.card.shadow.mt-2
-  .card-body.pt-0
-    .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
-      %h3 History
-    
-    #device_history
-      = render "device_logs/chart"
+= turbo_frame_tag "device_chart" do
+  .card.shadow.mt-2
+    .card-body.pt-0
+      .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
+        %h3 History
 
-:javascript
-  HomeControl.DeviceLogs.initChart();
+      #device_history
+        = render "device_logs/chart"

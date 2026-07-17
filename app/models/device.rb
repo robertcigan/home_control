@@ -67,8 +67,48 @@ class Device < ApplicationRecord
   end
 
   def json_data
-    super.merge(status: status.to_s, updated: last_change_text, value: value.to_s, indication: indication.to_s)
+    if last_change
+      ts = (last_change.to_f * 1000).to_i
+    else
+      ts = nil
+    end
+
+    super.merge(
+      status: status.to_s,
+      updated: last_change_text,
+      value: value.to_s,
+      indication: indication.to_s,
+      ts: ts,
+      chart_value: numeric_chart_value
+    )
   end
+
+  def numeric_chart_value
+    if value_attribute == :value_boolean
+      if value_boolean.nil?
+        nil
+      else
+        if value_boolean?
+          1
+        else
+          0
+        end
+      end
+    elsif value_attribute == :value_integer
+      value_integer
+    elsif value_attribute == :value_decimal
+      value_decimal
+    elsif value_attribute == :value_string
+      if value_string.present?
+        1
+      else
+        nil
+      end
+    else
+      nil
+    end
+  end
+
 
   def status
     nil

@@ -1,5 +1,5 @@
 # Dockerfile development version
-FROM ruby:3.3.6 AS home_control
+FROM ruby:3.4.10 AS home_control
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential libpq-dev zlib1g-dev liblzma-dev \

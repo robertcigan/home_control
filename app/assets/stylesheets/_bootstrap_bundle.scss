@@ -1,0 +1,5 @@
+// Bootstrap 5.3 still ships as @import modules; keep that stack in one bridge
+// so the rest of the app can use the Sass module system (@use).
+@import "custom_variables";
+@import "bootstrap";
+@import "font_awesome5_webfont";
