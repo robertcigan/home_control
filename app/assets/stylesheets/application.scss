@@ -1,14 +1,10 @@
-@import 'custom_variables';
-@import 'bootstrap';
-@import 'font_awesome5_webfont';
-
-@import 'vendor/tom-select.bootstrap5';
-@import 'vendor/gridstack.min';
-
-@import "theme";
-@import "layout";
-@import "boards";
-@import "devices";
-@import "programs";
-@import "panels";
-@import "widgets";
+@use "bootstrap_bundle";
+@use "vendor/tom-select.bootstrap5";
+@use "vendor/gridstack.min";
+@use "theme";
+@use "layout";
+@use "boards";
+@use "devices";
+@use "programs";
+@use "panels";
+@use "widgets";

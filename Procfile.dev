@@ -1,2 +1,2 @@
 web: bin/rails server -b 127.0.0.1 -p $PORT
-arduino: sleep 2 && bin/rails runner "ArduinoServer.run"
+arduino: sleep 4 && bin/rails runner "ArduinoServer.run"

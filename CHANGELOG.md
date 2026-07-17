@@ -6,6 +6,7 @@
   * Ruby upgraded to 3.4.10
   * Added ostruct and resolv-replace gems required by Ruby 3.4
   * Fixed navbar padding for brand and version
+  * Migrated app stylesheets from Sass @import to @use (Bootstrap remains behind a bridge)
 
 ## Home Control 3.5.1 (2026-07-17)
   * Added chart panel widgets (ECharts) with configurable time window and chart type

@@ -26,5 +26,10 @@ module HomeControl7
     config.time_zone = "Prague"
     config.active_record.yaml_column_permitted_classes = [ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Symbol, Time]
 
+    # Bootstrap 5.3 and Font Awesome still use @import; quiet those dependency warnings.
+    # App stylesheets use @use; the remaining @import lives only in _bootstrap_bundle.scss.
+    config.sass.quiet_deps = true
+    config.sass.silence_deprecations = %w[import]
+
   end
 end
