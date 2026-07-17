@@ -495,4 +495,4 @@ Rails scaffold leftover, unused. Candidate for deletion during cleanup.
 
 ---
 
-*Document generated 2026-07-17 against v3.5.1 (Rails 8.1.3, Ruby 3.3.6).*
+*Document generated 2026-07-17 against v3.5.2 (Rails 8.1.3, Ruby 3.4.10).*

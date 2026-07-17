@@ -2,6 +2,11 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.5.2 (2026-07-17)
+  * Ruby upgraded to 3.4.10
+  * Added ostruct and resolv-replace gems required by Ruby 3.4
+  * Fixed navbar padding for brand and version
+
 ## Home Control 3.5.1 (2026-07-17)
   * Added chart panel widgets (ECharts) with configurable time window and chart type
   * Live chart updates over DeviceChannel; shared series options for device and widget charts
