@@ -2,6 +2,14 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.5.0 (2026-07-17)
+  * Rails upgraded to 8.1; bundle updated (Puma 8, Redis 5, Bootstrap 5.3, and related gems)
+  * Frontend migrated from Turbolinks/CoffeeScript/jQuery to Turbo, Stimulus, and importmap
+  * CRUD forms moved from AJAX modals to full pages with Turbo Frames/Streams; Select2 replaced by Tom Select
+  * Charts refactored to ECharts with Stimulus controllers; flash messages as Bootstrap toasts
+  * Expanded RSpec test suite (feature, request, and channel specs; parallel test runs)
+  * ArduinoMessenger logging refactor; added APP_BEHAVIOR and TEST_PLAN documentation
+
 ## Home Control 3.4.6 (2025-11-17)
   * Bugfix: fix downloading DB backups
   * Rails updated to 7.2
