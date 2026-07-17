@@ -1,9 +1,8 @@
 class BoardsController < ApplicationController
-  responders :ajax_modal, :collection
-  respond_to :html, only: [:show, :index, :destroy]
-  respond_to :js, except: [:show]
+  responders :collection
+  respond_to :html, :turbo_stream
 
-  before_action :load_reload, only:  [:create, :update]
+  before_action :load_reload, only: [:create, :update]
   load_and_authorize_resource
 
   def index
@@ -26,26 +25,31 @@ class BoardsController < ApplicationController
   end
 
   def create
-    if !@reload && @board.save
-      flash.now[:notice] = "Board was successfully created." 
+    if @reload
+      render :new, status: :unprocessable_entity
+    else
+      if @board.save
+        flash[:notice] = "Board was successfully created."
+      end
+      respond_with(@board)
     end
-    respond_with(@board, reload: @reload)
   end
 
   def update
     if @reload
       @board.assign_attributes(board_params)
+      render :edit, status: :unprocessable_entity
     else
       @board.update(board_params)
+      if @board.errors.empty?
+        flash[:notice] = "Board was successfully updated."
+      end
+      respond_with(@board)
     end
-    flash.now[:notice] = "Board was successfully updated." if @board.errors.empty?
-    respond_with(@board, reload: @reload)
   end
 
   def destroy
-    @board.destroy
-    flash.now[:notice] = "Board was successfully removed."
-    respond_with(@board)
+    destroy_with_turbo_stream(@board, location: boards_path, notice: "Board was successfully removed.")
   end
 
   private

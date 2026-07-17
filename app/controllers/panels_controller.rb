@@ -1,11 +1,10 @@
 class PanelsController < ApplicationController
-  responders :ajax_modal, :collection
-  respond_to :html, only: [:show, :index, :destroy, :edit_layout, :update_layout]
-  respond_to :js, except: [:show, :edit_layout, :update_layout]
+  responders :collection
+  respond_to :html, :turbo_stream
 
   skip_before_action :authenticate, if: proc { action_name == 'show' }
 
-  before_action :load_reload, only:  [:create, :update]
+  before_action :load_reload, only: [:create, :update]
   load_and_authorize_resource except: :show
   load_resource only: :show
 
@@ -29,7 +28,6 @@ class PanelsController < ApplicationController
 
   def new
     @panel = Panel.new
-    #@panel.widgets.build if @panel.widgets.empty?
     respond_with(@panel)
   end
 
@@ -40,26 +38,31 @@ class PanelsController < ApplicationController
 
   def create
     @panel = Panel.new(panel_params)
-    if !@reload && @panel.save
-      flash.now[:notice] = "Panel was successfully created." 
+    if @reload
+      render :new, status: :unprocessable_entity
+    else
+      if @panel.save
+        flash[:notice] = "Panel was successfully created."
+      end
+      respond_with(@panel)
     end
-    respond_with(@panel, reload: @reload)
   end
 
   def update
     if @reload
       @panel.assign_attributes(panel_params)
+      render :edit, status: :unprocessable_entity
     else
       @panel.update(panel_params)
+      if @panel.errors.empty?
+        flash[:notice] = "Panel was successfully updated."
+      end
+      respond_with(@panel)
     end
-    flash.now[:notice] = "Panel was successfully updated." if @panel.errors.empty?
-    respond_with(@panel, reload: @reload)
   end
 
   def destroy
-    @panel.destroy
-    flash.now[:notice] = "Panel layout was successfully removed."
-    respond_with(@panel)
+    destroy_with_turbo_stream(@panel, location: panels_path, notice: "Panel layout was successfully removed.")
   end
 
   def edit_layout
@@ -68,17 +71,19 @@ class PanelsController < ApplicationController
 
   def update_layout
     @panel.update(panel_params)
-    flash[:notice] = "Panel layout was successfully updated." if @panel.errors.empty?
+    if @panel.errors.empty?
+      flash[:notice] = "Panel layout was successfully updated."
+    end
     respond_with(@panel)
   end
-  
+
   private
 
   def panel_params
     params.require(:panel).permit(:name, :column, :row, :public_access,
       widgets_attributes: [
-        :id, :widget_type, :device_id, :program_id, :x, :y, :w, :h, 
-        :color_1, :color_2, :icon, :name, :show_updated, :show_label, :_destroy]
+        :id, :widget_type, :device_id, :program_id, :x, :y, :w, :h,
+        :color_1, :color_2, :icon, :name, :show_updated, :show_label, :time_window_hours, :chart_type, :_destroy]
     )
   end
 end

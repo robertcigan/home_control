@@ -1,10 +1,9 @@
 class BoardLogsController < ApplicationController
   helper ChartsHelper
 
-  respond_to :html
-  respond_to :js
+  respond_to :html, :json
 
-  layout false  
+  layout false
 
   load_and_authorize_resource :board
   load_and_authorize_resource through: :board
@@ -41,13 +40,20 @@ class BoardLogsController < ApplicationController
       end
     end
 
-    @chart_options = helpers.chart_options(@min, @max, type: :area, title_y: "On/Off", stepped: true)
-    
+    @chart_data_attributes = helpers.chart_data_attributes(
+      chart_board_board_logs_path(@board, format: :json),
+      @min,
+      @max,
+      type: "step-area",
+      title_y: "On/Off",
+      timespan: @timespan,
+      multi: true
+    )
+
     respond_with(@board_logs) do |format|
+      format.html
       format.json do
-        data = []
-        
-        connection_data = @board.board_logs.where("created_at >= ? AND created_at <=? ", @min, @max).order(:created_at).collect(&:chart_data_status)
+        connection_data = BoardLog.chart_connection_series(@board, @min, @max)
         if (initial_value = @board.board_logs.where("created_at < ?", @min).order("created_at DESC").first)
           connection_data.unshift([(@min - 1.send(@timespan.to_sym)).to_s, initial_value.chart_data_status.last])
         end
@@ -57,7 +63,7 @@ class BoardLogsController < ApplicationController
           connection_data.push([@max.to_s, @board.chart_data_status])
         end
 
-        signal_strength_data = @board.board_logs.where("created_at >= ? AND created_at <=? ", @min, @max).order(:created_at).collect(&:chart_data_signal_strength)
+        signal_strength_data = BoardLog.chart_signal_series(@board, @min, @max)
         if (initial_value = @board.board_logs.where("created_at < ?", @min).order("created_at DESC").first)
           signal_strength_data.unshift([(@min - 1.send(@timespan.to_sym)).to_s, initial_value.chart_data_signal_strength.last])
         end
@@ -67,6 +73,7 @@ class BoardLogsController < ApplicationController
           signal_strength_data.push([@max.to_s, @board.chart_data_signal_strength])
         end
 
+        data = []
         data << { name: "Connection", data: connection_data }
         data << { name: "Signal Strength", data: signal_strength_data }
 

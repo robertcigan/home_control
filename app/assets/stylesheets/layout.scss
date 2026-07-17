@@ -1,22 +1,5 @@
-#ajax-modal,
-#confirm-modal {
-  .modal-header {
-    align-items: center;
-    background-color: theme-color("primary");
-    color: #fff;
-    padding: 0.5rem 1rem;
-
-    button.close {
-      color: inherit;
-      font-size: 2rem;
-      margin: 0;
-      padding: 0;
-      text-shadow: 0 0 0 BLACK;
-      opacity: 1;
-      font-weight: normal;
-    }
-  }
-}
+@use "sass:map";
+@use "bootstrap_bundle" as *;
 
 .page-pagination {
   display: flex;
@@ -37,7 +20,7 @@
 
       &.current a,
       a:hover {
-        color: theme-color("primary");
+        color: $primary;
         text-decoration: none;
       }
     }
@@ -49,16 +32,19 @@
 }
 
 .search-field {
-  min-width: 20rem;
+  // Match Tom Select (.ts-wrapper) height — native inputs size via
+  // padding/line-height and type=search can differ from the TS min-height.
+  width: 300px;
+  max-width: 100%;
+  height: calc(1.5em + 0.75rem + var(--bs-border-width) * 2);
+  flex: 0 0 auto;
 
-  @media (max-width: map-get($grid-breakpoints, "sm")) {
-    margin-right: 0 !important;
-    min-width: 0rem !important;
+  @media (max-width: map.get($grid-breakpoints, "sm")) {
     width: 100%;
   }
 
   &.search-field-5 {
-    min-width: 5rem;
+    width: 10rem;
   }
 }
 
@@ -66,25 +52,48 @@
   .form-group {
     margin-bottom: 0;
   }
+
+  .ts-wrapper {
+    min-width: 4.5rem;
+    width: 4.5rem;
+  }
 }
 
 .turbolinks-progress-bar {
   background-color: #f3f3f4;
 }
 
-.simple_form.form-inline {
-  span.select {
-    min-width: 12rem;
-  }
+// Tom Select clear (×): vendor centers with top/transform on a math glyph and
+// hides until hover — show × only when a real (non-blank) value is selected.
+.ts-wrapper.plugin-clear_button .clear-button {
+  top: 0 !important;
+  bottom: 0 !important;
+  transform: none !important;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  line-height: 1;
+  opacity: 0;
 }
 
-.select2-container--bootstrap4 {
-  .select2-dropdown {
-    border-color: #80bdff;
+.ts-wrapper.plugin-clear_button.has-selection .clear-button {
+  display: flex !important;
+  opacity: 1;
+}
+
+.simple_form.d-flex {
+  align-items: center;
+
+  span.select,
+  .ts-wrapper {
+    min-width: 12rem;
+    flex: 0 0 auto;
   }
 
-  .select2-selection__clear {
-    margin-left: 0.5rem;
+  .per-page .ts-wrapper {
+    min-width: 4.5rem;
+    width: 4.5rem;
   }
 }
 
@@ -100,6 +109,11 @@
   }
 }
 
+fieldset.mb-3.boolean:not(.single-checkbox),
 fieldset.form-group.boolean:not(.single-checkbox) {
   padding-top: 2.3175rem;
+}
+
+.toast-container {
+  z-index: 1100;
 }

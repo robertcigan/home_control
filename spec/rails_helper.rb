@@ -28,7 +28,7 @@ require 'capybara-screenshot/rspec'
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
+Rails.root.glob('spec/support/**/*.rb').sort_by(&:to_s).each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
@@ -66,7 +66,7 @@ RSpec.configure do |config|
   # behaviour is considered legacy and will be removed in a future version.
   #
   # To enable this behaviour uncomment the line below.
-  # config.infer_spec_type_from_file_location!
+  config.infer_spec_type_from_file_location!
 
   # Filter lines from Rails gems in backtraces.
   config.filter_rails_from_backtrace!
@@ -93,7 +93,9 @@ RSpec.configure do |config|
     DatabaseCleaner.start
   end
 
-  config.after(:each) do
+  # append_after ensures cleaning runs after Capybara.reset_sessions!,
+  # so in-flight app requests can't hold table locks during truncation
+  config.append_after(:each) do
     DatabaseCleaner.clean
   end
 end
@@ -146,13 +148,93 @@ end
 ENV["ADMIN_USERNAME"] = "admin"
 ENV["ADMIN_PASSWORD"] = "password"
 
-# Feature helpers for waiting on modal form reloads
+# Feature helpers for waiting on form reloads (data-reload round-trip)
 module FeatureHelpers
-  def wait_for_modal_reload
-    using_wait_time 1 do
-      page.has_css?("#ajax-modal input[name='reload']")
+  def wait_for_form_reload
+    begin
+      using_wait_time 1 do
+        page.has_css?("input[name='reload']")
+      end
+    rescue Ferrum::BrowserError, Ferrum::NodeNotFoundError, Capybara::Cuprite::ObsoleteNode
+      # Page navigated away while waiting for the reload marker.
     end
-    expect(page).to have_no_css("#ajax-modal input[name='reload']")
+    expect(page).to have_no_css("input[name='reload']")
+  end
+
+  def wait_for_modal_reload
+    wait_for_form_reload
+  end
+
+  # Tom Select hides the native <select> and rewrites label[for] to *-ts-control.
+  # Always resolve the real <select>, then set value via Tom Select API.
+  def select_tom(value, from: nil, select: nil)
+    field = if select
+      select
+    elsif from
+      resolve_select_field(from)
+    else
+      first("select", visible: :all)
+    end
+
+    option_value = field.find(:option, text: value, exact_text: true, visible: :all)[:value]
+    page.execute_script(<<~JS)
+      (function () {
+        var el = document.getElementById(#{field[:id].to_json});
+        if (!el) { return; }
+        if (el.tomselect) {
+          el.tomselect.setValue(#{option_value.to_json});
+        } else {
+          el.value = #{option_value.to_json};
+          el.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      })();
+    JS
+  end
+
+  def resolve_select_field(from)
+    if from.to_s.match?(/\A[\w-]+\z/) && page.has_css?("select##{from}", visible: :all, wait: 0)
+      return find("select##{from}", visible: :all)
+    end
+
+    begin
+      return find_field(from, type: "select", visible: :all, wait: 0.5)
+    rescue Capybara::ElementNotFound
+      # Tom Select points the label at its control input (*-ts-control).
+    end
+
+    label = find("label", text: /\A#{Regexp.escape(from.to_s)}/, visible: :all)
+    for_id = label[:for].to_s.sub(/-ts-control\z/, "")
+    find("select##{for_id}", visible: :all)
+  end
+
+  def select_and_reload(value, from:)
+    select_tom(value, from: from)
+    wait_for_form_reload
+  end
+
+  def select_and_submit(value, from:)
+    select_tom(value, from: from)
+  end
+
+  def expect_tom_select_selected(from, selected:)
+    field = resolve_select_field(from)
+    selected_option = field.find("option[value='#{field.value}']", visible: :all)
+    expect(selected_option.text).to eq(selected)
+  end
+
+  # For AJAX effects with no DOM feedback (e.g. background form submits) —
+  # polls until the block returns true instead of asserting immediately
+  def wait_until(timeout: Capybara.default_max_wait_time)
+    Timeout.timeout(timeout) do
+      sleep 0.1 until yield
+    end
+  end
+
+  # ActionCable subscription can race the first model update in feature specs.
+  def wait_for_action_cable
+    wait_until(timeout: 10) do
+      page.evaluate_script("!!(window.__HOME_CONTROL_CABLE__ && window.__HOME_CONTROL_CABLE__.connection.isOpen())")
+    end
   end
 end
 

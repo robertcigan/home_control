@@ -45,6 +45,7 @@ Rails.application.routes.draw do
             patch :run
           end
         end
+        resource :chart, only: [:show]
       end
     end
   end

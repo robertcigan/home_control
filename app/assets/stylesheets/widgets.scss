@@ -1,16 +1,19 @@
+@use "sass:map";
+@use "bootstrap_bundle" as *;
+
 .grid-stack-item {
   font-size: 1vw;
   line-height: 1;
 
-  // @media (min-width: map-get($grid-breakpoints, "xl")) {
+  // @media (min-width: map.get($grid-breakpoints, "xl")) {
   //   font-size: 0.7vw;
   // }
 
-  // @media (max-width: map-get($grid-breakpoints, "md")) {
+  // @media (max-width: map.get($grid-breakpoints, "md")) {
   //   font-size: 1.4vw;
   // }
 
-  // @media (max-width: map-get($grid-breakpoints, "sm")) {
+  // @media (max-width: map.get($grid-breakpoints, "sm")) {
   //   font-size: 1.8vw;
   // }
 
@@ -64,35 +67,51 @@
 }
 
 @mixin color-1-list {
-  &.color-1-blue { background: color("blue"); color: color("white"); }
-  &.color-1-indigo { background: color("indigo"); color: color("white"); }
-  &.color-1-purple { background: color("purple"); color: color("white"); }
-  &.color-1-pink { background: color("pink"); color: color("white"); }
-  &.color-1-red { background: color("red"); color: color("white"); }
-  &.color-1-orange { background: color("orange"); color: color("white"); }
-  &.color-1-yellow { background: color("yellow"); color: color("gray-dark"); }
-  &.color-1-green { background: color("green"); color: color("white"); }
-  &.color-1-teal { background: color("teal"); color: color("white"); }
-  &.color-1-cyan { background: color("cyan"); color: color("white"); }
-  &.color-1-white { background: color("white"); color: color("gray-dark"); }
-  &.color-1-gray { background: color("gray"); color: color("white"); }
-  &.color-1-gray_dark { background: color("gray-dark"); color: color("white"); }
+  &.color-1-blue { background: map.get($colors, "blue"); color: map.get($colors, "white"); }
+  &.color-1-indigo { background: map.get($colors, "indigo"); color: map.get($colors, "white"); }
+  &.color-1-purple { background: map.get($colors, "purple"); color: map.get($colors, "white"); }
+  &.color-1-pink { background: map.get($colors, "pink"); color: map.get($colors, "white"); }
+  &.color-1-red { background: map.get($colors, "red"); color: map.get($colors, "white"); }
+  &.color-1-orange { background: map.get($colors, "orange"); color: map.get($colors, "white"); }
+  &.color-1-yellow { background: map.get($colors, "yellow"); color: map.get($colors, "gray-dark"); }
+  &.color-1-green { background: map.get($colors, "green"); color: map.get($colors, "white"); }
+  &.color-1-teal { background: map.get($colors, "teal"); color: map.get($colors, "white"); }
+  &.color-1-cyan { background: map.get($colors, "cyan"); color: map.get($colors, "white"); }
+  &.color-1-white { background: map.get($colors, "white"); color: map.get($colors, "gray-dark"); }
+  &.color-1-gray { background: map.get($colors, "gray"); color: map.get($colors, "white"); }
+  &.color-1-gray_dark { background: map.get($colors, "gray-dark"); color: map.get($colors, "white"); }
 }
 
 @mixin color-2-list {
-  &.color-2-blue { background: color("blue"); color: color("white"); }
-  &.color-2-indigo { background: color("indigo"); color: color("white"); }
-  &.color-2-purple { background: color("purple"); color: color("white"); }
-  &.color-2-pink { background: color("pink"); color: color("white"); }
-  &.color-2-red { background: color("red"); color: color("white"); }
-  &.color-2-orange { background: color("orange"); color: color("white"); }
-  &.color-2-yellow { background: color("yellow"); color: color("gray-dark"); }
-  &.color-2-green { background: color("green"); color: color("white"); }
-  &.color-2-teal { background: color("teal"); color: color("white"); }
-  &.color-2-cyan { background: color("cyan"); color: color("white"); }
-  &.color-2-white { background: color("white"); color: color("gray-dark"); }
-  &.color-2-gray { background: color("gray"); color: color("white"); }
-  &.color-2-gray_dark { background: color("gray-dark"); color: color("white"); }
+  &.color-2-blue { background: map.get($colors, "blue"); color: map.get($colors, "white"); }
+  &.color-2-indigo { background: map.get($colors, "indigo"); color: map.get($colors, "white"); }
+  &.color-2-purple { background: map.get($colors, "purple"); color: map.get($colors, "white"); }
+  &.color-2-pink { background: map.get($colors, "pink"); color: map.get($colors, "white"); }
+  &.color-2-red { background: map.get($colors, "red"); color: map.get($colors, "white"); }
+  &.color-2-orange { background: map.get($colors, "orange"); color: map.get($colors, "white"); }
+  &.color-2-yellow { background: map.get($colors, "yellow"); color: map.get($colors, "gray-dark"); }
+  &.color-2-green { background: map.get($colors, "green"); color: map.get($colors, "white"); }
+  &.color-2-teal { background: map.get($colors, "teal"); color: map.get($colors, "white"); }
+  &.color-2-cyan { background: map.get($colors, "cyan"); color: map.get($colors, "white"); }
+  &.color-2-white { background: map.get($colors, "white"); color: map.get($colors, "gray-dark"); }
+  &.color-2-gray { background: map.get($colors, "gray"); color: map.get($colors, "white"); }
+  &.color-2-gray_dark { background: map.get($colors, "gray-dark"); color: map.get($colors, "white"); }
+}
+
+@mixin chart-line-color-list {
+  &.color-2-blue { --chart-line-color: #{map.get($colors, "blue")}; }
+  &.color-2-indigo { --chart-line-color: #{map.get($colors, "indigo")}; }
+  &.color-2-purple { --chart-line-color: #{map.get($colors, "purple")}; }
+  &.color-2-pink { --chart-line-color: #{map.get($colors, "pink")}; }
+  &.color-2-red { --chart-line-color: #{map.get($colors, "red")}; }
+  &.color-2-orange { --chart-line-color: #{map.get($colors, "orange")}; }
+  &.color-2-yellow { --chart-line-color: #{map.get($colors, "yellow")}; }
+  &.color-2-green { --chart-line-color: #{map.get($colors, "green")}; }
+  &.color-2-teal { --chart-line-color: #{map.get($colors, "teal")}; }
+  &.color-2-cyan { --chart-line-color: #{map.get($colors, "cyan")}; }
+  &.color-2-white { --chart-line-color: #{map.get($colors, "white")}; }
+  &.color-2-gray { --chart-line-color: #{map.get($colors, "gray")}; }
+  &.color-2-gray_dark { --chart-line-color: #{map.get($colors, "gray-dark")}; }
 }
 
 .widget {
@@ -108,6 +127,17 @@
 
   &.widget-text-value {
     @include color-1-list;
+  }
+
+  &.widget-chart {
+    @include color-1-list;
+    @include chart-line-color-list;
+
+    .chart-canvas {
+      width: 100%;
+      height: 100%;
+      min-height: 40px;
+    }
   }
 
   &.widget-switch {

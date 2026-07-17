@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+set -e
+
+cd "$(dirname "$0")/.."
+
+# Clear a stale Puma pid from a previous crash so the web process can start.
+rm -f tmp/pids/server.pid
+
+# Force PORT/HOST from .env (ignore a stale PORT in the parent shell, e.g. 3100 from
+# another app / IDE). Foreman alone does not override existing ENV vars.
+if [ -f .env ]; then
+  env_port=$(grep -E '^PORT=' .env | tail -1 | cut -d= -f2- | tr -d '"' | tr -d "'")
+  env_host=$(grep -E '^HOST=' .env | tail -1 | cut -d= -f2- | tr -d '"' | tr -d "'")
+  if [ -n "$env_port" ]; then
+    export PORT="$env_port"
+  fi
+  if [ -n "$env_host" ]; then
+    export HOST="$env_host"
+  fi
+fi
+
+export PORT="${PORT:-3000}"
+export ACTION_CABLE_URL="ws://127.0.0.1:${PORT}/websockets"
+
+echo "bin/dev: PORT=$PORT ACTION_CABLE_URL=$ACTION_CABLE_URL"
+
+exec bundle exec foreman start -f Procfile.dev "$@"

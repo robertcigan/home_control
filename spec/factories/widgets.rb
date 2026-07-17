@@ -6,8 +6,8 @@ FactoryBot.define do
     y { 0 }
     w { 2 }
     h { 2 }
-    color_1 { "#007bff" }
-    color_2 { "#ffffff" }
+    color_1 { "blue" }
+    color_2 { "white" }
     icon { "lightbulb" }
     sequence(:name) { |n| "Widget #{n}" }
     show_updated { false }
@@ -32,5 +32,13 @@ FactoryBot.define do
       widget_type { Widget::WidgetType::TEXT_VALUE }
       device
     end
+
+    trait :type_chart do
+      widget_type { Widget::WidgetType::CHART }
+      device { association :ds18b20 }
+      time_window_hours { 24 }
+      chart_type { Widget::ChartType::AUTO }
+    end
   end
 end
+

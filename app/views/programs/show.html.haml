@@ -5,14 +5,14 @@
     .card-body.pt-0
       .card-title.border-bottom.pt-2.pb-2.d-flex.align-items-center
         %h1= @program.name
-        .actions.ml-auto
-          = link_to fa_icon("toggle-on"), set_program_path(@program, program: { enabled: false }), method: :patch, class: "btn btn-sm btn-success toggle-on", data: { remote: true }
-          = link_to fa_icon("toggle-off"), set_program_path(@program, program: { enabled: true }), method: :patch, class: "btn btn-sm btn-warning toggle-off", data: { remote: true }
-          = link_to fa_icon("play"), run_program_path(@program), method: :patch, data: { confirm: 'Are you sure?', remote: true }, title: "Run", class: "ml btn btn-sm btn-info"
+        .actions.ms-auto
+          = link_to fa_icon("toggle-on"), set_program_path(@program, program: { enabled: false }), class: "btn btn-sm btn-success toggle-on", data: { turbo_method: :patch }
+          = link_to fa_icon("toggle-off"), set_program_path(@program, program: { enabled: true }), class: "btn btn-sm btn-warning toggle-off", data: { turbo_method: :patch }
+          = link_to fa_icon("play"), run_program_path(@program), class: "ml btn btn-sm btn-info", title: "Run", data: { turbo_method: :patch, turbo_confirm: "Are you sure?" }
 
-          = link_to fa_icon("copy"), new_program_path(program_id: @program), title: "Copy program", class: "ml-5 btn btn-sm btn-primary", data: { toggle: "ajax-modal", class: "modal-lg", title: "Copy Program" }
-          = link_to fa_icon("pencil-alt"), edit_program_path(@program), title: "Edit", class: "btn btn-sm btn-info", data: { toggle: "ajax-modal", class: "modal-lg", title: "Edit Program" }
-          = link_to fa_icon("trash"), program_path(@program), method: :delete, data: { confirm: 'Are you sure?' }, class: "ml btn btn-sm btn-danger"
+          = link_to fa_icon("copy"), new_program_path(program_id: @program), title: "Copy program", class: "ms-5 btn btn-sm btn-primary"
+          = link_to fa_icon("pencil-alt"), edit_program_path(@program), title: "Edit", class: "btn btn-sm btn-primary"
+          = link_to fa_icon("trash"), program_path(@program), class: "ml btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }
 
       .row
         .col-sm-6
@@ -82,6 +82,3 @@
         %code= @program.code.gsub("\n", "<br/>").html_safe
       .col-md-6
         %code= @program.compiled_code.gsub("\n", "<br/>").html_safe
-
-:javascript
-  HomeControl.Programs.initShow();

@@ -1,8 +1,7 @@
-.panel.panel-primary.mt
-  .panel-heading
-    %h3.panel-title 
-      Log files
-  .panel-body
+.card.border-primary.mt-3
+  .card-header.bg-primary.text-white
+    %h3.mb-0 Log files
+  .card-body
     %table.table
       - @files.each do |file|
         %tr

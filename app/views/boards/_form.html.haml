@@ -1,20 +1,17 @@
-= simple_form_for(@board, remote: true) do |form|
-  .modal-body
-    = form.error_notification
-    .row
-      = form.input :name, wrapper_html: { class: "col-sm-6" }
-      = form.input :ip, wrapper_html: { class: "col-sm-6" }
-      = form.input :board_type, collection: Board.board_types_to_collection, input_html: { data: { reload: true }}, wrapper_html: { class: "col-sm-6" }
-      = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
-    - if form.object.board_type_modbus_tcp?
+= simple_form_for(@board, html: { data: { controller: "reload-form" } }) do |form|
+  .card.shadow
+    .card-body
+      = form.error_notification
       .row
-        = form.input :slave_address, wrapper_html: { class: "col-sm-6" }
-        = form.input :data_read_interval, wrapper_html: { class: "col-sm-6" }
+        = form.input :name, wrapper_html: { class: "col-sm-6" }
+        = form.input :ip, wrapper_html: { class: "col-sm-6" }
+        = form.input :board_type, collection: Board.board_types_to_collection, input_html: { data: { controller: "select", reload: true }}, wrapper_html: { class: "col-sm-6" }
+        = form.input :days_to_preserve_logs, wrapper_html: { class: "col-sm-6" }
+      - if form.object.board_type_modbus_tcp?
+        .row
+          = form.input :slave_address, wrapper_html: { class: "col-sm-6" }
+          = form.input :data_read_interval, wrapper_html: { class: "col-sm-6" }
 
-  .modal-footer
-    = link_to "Cancel", "#", class: "btn btn-link", data: { dismiss: "modal" }, type: "button"
-    = form.button :submit, @board.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { disable_with: "Please wait…" }
-
-
-:javascript
-  HomeControl.Boards.initForm()
+    .card-footer.form-actions
+      = link_to "Cancel", boards_path, class: "btn btn-link"
+      = form.button :submit, @board.new_record? ? "Create" : "Update", class: "btn btn-primary", data: { turbo_submits_with: "Please wait…" }

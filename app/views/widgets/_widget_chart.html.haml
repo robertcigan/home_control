@@ -1,0 +1,13 @@
+- if widget.device
+  .widget.widget-chart.h-100.device{ data: { device: widget.device.json_data, controller: "widget-chart", action: "device:update->widget-chart#deviceUpdate", widget_chart_url_value: panel_widget_chart_path(@panel, widget), widget_chart_hours_value: widget.time_window_hours, widget_chart_type_value: widget_chart_type(widget) }, class: "color-1-#{widget.color_1} color-2-#{widget.color_2}" }
+    - if widget.show_label?
+      .widget-header.d-flex.align-items-center.justify-content-center.text-center{class: chart_label_height_class }
+        .resizable-font-size
+          = widget
+    .widget-body{class: chart_body_height_class(widget) }
+      .chart-canvas.h-100.w-100{ data: { widget_chart_target: "canvas" } }
+
+    - if widget.show_updated?
+      .widget-footer.d-flex.align-items-center.justify-content-center{class: chart_footer_height_class }
+        .updated.text-center
+          = widget.device.last_change_text

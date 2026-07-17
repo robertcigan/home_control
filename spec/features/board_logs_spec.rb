@@ -10,40 +10,42 @@ RSpec.feature "Board Logs", type: :feature do
   describe "connection history chart" do
     scenario "displays connection history chart with navigation", js: true do
       visit board_path(board)
-      expect(page).to have_css(".sk-spinner", visible: false, wait: 10)
-      expect(page).to have_css("#board_history")
-      expect(page).to have_css("canvas")
+      expect(page).to have_css("#board_history", wait: 10)
+      expect(page).to have_css(".chart-canvas canvas", wait: 10)
     end
 
     scenario "navigates chart by selecting different time intervals", js: true do
       visit board_path(board)
-      expect(page).to have_css("#board_history")
-      expect(page).to have_link("Year")
-      expect(page).to have_link("Month")
-      expect(page).to have_link("Week")
-      expect(page).to have_link("Day")
-      expect(page).to have_link("Hour")
+      expect(page).to have_css("#board_history", wait: 10)
+      expect(page).to have_button("Year")
+      expect(page).to have_button("Month")
+      expect(page).to have_button("Week")
+      expect(page).to have_button("Day")
+      expect(page).to have_button("Hour")
 
-      click_link "Week"
+      click_button "Week"
       expect(page).to have_selector(".nav-link.active", text: "Week")
-      click_link "Month"
+      expect(page).to have_css(".chart-canvas canvas")
+      click_button "Month"
       expect(page).to have_selector(".nav-link.active", text: "Month")
+      expect(page).to have_css(".chart-canvas canvas")
     end
 
     scenario "navigates chart by moving through days", js: true do
       Timecop.freeze(Time.parse("2025-01-01 12:00:00")) do
         visit board_path(board)
         expect(page).to have_css("#board_history")
-        click_link "Day"
+        click_button "Day"
         expect(page).to have_css(".btn.btn-success", text: "1.1.2025")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.mr-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.me-2").click
         end
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "31.12.2024")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.ml-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.ms-2").click
         end
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "1.1.2025")
+        expect(page).to have_css(".chart-canvas canvas")
       end
     end
 
@@ -51,16 +53,17 @@ RSpec.feature "Board Logs", type: :feature do
       Timecop.freeze(Time.parse("2025-01-01 12:00:00")) do
         visit board_path(board)
         expect(page).to have_css("#board_history")
-        click_link "Hour"
+        click_button "Hour"
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "1.1.2025 12h")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.mr-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.me-2").click
         end
         expect(page).to have_selector(".btn.btn-disabled.btn-success", text: "1.1.2025 11h")
-        within "ul.nav.nav-tabs li.ml-auto" do
-          find("a.btn.btn-secondary.ml-2").click
+        within "ul.nav.nav-tabs li.ms-auto" do
+          find("button.btn.btn-secondary.ms-2").click
         end
         expect(page).to have_selector(".btn.btn-success", text: "1.1.2025 12h")
+        expect(page).to have_css(".chart-canvas canvas")
       end
     end
   end
@@ -68,7 +71,7 @@ RSpec.feature "Board Logs", type: :feature do
   describe "connection logs" do
     scenario "displays connection logs with filtering", js: true do
       visit board_path(board)
-      expect(page).to have_css(".sk-spinner", visible: false, wait: 10)
+      expect(page).to have_css("#board_logs table", wait: 10)
       within "#board_logs" do
         within "table tbody tr:nth-child(1)" do
           expect(page).to have_content("connected")
@@ -83,13 +86,12 @@ RSpec.feature "Board Logs", type: :feature do
       visit board_path(board)
       within "#board_logs" do
         expect(page).to have_content("connected")
-        expect(page).to have_content("disconnected")
+        expect(page).to have_css("table tbody tr", text: "disconnected")
       end
-      select "Connected", from: "q_connected_eq"
-      within "#board_logs" do
-      expect(page).not_to have_content("disconnected")
-      expect(page).to have_content("connected")
-
+      select_and_submit "Connected", from: "q_connected_eq"
+      within "#board_logs table tbody" do
+        expect(page).to have_no_css("tr", text: "disconnected")
+        expect(page).to have_content("connected")
       end
     end
 

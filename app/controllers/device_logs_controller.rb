@@ -1,10 +1,9 @@
 class DeviceLogsController < ApplicationController
   helper ChartsHelper
 
-  respond_to :html
-  respond_to :js
+  respond_to :html, :json
 
-  layout false  
+  layout false
 
   load_and_authorize_resource :device
   load_and_authorize_resource through: :device
@@ -40,26 +39,30 @@ class DeviceLogsController < ApplicationController
         @max = Time.current.end_of_year
       end
     end
-    @chart_options = case @device.value_attribute
-    when :value_decimal, :value_integer
-      helpers.chart_options(@min, @max, title_y: @device.unit.present? ? @device.unit : "Value")
-    when :value_boolean
-      helpers.chart_options(@min, @max, type: :area, title_y: "On/Off", stepped: true)
-    else
-      helpers.chart_options(@min, @max, lines: false)
-    end
-  
+
+    chart_type = helpers.device_chart_type(@device)
+    title_y = helpers.device_chart_y_title(@device)
+
+    @chart_data_attributes = helpers.chart_data_attributes(
+      chart_device_device_logs_path(@device, format: :json),
+      @min,
+      @max,
+      type: chart_type,
+      title_y: title_y,
+      timespan: @timespan,
+      multi: false
+    )
+
     respond_with(@device_logs) do |format|
+      format.html
       format.json do
-        data = @device.device_logs.where("created_at >= ? AND created_at <=? ", @min, @max).order(:created_at).collect(&:chart_data)
+        data = DeviceLog.chart_series(@device, @min, @max)
         if @device.value_attribute
           if (initial_value = @device.device_logs.where("created_at < ?", @min).order("created_at DESC").first)
-            data.unshift([(@min - 1.send(@timespan.to_sym)).to_s, initial_value.chart_data.last])
+            data.unshift([(@min - 1.send(@timespan.to_sym)).to_s, initial_value.numeric_chart_value])
           end
           if (newer_value = @device.device_logs.where("created_at > ?", @max).order(:created_at).first)
-            data.push(newer_value.chart_data)
-          else
-            #data.push([@max.to_s, @device.get_current_chart_data])
+            data.push([newer_value.created_at.to_s, newer_value.numeric_chart_value])
           end
         end
         render json: data
