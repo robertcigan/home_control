@@ -18,7 +18,7 @@ Related docs: [README.md](../README.md) (HW & domain overview), [TEST_PLAN.md](T
 
 | Process | What it runs | Entry point |
 |---|---|---|
-| **Web** | Rails 7.2 + Puma, serves HTML/JS/JSON and mounts Action Cable at `/websockets` | `config.ru` |
+| **Web** | Rails 8.1 + Puma, serves HTML/JS/JSON and mounts Action Cable at `/websockets` | `config.ru` |
 | **Automation** | Standalone EventMachine process. Runs a TCP server on port **7777** for Arduino boards, a Modbus TCP client, periodic timers (programs, log compression, pings…). Connects to the web process **as an Action Cable client** (`action_cable_client` gem) | `lib/arduino_server.rb` |
 
 Action Cable is therefore used for two distinct purposes:
@@ -483,4 +483,4 @@ Rails scaffold leftover, unused. Candidate for deletion during cleanup.
 
 ---
 
-*Document generated 2026-07-13 against v3.4.6 (Rails 7.2.3, Ruby 3.3.6).*
+*Document generated 2026-07-13 against v3.4.6 (Rails 8.1.3, Ruby 3.3.6).*

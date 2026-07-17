@@ -9,7 +9,7 @@ Bundler.require(*Rails.groups)
 module HomeControl7
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.1
+    config.load_defaults 8.1
 
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
@@ -23,15 +23,8 @@ module HomeControl7
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    lib = root.join("lib")
     config.time_zone = "Prague"
-    config.autoload_paths += [lib]
     config.active_record.yaml_column_permitted_classes = [ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, Symbol, Time]
-
-    Rails.autoloaders.main.ignore(
-      lib.join("assets"),
-      lib.join("tasks")
-    )
 
   end
 end
