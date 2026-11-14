@@ -82,6 +82,23 @@
   opacity: 1;
 }
 
+// Valid/invalid single selects draw the status icon at right 2.25rem, the same
+// slot as the clear ×. Park the × to the left of that icon and keep the value
+// from running into it.
+.ts-wrapper.plugin-clear_button.has-selection.is-valid,
+.ts-wrapper.plugin-clear_button.has-selection.is-invalid,
+.was-validated :valid + .ts-wrapper.plugin-clear_button.has-selection,
+.was-validated :invalid + .ts-wrapper.plugin-clear_button.has-selection {
+  --ts-pr-clear-button: 2.75rem;
+}
+
+.ts-wrapper.plugin-clear_button.has-selection.is-valid .clear-button,
+.ts-wrapper.plugin-clear_button.has-selection.is-invalid .clear-button,
+.was-validated :valid + .ts-wrapper.plugin-clear_button.has-selection .clear-button,
+.was-validated :invalid + .ts-wrapper.plugin-clear_button.has-selection .clear-button {
+  right: calc(var(--ts-pr-caret) + 1.5rem);
+}
+
 .simple_form.d-flex {
   align-items: center;
 
