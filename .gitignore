@@ -42,3 +42,6 @@ config/database.yml
 node_modules
 
 .env
+
+# Local Compose build; the published compose file pulls the Hub image.
+docker-compose.override.yml

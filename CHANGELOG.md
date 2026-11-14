@@ -2,6 +2,11 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.6.0 (2026-11-15)
+  * Ruby upgraded to 4.0.9, Bundler upgraded to 4.0.20 (pinned in Dockerfile)
+  * Minor gem updates (erb, rdoc, rbs)
+  * Fixed select clear button overlapping the valid/invalid icon in forms
+
 ## Home Control 3.5.2 (2026-07-17)
   * Ruby upgraded to 3.4.10
   * Added ostruct and resolv-replace gems required by Ruby 3.4
