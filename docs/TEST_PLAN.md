@@ -43,11 +43,11 @@ stubs and is unused — consider deleting it to avoid confusion.
   the `for_compression` scope are tested.
 - `WebsocketPushChange` concern in isolation (channel name derivation, broadcast on
   update-commit only).
-- `lib/arduino_messenger.rb` — TCP framing (`process_buffer`: newline-delimited JSON,
-  partial buffers, overflow reset, parse-error recovery), connect/reject logic
-  (unknown IP, duplicate IP), disconnect cleanup.
-- `lib/arduino_server.rb` — periodic jobs logic (at minimum `repeated_to_run`
-  execution path is indirectly covered via Program scope spec).
+- `lib/arduino_messenger.rb` — now covered by `spec/lib/arduino_messenger_spec.rb`
+  (framing, connect/reject, disconnect, real TCP round-trip through EventMachine).
+- `lib/arduino_server.rb` — job scheduling (`every`: no overlap, errors don't kill
+  the process), command dispatch and timeout detection are covered by
+  `spec/lib/arduino_server_spec.rb`; the individual job bodies still rely on model specs.
 - Helpers: `ProgramsHelper` (`time_between`, log methods), `ChartsHelper`
   (`chart_options` unit selection by timespan), `ApplicationHelper`
   (`refresh_list_by_script`, `show_flash` — will change during migration anyway).
@@ -147,7 +147,8 @@ Instantiable without EventMachine reactor (call methods on an allocated instance
 stubbed board):
 - complete line → parsed and routed to `Board#parse`,
 - multiple JSONs in one packet; trailing partial JSON kept in buffer,
-- invalid JSON → buffer reset, no crash,
+- invalid JSON / non-object JSON line → skipped, following lines and trailing partial
+  kept, no crash; errors raised by `Board#parse` are logged, not propagated,
 - >10 MB buffer overflow reset,
 - `post_init`/`unbind` connect & disconnect bookkeeping (known IP, unknown IP
   rejected, duplicate IP rejected) — with `get_peername` stubbed.

@@ -4,7 +4,7 @@ description: >
   Aktualizace CHANGELOG.md v projektu Home Control. Zjistí změny od posledního zápisu
   do changelogu (commity i necommitnuté změny), navrhne novou verzi, zeptá se uživatele,
   na jakou verzi povýšit, zapíše novou sekci se stručným seznamem změn a povýší číslo
-  verze i v config/initializers/home_control.rb, .env.example a BUILD.md. Použij, když
+  verze i v README.md, config/initializers/home_control.rb, .env.example a BUILD.md. Použij, když
   uživatel řekne „aktualizuj changelog“, „povyš verzi“, „nová verze“, „release notes“
   nebo zavolá /changelog-update.
 allowed-tools: Bash(git log:*), Bash(git show:*), Bash(git diff:*), Bash(git status:*), Bash(git grep:*), Bash(grep:*), Bash(date:*)
@@ -134,6 +134,9 @@ Po odpovědi:
    ```
 3. **Vždy** (kromě volby `Doplnit do X.Y.Z`) povyš číslo verze i v dalších souborech,
    uživatele se na to neptej. Starou verzi nahraď novou v:
+   - `README.md`: první řádek `# Home Control X.Y.Z`. README se v minulosti zapomínalo
+     aktualizovat, takže tam může být i starší verze než ta předchozí. Nadpis nastav
+     na novou verzi bez ohledu na to, jaké číslo v něm je.
    - `config/initializers/home_control.rb`: `version: "X.Y.Z"`
    - `.env.example`: `HOME_CONTROL_VERSION=X.Y.Z`
    - `BUILD.md`: tag `robertcigan/home_control:X.Y.Z` v příkazu `docker buildx build`
@@ -146,6 +149,11 @@ Po odpovědi:
 4. Ověř, že stará verze aplikace nikde nezůstala:
    ```
    git grep -nF "<stará verze>" -- . ':!Gemfile.lock' ':!CHANGELOG.md' ':!docs/APP_BEHAVIOR.md'
+   ```
+   Zkontroluj zvlášť i nadpis README (grep na starou verzi ho nenajde, pokud v něm byla
+   ještě starší verze):
+   ```
+   grep -n -m1 "^# Home Control" README.md
    ```
    Pokud najdeš další místo, kde jde o verzi Home Control (ne o verzi gemu nebo JS
    knihovny se shodným číslem), uprav ho taky a uveď ho ve výstupu.

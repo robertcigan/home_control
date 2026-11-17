@@ -2,6 +2,13 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.6.1 (2026-11-17)
+  * Automation process: errors in periodic jobs, Modbus writes or board messages are logged instead of crashing the process
+  * Fixed overlapping runs of periodic jobs (e.g. a repeated program running twice at once when a run took longer than its interval)
+  * Fixed malformed or non-object JSON from a board dropping the following message
+  * Fixed board being marked as disconnected when a duplicate connection from the same IP was rejected
+  * Old device and board logs are also cleared shortly after the automation process starts
+
 ## Home Control 3.6.0 (2026-11-15)
   * Ruby upgraded to 4.0.9, Bundler upgraded to 4.0.20 (pinned in Dockerfile)
   * Minor gem updates (erb, rdoc, rbs)

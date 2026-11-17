@@ -50,6 +50,43 @@ RSpec.describe ArduinoMessenger do
       expect(messenger.instance_variable_get(:@received_data_buffer)).to eq("")
     end
 
+    it "keeps the following partial line after an invalid line" do
+      messenger = build_messenger
+      messenger.instance_variable_set(:@received_data_buffer, "not-json\n{\"partial\":")
+      messenger.process_buffer
+      expect(messenger.instance_variable_get(:@received_data_buffer)).to eq("{\"partial\":")
+    end
+
+    it "continues with the next line after an invalid one" do
+      messenger = build_messenger
+      expect(board).to receive(:parse).with(hash_including("pong" => true)).once
+      messenger.instance_variable_set(:@received_data_buffer, "not-json\n{\"pong\":true}\n")
+      messenger.process_buffer
+    end
+
+    it "ignores valid JSON that is not an object" do
+      messenger = build_messenger
+      expect(board).not_to receive(:parse)
+      messenger.instance_variable_set(:@received_data_buffer, "5\n[1]\nnull\n")
+      expect { messenger.process_buffer }.not_to raise_error
+      expect(messenger.instance_variable_get(:@received_data_buffer)).to eq("")
+    end
+
+    it "does not raise when the board fails to process a message" do
+      messenger = build_messenger
+      allow(board).to receive(:parse).and_raise(ActiveRecord::ConnectionNotEstablished)
+      messenger.instance_variable_set(:@received_data_buffer, "{\"pong\":true}\n")
+      expect { messenger.process_buffer }.not_to raise_error
+    end
+
+    it "accumulates data split across packets" do
+      messenger = build_messenger
+      expect(board).to receive(:parse).with(hash_including("pong" => true))
+      messenger.receive_data("{\"po")
+      messenger.receive_data("ng\":true}\r\n")
+      expect(messenger.instance_variable_get(:@received_data_buffer)).to eq("")
+    end
+
     it "resets buffer on overflow" do
       messenger = build_messenger
       messenger.instance_variable_set(:@received_data_buffer, "x" * (10_000_001))
@@ -86,6 +123,49 @@ RSpec.describe ArduinoMessenger do
       messenger.post_init
       expect(described_class.connected_clients.size).to eq(1)
     end
+
+    it "closes the connection instead of raising when the database fails" do
+      messenger = build_messenger
+      allow(Board).to receive(:where).and_raise(ActiveRecord::ConnectionNotEstablished)
+      expect(messenger).to receive(:close_connection)
+      expect { messenger.post_init }.not_to raise_error
+      expect(described_class.connected_clients).to be_empty
+    end
+  end
+
+  describe "over a real TCP connection" do
+    module FakeArduinoBoard
+      def initialize(lines)
+        @lines = lines
+      end
+
+      def connection_completed
+        @lines.each { |line| send_data(line) }
+        EM.add_timer(0.3) { close_connection }
+      end
+    end
+
+    it "survives malformed messages, applies valid ones and marks the board disconnected on close" do
+      local_board = create(:board, ip: "127.0.0.1")
+      port = nil
+      EM.run do
+        server = EM.start_server("127.0.0.1", 0, described_class)
+        port = Socket.unpack_sockaddr_in(EM.get_sockname(server)).first
+        allow(EventMachine::Timer).to receive(:new) # skip the initial device read/write
+        EM.connect("127.0.0.1", port, FakeArduinoBoard, [
+          "5\nnot-json\n",
+          "{\"pong\":true,\"version\":\"1.2\",\"ssid\":\"ho",
+          "me\",\"rssi\":-60}\r\n"
+        ])
+        EM.add_timer(0.15) do
+          expect(described_class.connected_clients.map(&:ip)).to eq(["127.0.0.1"])
+          expect(local_board.reload.ssid).to eq("home")
+        end
+        EM.add_timer(0.6) { EM.stop }
+      end
+      expect(described_class.connected_clients).to be_empty
+      expect(local_board.reload.connected_at).to be_nil
+    end
   end
 
   describe "#unbind" do
@@ -95,6 +175,23 @@ RSpec.describe ArduinoMessenger do
       expect(board).to receive(:reload).and_return(board)
       expect(board).to receive(:disconnected!)
       messenger.unbind
+      expect(described_class.connected_clients).to be_empty
+    end
+
+    it "does not disconnect the board when a rejected duplicate connection closes" do
+      active = build_messenger
+      described_class.class_variable_set(:@@connected_clients, [active])
+      duplicate = build_messenger
+      expect(board).not_to receive(:disconnected!)
+      duplicate.unbind
+      expect(described_class.connected_clients).to eq([active])
+    end
+
+    it "removes the client even when the database fails" do
+      messenger = build_messenger
+      described_class.class_variable_set(:@@connected_clients, [messenger])
+      allow(board).to receive(:reload).and_raise(ActiveRecord::ConnectionNotEstablished)
+      expect { messenger.unbind }.not_to raise_error
       expect(described_class.connected_clients).to be_empty
     end
   end
