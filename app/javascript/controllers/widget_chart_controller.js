@@ -18,6 +18,9 @@ export default class extends Controller {
     this.pendingUpdate = null
     this.loading = true
     this.abortController = new AbortController()
+    // The value from page render is already in the fetched logs (their timestamps
+    // have only second precision), so only a later change adds a point.
+    this.lastDeviceTs = Number(this.element.dataset.deviceTs) || 0
 
     this.resizeObserver = new ResizeObserver(() => {
       if (this.chart) {
@@ -46,11 +49,15 @@ export default class extends Controller {
     }
   }
 
+  // Every device push (a value change or the periodic push of an unchanged device)
+  // moves the time window to "now"; a point is added only when the value changed.
   deviceUpdate(event) {
     if (this.loading) {
       this.pendingUpdate = event
     } else {
       this.appendPointFromDataset()
+      this.prune()
+      this.render()
     }
   }
 
@@ -62,12 +69,13 @@ export default class extends Controller {
       } else {
         const data = await response.json()
         this.points = (data || []).map((pair) => [new Date(pair[0]).getTime(), pair[1]])
-        this.render()
         this.loading = false
         if (this.pendingUpdate) {
           this.pendingUpdate = null
           this.appendPointFromDataset()
         }
+        this.prune()
+        this.render()
       }
     } catch (error) {
       if (error.name !== "AbortError") {
@@ -89,6 +97,11 @@ export default class extends Controller {
       return
     }
 
+    if (ts <= this.lastDeviceTs) {
+      return
+    }
+    this.lastDeviceTs = ts
+
     if (this.points.length > 0) {
       const lastTs = this.points[this.points.length - 1][0]
       if (ts <= lastTs) {
@@ -97,8 +110,26 @@ export default class extends Controller {
     }
 
     this.points.push([ts, value])
-    this.prune()
-    this.render()
+  }
+
+  // The current value held up to the end of the window. It isn't stored in this.points,
+  // so it moves with time and doesn't leave a stale point behind.
+  currentValuePoint(max) {
+    const rawValue = this.element.dataset.deviceChartValue
+    if (rawValue === undefined || rawValue === "") {
+      return null
+    }
+
+    const value = Number(rawValue)
+    if (Number.isNaN(value)) {
+      return null
+    }
+
+    if (this.points.length > 0 && this.points[this.points.length - 1][0] >= max) {
+      return null
+    }
+
+    return [max, value]
   }
 
   prune() {
@@ -129,6 +160,12 @@ export default class extends Controller {
     const { min, max } = this.windowBounds()
     const lineColor = this.lineColor()
     const textColor = getComputedStyle(this.element).color
+    const currentPoint = this.currentValuePoint(max)
+    let seriesData = this.points
+    if (currentPoint) {
+      seriesData = [...this.points, currentPoint]
+    }
+
     this.chart.setOption(
       {
         animation: false,
@@ -148,12 +185,13 @@ export default class extends Controller {
           axisLine: { lineStyle: { color: textColor } },
           splitLine: { lineStyle: { color: textColor, opacity: 0.25 } }
         },
-        series: [seriesOptions(this.typeValue, null, this.points, lineColor)]
+        series: [seriesOptions(this.typeValue, null, seriesData, lineColor)]
       },
       { notMerge: true }
     )
 
     this.element.dataset.chartPoints = String(this.points.length)
+    this.element.dataset.chartMax = String(max)
   }
 
   lineColor() {

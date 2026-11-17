@@ -14,6 +14,7 @@ export default class extends Controller {
 
     this.grid = GridStack.init({
       float: true,
+      animate: false,
       alwaysShowResizeHandle: "mobile",
       column: this.columnValue,
       row: this.rowValue,

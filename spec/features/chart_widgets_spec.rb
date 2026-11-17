@@ -41,6 +41,36 @@ RSpec.feature "Chart widgets", type: :feature do
       sensor.update(value_decimal: 33.3)
       expect(page).to have_css(".widget-chart[data-chart-points='#{initial_points + 1}']", wait: 10)
     end
+
+    scenario "draws the current value up to now", js: true do
+      create(:widget, :type_chart, panel: public_panel, device: sensor, show_label: true, time_window_hours: 24)
+      visit panel_path(public_panel)
+      expect(page).to have_css(".widget-chart[data-chart-max]", wait: 10)
+
+      last_point, max = page.evaluate_script(<<~JS)
+        (function() {
+          var el = document.querySelector(".widget-chart");
+          var controller = window.Stimulus.getControllerForElementAndIdentifier(el, "widget-chart");
+          var data = controller.chart.getOption().series[0].data;
+          return [data[data.length - 1], Number(el.dataset.chartMax)];
+        })()
+      JS
+      expect(last_point).to eq([max, 21.5])
+    end
+
+    scenario "moves the time window on a push of an unchanged value", js: true do
+      create(:widget, :type_chart, panel: public_panel, device: sensor, show_label: true, time_window_hours: 24)
+      visit panel_path(public_panel)
+      expect(page).to have_css(".widget-chart[data-chart-max]", wait: 10)
+      initial_points = find(".widget-chart")["data-chart-points"]
+      initial_max = find(".widget-chart")["data-chart-max"].to_i
+      wait_for_action_cable
+
+      sensor.push_value_change
+
+      wait_until { find(".widget-chart")["data-chart-max"].to_i > initial_max }
+      expect(find(".widget-chart")["data-chart-points"]).to eq(initial_points)
+    end
   end
 
   describe "widget form" do

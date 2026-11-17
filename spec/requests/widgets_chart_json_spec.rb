@@ -29,19 +29,20 @@ RSpec.describe "Widget chart JSON", type: :request do
       expect(data).to be_an(Array)
       expect(data.first).to be_an(Array)
       values = data.map { |point| point.last.to_f }
-      expect(values).to include(10.0, 15.0, 22.5)
+      expect(values).to include(10.0, 15.0)
       expect(values).to include(5.0)
     end
   end
 
-  it "prepends the last value before the window and appends the current device value" do
+  it "prepends the last value before the window and ends with the last logged value" do
     Timecop.freeze(frozen_time) do
       get panel_widget_chart_path(public_panel, public_widget)
       data = JSON.parse(response.body)
       expect(data.first.last.to_f).to eq(5.0)
       expect(Time.zone.parse(data.first.first)).to be_within(1.second).of(frozen_time - 24.hours)
-      expect(data.last.last.to_f).to eq(22.5)
-      expect(Time.zone.parse(data.last.first)).to be_within(1.second).of(frozen_time)
+      # the current value up to "now" is drawn by the widget, not returned by the server
+      expect(data.last.last.to_f).to eq(15.0)
+      expect(Time.zone.parse(data.last.first)).to be_within(1.second).of(frozen_time - 1.hour)
     end
   end
 
@@ -64,16 +65,15 @@ RSpec.describe "Widget chart JSON", type: :request do
     end
   end
 
-  it "returns only the current value when the device has no logs" do
+  it "returns an empty series when the device has no logs" do
     board = create(:board, name: "Empty Board", ip: "192.168.1.211")
     empty_device = create(:ds18b20, name: "Empty Sensor", board: board, pin: 4, value_decimal: 18.0, log_enabled: true)
     widget = create(:widget, :type_chart, panel: public_panel, device: empty_device, time_window_hours: 12)
+    empty_device.device_logs.delete_all
 
     Timecop.freeze(frozen_time) do
       get panel_widget_chart_path(public_panel, widget)
-      data = JSON.parse(response.body)
-      expect(data.length).to eq(1)
-      expect(data.first.last.to_f).to eq(18.0)
+      expect(JSON.parse(response.body)).to eq([])
     end
   end
 

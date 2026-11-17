@@ -4,5 +4,5 @@
   = link_to fa_icon("plus", class: "pe-2", text: "Add Widget"), new_panel_widget_path(@panel), class: "btn btn-primary"
 
 .grid-stack.grid-stack-edit.bg-light.border{ data: { controller: "grid-editor", grid_editor_column_value: @panel.column, grid_editor_row_value: @panel.row }}
-  - @panel.widgets.each do |widget|
+  - @panel.widgets.in_grid_order.each do |widget|
     = render widget, edit: true

@@ -1,4 +1,4 @@
-# Home Control 3.6.2
+# Home Control 3.6.3
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 

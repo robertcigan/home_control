@@ -2,6 +2,11 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.6.3 (2026-11-17)
+  * Widgets no longer animate (stretch) on load in the layout editor
+  * Fixed a newly added widget breaking the panel layout (widgets overlapping, dragging in the layout editor not working); new widgets are placed into the first free cell of the panel
+  * Chart widgets move with time: the time window follows the current time on every device update (at least once a minute) and the current value is drawn up to now
+
 ## Home Control 3.6.2 (2026-11-17)
   * Fixed widget labels and values not being sized to fit on the first load of a panel and in the layout editor
   * Panel grid now follows size changes of its container (not only window resize) and no longer animates widgets on load

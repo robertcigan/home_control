@@ -71,6 +71,50 @@ RSpec.describe Widget, type: :model do
     it { should belong_to(:program).optional }
   end
 
+  describe "position of a new widget" do
+    let(:panel) { create(:panel, column: 3, row: 2) }
+
+    def unplaced_widget
+      create(:widget, :type_button, panel: panel, x: nil, y: nil, w: nil, h: nil)
+    end
+
+    it "is put into the first free cell of the panel" do
+      create(:widget, :type_button, panel: panel, x: 0, y: 0, w: 2, h: 1)
+      create(:widget, :type_button, panel: panel, x: 2, y: 0, w: 1, h: 2)
+
+      expect(unplaced_widget).to have_attributes(x: 0, y: 1, w: 1, h: 1)
+    end
+
+    it "puts several new widgets into different cells" do
+      first = unplaced_widget
+      second = unplaced_widget
+
+      expect([first.x, first.y]).to eq([0, 0])
+      expect([second.x, second.y]).to eq([1, 0])
+    end
+
+    it "places widgets created together through the panel form" do
+      panel.update!(widgets_attributes: [
+        { widget_type: Widget::WidgetType::TEXT_VALUE, device_id: create(:ds18b20).id },
+        { widget_type: Widget::WidgetType::TEXT_VALUE, device_id: create(:ds18b20, pin: 3).id }
+      ])
+
+      expect(panel.widgets.in_grid_order.pluck(:x, :y, :w, :h)).to eq([[0, 0, 1, 1], [1, 0, 1, 1]])
+    end
+
+    it "stays empty when the panel is full" do
+      create(:widget, :type_button, panel: panel, x: 0, y: 0, w: 3, h: 2)
+
+      expect(unplaced_widget).to have_attributes(x: nil, y: nil, w: nil, h: nil)
+    end
+
+    it "keeps an explicitly given position" do
+      widget = create(:widget, :type_button, panel: panel, x: 2, y: 1, w: 1, h: 1)
+
+      expect(widget).to have_attributes(x: 2, y: 1)
+    end
+  end
+
   describe "#to_s" do
     it "returns the widget name" do
       expect(widget.to_s).to eq(widget.name)

@@ -34,11 +34,7 @@ class Widgets::ChartsController < ApplicationController
       data.unshift([min.to_s, initial_value.numeric_chart_value])
     end
 
-    chart_value = device.numeric_chart_value
-    if chart_value != nil
-      data.push([max.to_s, chart_value])
-    end
-
+    # The current value up to "now" is drawn by the widget itself (it moves with time)
     data
   end
 end
