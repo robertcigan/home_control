@@ -38,6 +38,10 @@ function autoFontResize(container = document.body) {
       return
     }
 
+    if (parentContainer.clientHeight <= 0 || parentContainer.clientWidth <= 0) {
+      return
+    }
+
     let fontSize = parentContainer.clientHeight * 0.8
     const maxWidth = parentContainer.clientWidth * 0.6
 

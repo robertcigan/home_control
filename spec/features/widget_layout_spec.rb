@@ -13,6 +13,35 @@ RSpec.feature "Widget Layout", type: :feature do
     expect(page).to have_css(".grid-stack-item[gs-x='1'][gs-y='2'][gs-w='3'][gs-h='4']")
   end
 
+  scenario "fits widget fonts on first load in layout editor", js: true do
+    visit panel_widgets_path(panel)
+
+    wait_until do
+      page.evaluate_script(<<~JS)
+        (function() {
+          var label = document.querySelector(".widget-switch .resizable-font-size");
+          return !!label && label.style.fontSize !== "" && parseFloat(getComputedStyle(label).fontSize) > 20;
+        })()
+      JS
+    end
+  end
+
+  scenario "stretches layout editor grid to the bottom of the viewport", js: true do
+    visit panel_widgets_path(panel)
+    expect(page).to have_css(".grid-stack-item")
+
+    gap = page.evaluate_script(<<~JS)
+      (function() {
+        var grid = document.querySelector(".grid-stack-edit");
+        var bottomPadding = parseFloat(getComputedStyle(document.body).paddingBottom);
+        return window.innerHeight - bottomPadding - grid.getBoundingClientRect().bottom;
+      })()
+    JS
+
+    # cell height is floored to whole pixels, so up to one pixel per row may remain
+    expect(gap).to be_between(0, panel.row)
+  end
+
   scenario "reloads dashboard when widget position changes over cable", js: true do
     visit panel_path(panel)
     expect(page).to have_css(".grid-stack-item[gs-w='3'][gs-h='4']")

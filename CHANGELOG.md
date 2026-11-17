@@ -2,6 +2,12 @@
 
 [Home Control](README.md) | [How to Install](INSTALL.md) | [Docker build manual](BUILD.md) | [Changelog](CHANGELOG.md)
 
+## Home Control 3.6.2 (2026-11-17)
+  * Fixed widget labels and values not being sized to fit on the first load of a panel and in the layout editor
+  * Panel grid now follows size changes of its container (not only window resize) and no longer animates widgets on load
+  * Layout editor grid stretches to the bottom of the window
+  * Layout editor resize handles are visible on dark and colored widgets
+
 ## Home Control 3.6.1 (2026-11-17)
   * Automation process: errors in periodic jobs, Modbus writes or board messages are logged instead of crashing the process
   * Fixed overlapping runs of periodic jobs (e.g. a repeated program running twice at once when a run took longer than its interval)

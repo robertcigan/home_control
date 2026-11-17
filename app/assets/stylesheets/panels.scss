@@ -1,5 +1,14 @@
 .grid-stack-edit {
   min-height: 30rem;
+
+  // Same arrow as GridStack's default handle, but white with a black outline
+  // so it stays visible on dark and colored widgets.
+  .grid-stack-item > .ui-resizable-ne,
+  .grid-stack-item > .ui-resizable-nw,
+  .grid-stack-item > .ui-resizable-se,
+  .grid-stack-item > .ui-resizable-sw {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='none' stroke-linecap='round' stroke-linejoin='round' viewBox='0 0 20 20'><path stroke='%23000' stroke-width='4' d='m10 3 2 2H8l2-2v14l-2-2h4l-2 2'/><path stroke='%23fff' stroke-width='2' d='m10 3 2 2H8l2-2v14l-2-2h4l-2 2'/></svg>");
+  }
 }
 
 .grid-stack-view, .grid-stack-edit {

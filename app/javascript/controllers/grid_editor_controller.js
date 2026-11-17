@@ -45,11 +45,17 @@ export default class extends Controller {
     })
 
     window.addEventListener("resize", this.boundUpdateCellHeight)
+    this.scheduleFontResize()
   }
 
   disconnect() {
     this.element.removeEventListener("widget:update", this.boundHandleWidgetUpdate, true)
     window.removeEventListener("resize", this.boundUpdateCellHeight)
+
+    if (this.fontResizeFrame) {
+      cancelAnimationFrame(this.fontResizeFrame)
+      this.fontResizeFrame = null
+    }
 
     if (this.grid) {
       this.grid.destroy(false)
@@ -60,11 +66,33 @@ export default class extends Controller {
   updateCellHeight() {
     if (this.grid) {
       this.grid.cellHeight(this.cellHeightPx())
+      this.scheduleFontResize()
     }
   }
 
+  // Fonts can only be fitted once GridStack has laid out the items,
+  // so the resize runs on the next animation frame.
+  scheduleFontResize() {
+    if (this.fontResizeFrame) {
+      cancelAnimationFrame(this.fontResizeFrame)
+    }
+
+    this.fontResizeFrame = requestAnimationFrame(() => {
+      this.fontResizeFrame = null
+      this.element.dispatchEvent(new CustomEvent("widget:resize", { bubbles: true }))
+    })
+  }
+
+  // Stretch the grid from its top edge down to the bottom of the viewport
+  // (minus the page's bottom padding), never below its CSS min-height.
+  // GridStack sets an inline height on the element, so it can't be measured directly.
   cellHeightPx() {
-    return Math.max(1, Math.floor(this.element.clientHeight / this.rowValue))
+    const top = this.element.getBoundingClientRect().top + window.scrollY
+    const bottomGap = parseFloat(getComputedStyle(document.body).paddingBottom) || 0
+    const minHeight = parseFloat(getComputedStyle(this.element).minHeight) || 0
+    const height = Math.max(minHeight, window.innerHeight - top - bottomGap)
+
+    return Math.max(1, Math.floor(height / this.rowValue))
   }
 
   handleWidgetUpdate(event) {

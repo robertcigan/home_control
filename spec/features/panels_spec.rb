@@ -76,6 +76,31 @@ RSpec.feature "Panels", type: :feature do
   end
 
   describe "panel show and live updates" do
+    scenario "draws widget content on first load", js: true do
+      panel.update!(public_access: true)
+      create(:widget, :type_button, panel: panel, program: program, x: 0, y: 0, w: 2, h: 2, show_label: true, name: "Start")
+      visit panel_path(panel)
+
+      wait_until do
+        page.evaluate_script(<<~JS)
+          (function() {
+            var item = document.querySelector(".grid-stack-item");
+            var label = document.querySelector(".widget-button .resizable-font-size");
+            if (!item || !label) {
+              return false;
+            }
+            var itemHeight = item.getBoundingClientRect().height;
+            var fontSize = parseFloat(getComputedStyle(label).fontSize);
+            return itemHeight > 20 && fontSize > 8;
+          })()
+        JS
+      end
+
+      expect(page).to have_content("Start")
+      duration = page.evaluate_script("getComputedStyle(document.querySelector('.grid-stack-item')).transitionDuration")
+      expect(duration).to eq("0s")
+    end
+
     scenario "displays widgets and reacts to realtime updates", js: true do
       device = create(:switch, name: "Switch device", value_boolean: false)
       create(:widget, :type_switch, panel: panel, device: device, x: 0, y: 0, w: 2, h: 4, show_label: true)
